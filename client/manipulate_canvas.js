@@ -50,7 +50,7 @@ function init(imgsrc) {
 }
 function draw() {
 
-    
+
     ctx.clearRect(0, 0, canvas.width, canvas.height);
 
     ctx.scale(scale, scale);
@@ -173,3 +173,19 @@ function handleMouseMove(e) {
 
 
 }
+
+
+
+
+$("#canvas").mousedown(function (e) {
+    handleMouseDown(e);
+});
+$("#canvas").mousemove(function (e) {
+    handleMouseMove(e);
+});
+$("#canvas").mouseup(function (e) {
+    handleMouseUp(e);
+});
+$("#canvas").mouseout(function (e) {
+    handleMouseOut(e);
+});

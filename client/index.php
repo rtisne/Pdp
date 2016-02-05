@@ -5,9 +5,7 @@
 	<title>Document</title>
 	<link href="style.css" rel="stylesheet">
 	<link href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css" rel="stylesheet">
-	<script type="text/javascript" src="https://code.jquery.com/jquery-2.2.0.min.js" ></script>
-	<script type="text/javascript" src="init.js" ></script>
-
+	
 </head>
 <body>
 <div class="row header">
@@ -44,7 +42,7 @@
 	</div>
 
 </div>
-
+<script type="text/javascript" src="https://code.jquery.com/jquery-2.2.0.min.js" ></script>
 <script type="text/javascript" src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js" ></script>
 <script type="text/javascript" src="manipulate_canvas.js" ></script>
 <script type="text/javascript" src="upload_file.js" ></script>
