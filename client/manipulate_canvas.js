@@ -50,11 +50,11 @@ function init(imgsrc) {
 }
 function draw() {
 
-    // clear the canvas
+    
     ctx.clearRect(0, 0, canvas.width, canvas.height);
 
     ctx.scale(scale, scale);
-    // draw the image
+
     ctx.drawImage(img, 0, 0, img.width, img.height, imageX, imageY, imageWidth, imageHeight);
 
 
@@ -65,25 +65,21 @@ function anchorHitTest(x, y) {
 
     var dx, dy;
 
-    // top-left
     dx = x - imageX;
     dy = y - imageY;
     if (dx * dx + dy * dy <= rr) {
         return (0);
     }
-    // top-right
     dx = x - imageRight;
     dy = y - imageY;
     if (dx * dx + dy * dy <= rr) {
         return (1);
     }
-    // bottom-right
     dx = x - imageRight;
     dy = y - imageBottom;
     if (dx * dx + dy * dy <= rr) {
         return (2);
     }
-    // bottom-left
     dx = x - imageX;
     dy = y - imageBottom;
     if (dx * dx + dy * dy <= rr) {
@@ -123,28 +119,23 @@ function handleMouseMove(e) {
         mouseX = parseInt(e.clientX - offsetX);
         mouseY = parseInt(e.clientY - offsetY);
 
-        // resize the image
         switch (draggingResizer) {
             case 0:
-                //top-left
                 imageX = mouseX;
                 imageWidth = imageRight - mouseX;
                 imageY = mouseY;
                 imageHeight = imageBottom - mouseY;
                 break;
             case 1:
-                //top-right
                 imageY = mouseY;
                 imageWidth = mouseX - imageX;
                 imageHeight = imageBottom - mouseY;
                 break;
             case 2:
-                //bottom-right
                 imageWidth = mouseX - imageX;
                 imageHeight = mouseY - imageY;
                 break;
             case 3:
-                //bottom-left
                 imageX = mouseX;
                 imageWidth = imageRight - mouseX;
                 imageHeight = mouseY - imageY;
@@ -154,11 +145,9 @@ function handleMouseMove(e) {
         if(imageWidth<25){imageWidth=25;}
         if(imageHeight<25){imageHeight=25;}
 
-        // set the image right and bottom
         imageRight = imageX + imageWidth;
         imageBottom = imageY + imageHeight;
 
-        // redraw the image with resizing anchors
         draw();
 
     } else if (draggingImage) {
@@ -168,49 +157,19 @@ function handleMouseMove(e) {
         mouseX = parseInt(e.clientX - offsetX);
         mouseY = parseInt(e.clientY - offsetY);
 
-        // move the image by the amount of the latest drag
         var dx = mouseX - startX;
         var dy = mouseY - startY;
         imageX += dx;
         imageY += dy;
         imageRight += dx;
         imageBottom += dy;
-        // reset the startXY for next time
+
         startX = mouseX;
         startY = mouseY;
 
-        // redraw the image with border
         draw();
 
     }
 
 
 }
-$('#canvas').on( 'DOMMouseScroll mousewheel', function ( event ) {
-  if( event.originalEvent.detail > 0 || event.originalEvent.wheelDelta < 0 ) { //alternative options for wheelData: 
-        scale += zoomDelta;
-        draw();
-  } else {
-        scale -= zoomDelta;
-        draw();
-  }
-  //prevent page fom scrolling
-  return false;
-});
-
-
-
-
-
-$("#canvas").mousedown(function (e) {
-    handleMouseDown(e);
-});
-$("#canvas").mousemove(function (e) {
-    handleMouseMove(e);
-});
-$("#canvas").mouseup(function (e) {
-    handleMouseUp(e);
-});
-$("#canvas").mouseout(function (e) {
-    handleMouseOut(e);
-});

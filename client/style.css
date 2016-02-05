@@ -21,6 +21,10 @@
 	margin: auto;
 
 }
+.loader{
+	margin: auto;
+	display: none;
+}
 .right{
 	border: 1px solid #000; 
 	border-left: none;

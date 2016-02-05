@@ -12,17 +12,17 @@ if(isset($_GET['image']))
     {
           $fichier = basename($file['name']);
           $taille = filesize($file['tmp_name']);
-          $extensions = array('.png', '.gif', '.jpg', '.jpeg');
+          $extensions = array('.png', '.tiff', '.jpg', '.jpeg');
           $extension = strrchr($file['name'], '.'); 
-          $taille_maxi = 1000000;
+          $taille_maxi = 52428800;
 
           if(!in_array($extension, $extensions)) 
           {
-               $data = ($error) ? array('error' => 'Extension erreur') : array('files' => $files);
+               $data = ($error) ? array('error' => 'Only JPG, JPEG, PNG & TIFF files are allowed.') : array('files' => $files);
           }
           if($taille>$taille_maxi)
           {
-               $data = ($error) ? array('error' => 'Taille de fichier trop grosse') : array('files' => $files);
+               $data = ($error) ? array('error' => 'Your image is too large.') : array('files' => $files);
           }
           if(!isset($erreur)) 
           {    

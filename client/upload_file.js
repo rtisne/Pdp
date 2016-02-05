@@ -17,7 +17,8 @@ function prepareUpload(event)
     {
         data.append(key, value);
     });
-
+    $('form').hide();
+    $('.loader').show();
     $.ajax({
         url: 'upload.php?image',
         type: 'POST',
@@ -30,7 +31,8 @@ function prepareUpload(event)
             if(typeof data.error === 'undefined')
             {
                 $('#canvas').show();
-                $('form').hide();
+                
+                $('.loader').hide();
                 var parsedData = JSON.parse(data);
                 console.log(parsedData['files']);
                 init(parsedData['files']);

@@ -5,6 +5,8 @@
 	<title>Document</title>
 	<link href="style.css" rel="stylesheet">
 	<link href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css" rel="stylesheet">
+	<script type="text/javascript" src="https://code.jquery.com/jquery-2.2.0.min.js" ></script>
+	<script type="text/javascript" src="init.js" ></script>
 
 </head>
 <body>
@@ -25,12 +27,12 @@
 	</div>
 </div>
 <div class="row processing">
-	
 	<div class="left col-md-8">
 		<canvas id="canvas" height="500" width="500" data-girar="0"></canvas>
+		<img class="loader" src="img/loader.gif">
 		<form enctype="multipart/form-data" action="" method="post" class="upload_image">
 
-			<input type="hidden" name="MAX_FILE_SIZE" value="1000000" />
+			<input type="hidden" name="MAX_FILE_SIZE" value="52428800" />
 		 	<div class="fileUpload btn btn-primary">
 		    <span>Upload</span>
 		    <input type="file" class="upload" name="image"/>
@@ -43,7 +45,6 @@
 
 </div>
 
-<script type="text/javascript" src="https://code.jquery.com/jquery-2.2.0.min.js" ></script>
 <script type="text/javascript" src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js" ></script>
 <script type="text/javascript" src="manipulate_canvas.js" ></script>
 <script type="text/javascript" src="upload_file.js" ></script>
