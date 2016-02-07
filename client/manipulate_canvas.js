@@ -1,191 +1,113 @@
-var canvas;
-var ctx;
+// Constructeur de la classe ProcessingImage
+function ProcessingImage(src) {
 
-var canvasOffset;
-var offsetX;
-var offsetY;
+    this.img = new Image();
+    this.img.src = src;
 
-var startX;
-var startY;
-var isDown = false;
+    var that = this;
 
+    this.img.onload = function() {
+        that.w = this.width;
+        that.h = this.height;
 
+        var canvas = document.getElementById('canvas');
 
-var resizerRadius = 8;
-var rr = resizerRadius * resizerRadius;
-var draggingResizer = {
-    x: 0,
-    y: 0
-};
-var imageX = 50;
-var imageY = 50;
-var imageWidth, imageHeight, imageRight, imageBottom;
-var draggingImage = false;
-
-
-var scale = 1;
-var zoomDelta = 0.1;
-
-
-var img;
-
-
-
-function init(imgsrc) {
-    canvas = document.getElementById("canvas");
-    ctx = canvas.getContext("2d");
-    canvasOffset = $("#canvas").offset();
-    offsetX = canvasOffset.left;
-    offsetY = canvasOffset.top;
-
-    img = new Image();
-    img.src = imgsrc;
-    img.onload = function () {
-        imageWidth = img.width;
-        imageHeight = img.height;
-        imageRight = imageX + imageWidth;
-        imageBottom = imageY + imageHeight
-        draw();
+        that.x = canvas.width/2 - this.width/2;
+        that.y = canvas.height/2 - this.height/2;
     }
 }
-function draw() {
 
-
-    ctx.clearRect(0, 0, canvas.width, canvas.height);
-
-    ctx.scale(scale, scale);
-
-    ctx.drawImage(img, 0, 0, img.width, img.height, imageX, imageY, imageWidth, imageHeight);
-
-
+//Dessine l'image
+ProcessingImage.prototype.draw = function(ctx) {
+    var locx = this.x;
+    var locy = this.y;
+    ctx.drawImage(this.img,locx,locy);
 }
 
+// Determine si un point est dans l'image
+ProcessingImage.prototype.contains = function(mx, my) {
 
-function anchorHitTest(x, y) {
-
-    var dx, dy;
-
-    dx = x - imageX;
-    dy = y - imageY;
-    if (dx * dx + dy * dy <= rr) {
-        return (0);
-    }
-    dx = x - imageRight;
-    dy = y - imageY;
-    if (dx * dx + dy * dy <= rr) {
-        return (1);
-    }
-    dx = x - imageRight;
-    dy = y - imageBottom;
-    if (dx * dx + dy * dy <= rr) {
-        return (2);
-    }
-    dx = x - imageX;
-    dy = y - imageBottom;
-    if (dx * dx + dy * dy <= rr) {
-        return (3);
-    }
-    return (-1);
-
+  return  (this.x <= mx) && (this.x + this.w >= mx) &&
+          (this.y <= my) && (this.y + this.h >= my);
 }
 
+function CanvasState(canvas, image) {
+  
+    this.canvas = canvas;
+    this.width = canvas.width;
+    this.height = canvas.height;
+    this.ctx = canvas.getContext('2d');
 
-function hitImage(x, y) {
-    return (x > imageX && x < imageX + imageWidth && y > imageY && y < imageY + imageHeight);
-}
+    this.image = image;
 
+    this.dragging = false;
 
-function handleMouseDown(e) {
-    startX = parseInt(e.clientX - offsetX);
-    startY = parseInt(e.clientY - offsetY);
-    draggingResizer = anchorHitTest(startX, startY);
-    draggingImage = draggingResizer < 0 && hitImage(startX, startY);
-}
+    //Coordonnées de la selection sur l'image
+    this.dragoffx = 0;
+    this.dragoffy = 0;
 
-function handleMouseUp(e) {
-    draggingResizer = -1;
-    draggingImage = false;
-    draw();
-}
+    var myState = this;
 
-function handleMouseOut(e) {
-    handleMouseUp(e);
-}
+    canvas.addEventListener('selectstart', function(e) { e.preventDefault(); return false; }, false);
+  
+    canvas.addEventListener('mousedown', function(e) {
 
-function handleMouseMove(e) {
+        var mouse = myState.getMouse(e);
+        var mx = mouse.x;
+        var my = mouse.y;
+        var image = myState.image;
+        
+        if (image.contains(mx, my)) {
+        
+            myState.dragoffx = mx - image.x;
+            myState.dragoffy = my - image.y;
+            myState.dragging = true;
+            return;
+          }
+    }, true);
 
-    if (draggingResizer > -1) {
-
-        mouseX = parseInt(e.clientX - offsetX);
-        mouseY = parseInt(e.clientY - offsetY);
-
-        switch (draggingResizer) {
-            case 0:
-                imageX = mouseX;
-                imageWidth = imageRight - mouseX;
-                imageY = mouseY;
-                imageHeight = imageBottom - mouseY;
-                break;
-            case 1:
-                imageY = mouseY;
-                imageWidth = mouseX - imageX;
-                imageHeight = imageBottom - mouseY;
-                break;
-            case 2:
-                imageWidth = mouseX - imageX;
-                imageHeight = mouseY - imageY;
-                break;
-            case 3:
-                imageX = mouseX;
-                imageWidth = imageRight - mouseX;
-                imageHeight = mouseY - imageY;
-                break;
+    canvas.addEventListener('mousemove', function(e) {
+        if (myState.dragging){
+            var mouse = myState.getMouse(e);
+            image.x = mouse.x - myState.dragoffx;
+            image.y = mouse.y - myState.dragoffy; 
         }
+    }, true);
 
-        if(imageWidth<25){imageWidth=25;}
-        if(imageHeight<25){imageHeight=25;}
-
-        imageRight = imageX + imageWidth;
-        imageBottom = imageY + imageHeight;
-
-        draw();
-
-    } else if (draggingImage) {
-
-        imageClick = false;
-
-        mouseX = parseInt(e.clientX - offsetX);
-        mouseY = parseInt(e.clientY - offsetY);
-
-        var dx = mouseX - startX;
-        var dy = mouseY - startY;
-        imageX += dx;
-        imageY += dy;
-        imageRight += dx;
-        imageBottom += dy;
-
-        startX = mouseX;
-        startY = mouseY;
-
-        draw();
-
-    }
-
-
+    canvas.addEventListener('mouseup', function(e) {
+        myState.dragging = false;
+    }, true);
+  
+    this.interval = 30;
+    setInterval(function() { myState.draw(); }, myState.interval);
 }
 
 
+// Efface le canvas pour redessiner
+CanvasState.prototype.clear = function() {
+  this.ctx.clearRect(0, 0, this.width, this.height);
+}
 
+// Dessine le canvas avec ces éléments
+CanvasState.prototype.draw = function() {
+  if (!this.valid) {
+    var ctx = this.ctx;
 
-$("#canvas").mousedown(function (e) {
-    handleMouseDown(e);
-});
-$("#canvas").mousemove(function (e) {
-    handleMouseMove(e);
-});
-$("#canvas").mouseup(function (e) {
-    handleMouseUp(e);
-});
-$("#canvas").mouseout(function (e) {
-    handleMouseOut(e);
-});
+    this.clear();
+    
+    this.image.draw(ctx);
+  }
+}
+
+// Retourne les coordonnées de la souris
+CanvasState.prototype.getMouse = function(e) {
+    var rect = this.canvas.getBoundingClientRect();
+    mx = Math.floor((e.clientX-rect.left)/(rect.right-rect.left)*this.canvas.width);
+    my = Math.floor((e.clientY-rect.top)/(rect.bottom-rect.top)*this.canvas.height);
+    return {x: mx, y: my};
+}
+
+function init(src) {
+    var image = new ProcessingImage(src);
+    var s = new CanvasState(document.getElementById('canvas'), image);
+}
