@@ -84,15 +84,16 @@ function CanvasState(canvas, image) {
     document.getElementById('zoom-in').addEventListener('click', function(e){
         console.log("zoom in");
         myState.scale += 0.1;
-        
-        console.log("scale: "+myState.scale);
     }, true);
 
     document.getElementById('zoom-out').addEventListener('click', function(e){
         console.log("zoom out");
         myState.scale -= 0.1;
-
-        console.log("scale: "+myState.scale);
+    }, true);
+    
+    document.getElementById('zoom-reset').addEventListener('click', function(e){
+        console.log("zoom reset");
+        myState.scale = 1;
     }, true);
 
   

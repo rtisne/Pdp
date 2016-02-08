@@ -28,7 +28,8 @@
 	<div class="left col-md-8">
 		<div class="zoom-icon">
 			<span class="glyphicon glyphicon-zoom-in" id="zoom-in"></span><br>
-			<span class="glyphicon glyphicon-zoom-out" id="zoom-out"></span>
+			<span class="glyphicon glyphicon-zoom-out" id="zoom-out"></span><br>
+			<span class="glyphicon glyphicon-repeat" id="zoom-reset"></span>
 		</div>
 		
 		<canvas id="canvas" height="500" width="500" data-girar="0"></canvas>
