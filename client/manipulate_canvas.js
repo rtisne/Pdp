@@ -42,6 +42,8 @@ function CanvasState(canvas, image) {
 
     this.dragging = false;
 
+    this.scale = 1.0;
+
     //Coordonnées de la selection sur l'image
     this.dragoffx = 0;
     this.dragoffy = 0;
@@ -77,6 +79,22 @@ function CanvasState(canvas, image) {
     canvas.addEventListener('mouseup', function(e) {
         myState.dragging = false;
     }, true);
+
+
+    document.getElementById('zoom-in').addEventListener('click', function(e){
+        console.log("zoom in");
+        myState.scale += 0.1;
+        
+        console.log("scale: "+myState.scale);
+    }, true);
+
+    document.getElementById('zoom-out').addEventListener('click', function(e){
+        console.log("zoom out");
+        myState.scale -= 0.1;
+
+        console.log("scale: "+myState.scale);
+    }, true);
+
   
     this.interval = 30;
     setInterval(function() { myState.draw(); }, myState.interval);
@@ -93,9 +111,19 @@ CanvasState.prototype.draw = function() {
   if (!this.valid) {
     var ctx = this.ctx;
 
+    var newWidth = this.width * this.scale;
+    var newHeight = this.height * this.scale;
+
     this.clear();
+
+    ctx.save();
+
+    ctx.translate(-((newWidth-this.width)/2), -((newHeight-this.height)/2));
+    ctx.scale(this.scale, this.scale);
     
     this.image.draw(ctx);
+    ctx.restore();
+
   }
 }
 
@@ -105,6 +133,16 @@ CanvasState.prototype.getMouse = function(e) {
     mx = Math.floor((e.clientX-rect.left)/(rect.right-rect.left)*this.canvas.width);
     my = Math.floor((e.clientY-rect.top)/(rect.bottom-rect.top)*this.canvas.height);
     return {x: mx, y: my};
+}
+
+CanvasState.prototype.zoom = function(e){
+
+        var pt = this.canvas.transformedPoint(lastX,lastY);
+        ctx.translate(pt.x,pt.y);
+        var factor = Math.pow(scaleFactor,clicks);
+        ctx.scale(factor,factor);
+        ctx.translate(-pt.x,-pt.y);
+        redraw();
 }
 
 function init(src) {

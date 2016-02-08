@@ -26,6 +26,11 @@
 </div>
 <div class="row processing">
 	<div class="left col-md-8">
+		<div class="zoom-icon">
+			<span class="glyphicon glyphicon-zoom-in" id="zoom-in"></span><br>
+			<span class="glyphicon glyphicon-zoom-out" id="zoom-out"></span>
+		</div>
+		
 		<canvas id="canvas" height="500" width="500" data-girar="0"></canvas>
 		<img class="loader" src="img/loader.gif">
 		<form enctype="multipart/form-data" action="" method="post" class="upload_image">

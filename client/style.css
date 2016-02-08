@@ -7,14 +7,12 @@
 }
 .left{
 	display: block;
+	position: relative;
 	border: 1px solid #000; 
 	height: 100%;
 	padding: 0px !important;
-	min-height: 100%;  /* Fallback for browsers do NOT support vh unit */
-  min-height: 100vh; /* These two lines are counted as one :-)       */
-
-  display: flex;
-  align-items: center;
+	min-height: 100%;  
+  min-height: 100vh;
 
 
 }
@@ -39,10 +37,13 @@
 
 .fileUpload {
 	width: 100px;
-	position: relative;
+	position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
 	overflow: hidden;
-	margin: 10px;
-	vertical-align: middle;
+
+
 
 
 }
@@ -57,3 +58,17 @@
 	opacity: 0;
 	filter: alpha(opacity=0);
 }
+.zoom-icon{
+	position: absolute;
+	left: 20px;
+	top:20px;
+	z-index: 2;
+}
+.zoom-icon span{
+	font-size: 1.8em;
+}
+.zoom-icon span:hover{
+	cursor: pointer;
+}
+
+
