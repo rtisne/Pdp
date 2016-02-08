@@ -162,8 +162,8 @@ CanvasState.prototype.draw = function() {
 // Retourne les coordonnées de la souris
 CanvasState.prototype.getMouse = function(e) {
     var rect = this.canvas.getBoundingClientRect();
-    mx = Math.floor((e.clientX-rect.left)/(rect.right-rect.left)*this.canvas.width);
-    my = Math.floor((e.clientY-rect.top)/(rect.bottom-rect.top)*this.canvas.height);
+    mx = Math.floor((e.clientX-rect.left)/(rect.right-rect.left)*this.canvas.width) / this.scale;
+    my = Math.floor((e.clientY-rect.top)/(rect.bottom-rect.top)*this.canvas.height) / this.scale;
     return {x: mx, y: my};
 }
 
