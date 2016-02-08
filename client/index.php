@@ -8,22 +8,28 @@
 	
 </head>
 <body>
-<div class="row header">
-	<div class="col-md-2">
-		<button class="btn btn-default" type="submit"><span class="glyphicon glyphicon-flash" aria-hidden="true"></span></button>
-		
-	</div>
-	<div class="col-md-4">
-		<div class="btn-group" data-toggle="buttons">
-		  <label class="btn btn-primary active">
-		    <input type="radio" name="options" id="option1" autocomplete="off" checked> Connexe Hull
-		  </label>
-		  <label class="btn btn-primary">
-		    <input type="radio" name="options" id="option2" autocomplete="off"> Bounding Box
-		  </label>
-		</div>
-	</div>
-</div>
+<nav class="navbar navbar-default">
+  <div class="container-fluid">
+    <div class="navbar-header">
+      <a class="navbar-brand" href="#" ref="Process and find connexes composants"><span class="glyphicon glyphicon-tasks"></span></a>
+    </div>
+
+    <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+      <ul class="nav navbar-nav">
+        
+      </ul>
+     
+      <ul class="nav navbar-nav navbar-right">
+        <li>
+					<a href="#"><span class="glyphicon glyphicon-save" aria-hidden="true"></span></a>
+				</li>
+				<li>
+					<a href="#"><span class="glyphicon glyphicon-trash" aria-hidden="true"></span></a>
+				</li>
+      </ul>
+    </div>
+  </div>
+</nav>
 <div class="row processing">
 	<div class="left col-md-8">
 		<div class="zoom-icon">

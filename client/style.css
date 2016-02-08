@@ -1,20 +1,16 @@
-.header{
-	height: 8vh;
-	padding: 10px;
+.navbar{
+	margin-bottom: 0px !important;
 }
 .processing{
-	height: 90vh;
+  height: 95vh;
 }
 .left{
 	display: block;
 	position: relative;
-	border: 1px solid #000; 
 	height: 100%;
 	padding: 0px !important;
 	min-height: 100%;  
   min-height: 100vh;
-
-
 }
 .upload_image{
 	margin: auto;
@@ -25,9 +21,11 @@
 	display: none;
 }
 .right{
-	border: 1px solid #000; 
-	border-left: none;
 	height: 100%;
+	border-left: solid 1px #e7e7e7;
+	-webkit-box-shadow: -5px 0px 5px -3px #e7e7e7;
+  box-shadow: -5px 0px 5px -3px #e7e7e7;
+ 
 }
 #canvas{
 	width: 100%;
