@@ -4,6 +4,9 @@
 .processing{
   height: 95vh;
 }
+.navbar-nav,.navbar-right{
+	display: none;
+}
 .left{
 	display: block;
 	position: relative;
@@ -61,6 +64,7 @@
 	left: 20px;
 	top:20px;
 	z-index: 2;
+	display: none;
 }
 .zoom-icon span{
 	font-size: 1.8em;

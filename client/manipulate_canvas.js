@@ -31,7 +31,29 @@ ProcessingImage.prototype.contains = function(mx, my) {
           (this.y <= my) && (this.y + this.h >= my);
 }
 
-function CanvasState(canvas, image) {
+
+//Constructeur de la baseline
+function Baseline(lines) {
+    this.lines = lines;
+    this.visible = false;
+
+}
+
+Baseline.prototype.draw = function(ctx, image){  
+    if(this.visible)
+    {
+        for (index = 0; index < this.lines.length; index++) {
+            ctx.beginPath();
+            ctx.moveTo(image.x,image.y + this.lines[index]);
+            ctx.lineTo(image.x + image.w,image.y + this.lines[index]);
+            ctx.strokeStyle = '#2ecc71';
+            ctx.stroke();
+        }   
+    }
+    
+}
+
+function CanvasState(canvas, image, baseline) {
   
     this.canvas = canvas;
     this.width = canvas.width;
@@ -39,6 +61,7 @@ function CanvasState(canvas, image) {
     this.ctx = canvas.getContext('2d');
 
     this.image = image;
+    this.baseline = baseline;
 
     this.dragging = false;
 
@@ -80,7 +103,6 @@ function CanvasState(canvas, image) {
         myState.dragging = false;
     }, true);
 
-
     document.getElementById('zoom-in').addEventListener('click', function(e){
         console.log("zoom in");
         myState.scale += 0.1;
@@ -96,6 +118,14 @@ function CanvasState(canvas, image) {
         myState.scale = 1;
     }, true);
 
+    document.getElementById('baseline').addEventListener('change', function(e){
+        if(this.checked){
+            myState.baseline.visible = true;
+        }
+        else{
+            myState.baseline.visible = false;
+        }     
+    }, true);
   
     this.interval = 30;
     setInterval(function() { myState.draw(); }, myState.interval);
@@ -123,6 +153,7 @@ CanvasState.prototype.draw = function() {
     ctx.scale(this.scale, this.scale);
     
     this.image.draw(ctx);
+    this.baseline.draw(ctx, this.image);
     ctx.restore();
 
   }
@@ -148,5 +179,6 @@ CanvasState.prototype.zoom = function(e){
 
 function init(src) {
     var image = new ProcessingImage(src);
-    var s = new CanvasState(document.getElementById('canvas'), image);
+    var baseline = new Baseline([33, 94, 155]);
+    var s = new CanvasState(document.getElementById('canvas'), image, baseline);
 }

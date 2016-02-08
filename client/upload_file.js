@@ -31,6 +31,9 @@ function prepareUpload(event)
             if(typeof data.error === 'undefined')
             {
                 $('#canvas').show();
+                $('.zoom-icon').show();
+                $('.navbar-nav').show();
+                $('.navbar-right').show();
                 
                 $('.loader').hide();
                 var parsedData = JSON.parse(data);
