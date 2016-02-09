@@ -6,7 +6,7 @@ if(isset($_GET['image']))
 {  
     $error = false;
     $files = array();
-
+    
     $dossier = 'images/';
     foreach($_FILES as $file)
     {
