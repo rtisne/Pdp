@@ -29,8 +29,8 @@ ProcessingImage.prototype.draw = function(ctx) {
 // Determine si un point est dans l'image
 ProcessingImage.prototype.contains = function(mx, my, scale) {
 
-  return  (this.x * scale <= mx) && (this.x * scale + this.w * scale >= mx) &&
-          (this.y * scale <= my) && (this.y * scale + this.h * scale >= my);
+  return  (this.x <= mx) && (this.x + (this.w) >= mx) &&
+          (this.y <= my) && (this.y + (this.h) >= my);
 }
 
 
@@ -69,6 +69,9 @@ function CanvasState(canvas, image, baseline) {
 
     this.scale = 1.0;
 
+    this.panX = 0;
+    this.panY = 0;
+
     //Coordonnées de la selection sur l'image
     this.dragoffx = 0;
     this.dragoffy = 0;
@@ -80,7 +83,7 @@ function CanvasState(canvas, image, baseline) {
     canvas.addEventListener('mousedown', function(e) {
 
         var mouse = myState.getMouse(e);
-        var mx = mouse.x ;
+        var mx = mouse.x;
         var my = mouse.y;
 
         var image = myState.image;
@@ -89,7 +92,7 @@ function CanvasState(canvas, image, baseline) {
         if (image.contains(mx, my, myState.scale)) {
         
             myState.dragoffx = mx - image.x;
-            myState.dragoffy = my - image.y;
+            myState.dragoffy = my - image.y;             
             myState.dragging = true;
             return;
           }
@@ -98,8 +101,8 @@ function CanvasState(canvas, image, baseline) {
     canvas.addEventListener('mousemove', function(e) {
         if (myState.dragging){
             var mouse = myState.getMouse(e);
-            image.x = mouse.x - myState.dragoffx;
-            image.y = mouse.y - myState.dragoffy; 
+            image.x = (mouse.x) - myState.dragoffx;
+            image.y = (mouse.y) - myState.dragoffy; 
         }
     }, true);
 
@@ -108,17 +111,14 @@ function CanvasState(canvas, image, baseline) {
     }, true);
 
     document.getElementById('zoom-in').addEventListener('click', function(e){
-        console.log("zoom in");
         myState.scale += 0.1;
     }, true);
 
     document.getElementById('zoom-out').addEventListener('click', function(e){
-        console.log("zoom out");
         myState.scale -= 0.1;
     }, true);
     
     document.getElementById('zoom-reset').addEventListener('click', function(e){
-        console.log("zoom reset");
         myState.scale = 1;
         myState.image.x = myState.image.initialx;
         myState.image.y = myState.image.initialy;
@@ -150,15 +150,20 @@ CanvasState.prototype.draw = function() {
 
     var newWidth = this.width * this.scale;
     var newHeight = this.height * this.scale;
-
+    this.panX = -((newWidth-this.width)/2);
+    this.panY = -((newHeight-this.height)/2);
+    
     this.clear();
 
     ctx.save();
 
-    ctx.translate(-((newWidth-this.width)/2), -((newHeight-this.height)/2));
+    ctx.translate(this.panX, this.panY);
+
+
     ctx.scale(this.scale, this.scale);
     
     this.image.draw(ctx);
+
     this.baseline.draw(ctx, this.image);
     ctx.restore();
 
@@ -168,19 +173,13 @@ CanvasState.prototype.draw = function() {
 // Retourne les coordonnées de la souris
 CanvasState.prototype.getMouse = function(e) {
     var rect = this.canvas.getBoundingClientRect();
-    mx = Math.floor((e.clientX-rect.left)/(rect.right-rect.left)*this.canvas.width);
-    my = Math.floor((e.clientY-rect.top)/(rect.bottom-rect.top)*this.canvas.height);
-    return {x: mx, y: my};
-}
+    var mx = Math.floor((e.clientX-rect.left)/(rect.right-rect.left)*this.canvas.width);
+    var my = Math.floor((e.clientY-rect.top)/(rect.bottom-rect.top)*this.canvas.height);
 
-CanvasState.prototype.zoom = function(e){
+    var mouseXT = parseInt((mx - this.panX) / this.scale);
+    var mouseYT = parseInt((my - this.panY) / this.scale);
 
-        var pt = this.canvas.transformedPoint(lastX,lastY);
-        ctx.translate(pt.x,pt.y);
-        var factor = Math.pow(scaleFactor,clicks);
-        ctx.scale(factor,factor);
-        ctx.translate(-pt.x,-pt.y);
-        redraw();
+    return {x: mouseXT, y: mouseYT};
 }
 
 function init(src) {
