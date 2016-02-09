@@ -29,13 +29,14 @@
 					<a href="#"><span class="glyphicon glyphicon-save" aria-hidden="true"></span></a>
 				</li>
 				<li>
-					<a class="modal" href="#"><span class="glyphicon glyphicon-trash" id="button_trash" aria-hidden="true"></span></a>
+					<a href="#popup" data-toggle="modal" data-target=".bs-example-modal-sm"><span class="glyphicon glyphicon-trash" id="button_trash" aria-hidden="true"></span></a>
 				</li>
       </ul>
     </div>
   </div>
 </nav>
 <div class="row processing">
+
 	<div class="left col-md-8">
 		<div class="zoom-icon">
 			<span class="glyphicon glyphicon-zoom-in" id="zoom-in"></span><br>
@@ -115,6 +116,23 @@
 	        	</div>
 			</div>
 	    </div>
+	</div>
+	<div class="modal fade bs-example-modal-sm" tabindex="-1" role="dialog">
+	  <div class="modal-dialog">
+	    <div class="modal-content">
+	      <div class="modal-header">
+	        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+	        <h4 class="modal-title">Reset</h4>
+	      </div>
+	      <div class="modal-body">
+	        <p>Are you really sure to reset?</p>
+	      </div>
+	      <div class="modal-footer">
+	        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+	        <button id="valid-reset" type="button" class="btn btn-primary">Yes</button>
+	      </div>
+	    </div><!-- /.modal-content -->
+	  </div><!-- /.modal-dialog -->
 	</div>
 
 </div>
