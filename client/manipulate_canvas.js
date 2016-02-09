@@ -133,6 +133,7 @@ function CanvasState(canvas, image, baseline) {
         }     
     }, true);
 
+
     document.getElementById('valid-reset').addEventListener('click', function(e){
               
         var data = new FormData();
@@ -162,6 +163,7 @@ function CanvasState(canvas, image, baseline) {
                 console.log('ERRORS: ' + textStatus);
             }
           });   
+
     }, true);
 
   

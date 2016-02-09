@@ -29,7 +29,9 @@
 					<a href="#"><span class="glyphicon glyphicon-save" aria-hidden="true"></span></a>
 				</li>
 				<li>
+
 					<a href="#popup" data-toggle="modal" data-target=".bs-example-modal-sm"><span class="glyphicon glyphicon-trash" id="button_trash" aria-hidden="true"></span></a>
+
 				</li>
       </ul>
     </div>
@@ -116,6 +118,7 @@
 	        	</div>
 			</div>
 	    </div>
+
 	</div>
 	<div class="modal fade bs-example-modal-sm" tabindex="-1" role="dialog">
 	  <div class="modal-dialog">
@@ -133,6 +136,7 @@
 	      </div>
 	    </div><!-- /.modal-content -->
 	  </div><!-- /.modal-dialog -->
+
 	</div>
 
 </div>
