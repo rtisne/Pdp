@@ -4,16 +4,18 @@ function ProcessingImage(src) {
     this.img = new Image();
     this.img.src = src;
 
-    var that = this;
+    var myImage = this;
 
     this.img.onload = function() {
-        that.w = this.width;
-        that.h = this.height;
+        myImage.w = this.width;
+        myImage.h = this.height;
 
         var canvas = document.getElementById('canvas');
 
-        that.x = canvas.width/2 - this.width/2;
-        that.y = canvas.height/2 - this.height/2;
+        myImage.initialx = canvas.width/2 - this.width/2;
+        myImage.initialy = canvas.height/2 - this.height/2;
+        myImage.x = myImage.initialx;
+        myImage.y = myImage.initialy;
     }
 }
 
@@ -25,10 +27,10 @@ ProcessingImage.prototype.draw = function(ctx) {
 }
 
 // Determine si un point est dans l'image
-ProcessingImage.prototype.contains = function(mx, my) {
+ProcessingImage.prototype.contains = function(mx, my, scale) {
 
-  return  (this.x <= mx) && (this.x + this.w >= mx) &&
-          (this.y <= my) && (this.y + this.h >= my);
+  return  (this.x * scale <= mx) && (this.x * scale + this.w * scale >= mx) &&
+          (this.y * scale <= my) && (this.y * scale + this.h * scale >= my);
 }
 
 
@@ -78,11 +80,13 @@ function CanvasState(canvas, image, baseline) {
     canvas.addEventListener('mousedown', function(e) {
 
         var mouse = myState.getMouse(e);
-        var mx = mouse.x;
+        var mx = mouse.x ;
         var my = mouse.y;
+
         var image = myState.image;
+
         
-        if (image.contains(mx, my)) {
+        if (image.contains(mx, my, myState.scale)) {
         
             myState.dragoffx = mx - image.x;
             myState.dragoffy = my - image.y;
@@ -116,6 +120,8 @@ function CanvasState(canvas, image, baseline) {
     document.getElementById('zoom-reset').addEventListener('click', function(e){
         console.log("zoom reset");
         myState.scale = 1;
+        myState.image.x = myState.image.initialx;
+        myState.image.y = myState.image.initialy;
     }, true);
 
     document.getElementById('baseline').addEventListener('change', function(e){
@@ -162,8 +168,8 @@ CanvasState.prototype.draw = function() {
 // Retourne les coordonnées de la souris
 CanvasState.prototype.getMouse = function(e) {
     var rect = this.canvas.getBoundingClientRect();
-    mx = Math.floor((e.clientX-rect.left)/(rect.right-rect.left)*this.canvas.width) / this.scale;
-    my = Math.floor((e.clientY-rect.top)/(rect.bottom-rect.top)*this.canvas.height) / this.scale;
+    mx = Math.floor((e.clientX-rect.left)/(rect.right-rect.left)*this.canvas.width);
+    my = Math.floor((e.clientY-rect.top)/(rect.bottom-rect.top)*this.canvas.height);
     return {x: mx, y: my};
 }
 
