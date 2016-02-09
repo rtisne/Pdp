@@ -73,4 +73,43 @@
 	cursor: pointer;
 }
 
+.zoom-icon span{
+	font-size: 1.8em;
+}
+
+.field_base{
+	display: inline-block;
+	vertical-align: middle;
+}
+.field_base label{
+	margin: 0;
+}
+
+.change_base_icon {
+	display: inline-block;
+	vertical-align: middle;
+}
+
+.change_base_icon ul{
+	list-style-type: none;
+}
+
+.change_base_icon span{
+	font-size: 0.8em;
+
+}
+
+.container_option_base {
+	text-align: center;
+}
+
+.field {
+	height: 40px;
+}
+.field_modification_base{
+	display: flex;
+	flex-direction:column;
+	align-item: center;
+}
+
 

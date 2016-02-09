@@ -38,6 +38,7 @@ function prepareUpload(event)
                 $('.loader').hide();
                 var parsedData = JSON.parse(data);
                 console.log(parsedData['files']);
+                console.log(parsedData);
                 init(parsedData['files']);
             }
             else
