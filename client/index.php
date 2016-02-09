@@ -30,7 +30,7 @@
 					<a href="#"><span class="glyphicon glyphicon-save" aria-hidden="true"></span></a>
 				</li>
 				<li>
-					<a onclick='window.location.reload(false)' href="#"><span class="glyphicon glyphicon-trash" aria-hidden="true"></span></a>
+					<a class="modal" href="#"><span class="glyphicon glyphicon-trash" id="button_trash" aria-hidden="true"></span></a>
 				</li>
       </ul>
     </div>
@@ -123,5 +123,6 @@
 <script type="text/javascript" src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js" ></script>
 <script type="text/javascript" src="manipulate_canvas.js" ></script>
 <script type="text/javascript" src="upload_file.js" ></script>
+
 </body>
 </html>

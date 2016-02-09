@@ -126,6 +126,40 @@ function CanvasState(canvas, image, baseline) {
             myState.baseline.visible = false;
         }     
     }, true);
+
+    document.getElementById('button_trash').addEventListener('click', function(e){
+        if(confirm("Do you really want to reset this page ?")) 
+        {   $('.button_trash').modal('show');
+            var data = new FormData();
+            data.append('file', myState.image.img.src);
+
+            $.ajax({
+                url: 'remove.php?restart',
+                type: 'POST',
+                data: data,
+                cache: false,
+                processData: false, // Don't process the files
+                contentType: false, // Set content type to false as jQuery will tell the server its a query string request
+                success: function(data, textStatus, jqXHR)
+                {
+                    var parsedData = JSON.parse(data);
+                    if (parsedData == true) {
+                        location.reload();
+                        console.log("Page réinitialisée.");    
+                    }
+                    else
+                    {
+                        console.log('ERRORS: ' + data.error);
+                    }
+                },
+                error: function(jqXHR, textStatus, errorThrown)
+                {
+                    console.log('ERRORS: ' + textStatus);
+                }
+              });
+        }
+    }, true);
+
   
     this.interval = 30;
     setInterval(function() { myState.draw(); }, myState.interval);
@@ -182,3 +216,10 @@ function init(src) {
     var baseline = new Baseline([33, 94, 155]);
     var s = new CanvasState(document.getElementById('canvas'), image, baseline);
 }
+
+
+
+
+
+
+
