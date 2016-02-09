@@ -56,7 +56,66 @@
 		</form>
 	</div>
 	<div class="right col-md-4">
-		
+		<div class="container_right">
+			<button class="buttonPrevious btn btn-primary">Previous</button>
+			<button class="buttonNext btn btn-primary">Next</button>
+			
+			<canvas id="small_canvas" height="500" width="500" data-girar="500"></canvas>
+
+			<div class="container_option_base">
+
+				<label id="title_modif">Modification base of bounding box</label><br>
+				<div class="field_modification_base">
+					<div class="field">
+						<div class="field_base">
+		        			<label id="up_base">Up : </label>
+		        			<input type="text" name="up_base" id="up_base-input"/>
+		        		</div>
+		        		<div class="change_base_icon">
+							<span class="glyphicon glyphicon-chevron-up" id="glyph_base_up" ></span><br>
+							<span class="glyphicon glyphicon-chevron-down" id="glyph_base_down"></span>
+						</div>
+		        		<br>
+	        		</div>
+
+	        		<div class="field">
+						<div class="field_base">
+							<label id="down_base">Down : </label>
+		        			<input type="text" name="down_base" id="down_base-input"/>
+		        		</div>
+		        		<div class="change_base_icon">
+							<span class="glyphicon glyphicon-chevron-up" id="glyph_base_up" ></span><br>
+							<span class="glyphicon glyphicon-chevron-down" id="glyph_base_down"></span>
+						</div>
+		        		<br>
+		        	</div>
+
+		        	<div class="field">
+		        		<div class="field_base">
+		        		<label id="right_base">Right : </label>
+		        		<input type="text" name="right_base" id="right_base-input"/>
+		        		</div>
+		        		<div class="change_base_icon">
+							<span class="glyphicon glyphicon-chevron-up" id="glyph_base_up" ></span><br>
+							<span class="glyphicon glyphicon-chevron-down" id="glyph_base_down"></span>
+						</div>
+		        		<br>
+		        	</div>
+
+		        	<div class="field">
+		        		<div class="field_base">
+		        		<label id="left_base">Left : </label>
+		        		<input type="text" name="left_base" id="left_base-input"/>
+		        		</div>
+		        		<div class="change_base_icon">
+							<span class="glyphicon glyphicon-chevron-up" id="glyph_base_up" ></span><br>
+							<span class="glyphicon glyphicon-chevron-down" id="glyph_base_down"></span>
+						</div>
+		        		<br>
+		        	</div>
+	        	</div>
+			</div>
+	    </div>
 	</div>
 
 </div>
