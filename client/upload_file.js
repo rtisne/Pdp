@@ -34,6 +34,7 @@ function prepareUpload(event)
                 $('.zoom-icon').show();
                 $('.navbar-nav').show();
                 $('.navbar-right').show();
+                $('.container_right').show();
                 
                 $('.loader').hide();
                 var parsedData = JSON.parse(data);

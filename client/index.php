@@ -30,7 +30,7 @@
 					<a href="#"><span class="glyphicon glyphicon-save" aria-hidden="true"></span></a>
 				</li>
 				<li>
-					<a href="#"><span class="glyphicon glyphicon-trash" aria-hidden="true"></span></a>
+					<a onclick='window.location.reload(false)' href="#"><span class="glyphicon glyphicon-trash" aria-hidden="true"></span></a>
 				</li>
       </ul>
     </div>
@@ -60,11 +60,11 @@
 			<button class="buttonPrevious btn btn-primary">Previous</button>
 			<button class="buttonNext btn btn-primary">Next</button>
 			
-			<canvas id="small_canvas" height="500" width="500" data-girar="500"></canvas>
+			<!--<canvas id="small_canvas" height="500" width="500" data-girar="500"></canvas>-->
 
 			<div class="container_option_base">
 
-				<label id="title_modif">Modification base of bounding box</label><br>
+				<label id="title_modif">Modification base of bounding box</label><br><br>
 				<div class="field_modification_base">
 					<div class="field">
 						<div class="field_base">
