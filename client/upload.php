@@ -27,8 +27,8 @@ if(isset($_GET['image']))
           if(!isset($erreur)) 
           {    
                $fichier = strtr($fichier, 
-               'ÀÁÂÃÄÅÇÈÉÊËÌÍÎÏÒÓÔÕÖÙÚÛÜÝàáâãäåçèéêëìíîïðòóôõöùúûüýÿ', 
-               'AAAAAACEEEEIIIIOOOOOUUUUYaaaaaaceeeeiiiioooooouuuuyy');
+               'ÀÁÂÃÄÅÇÈÉÊËÌÍÎÏÒÓÔÕÖÙÚÛÜÝàáâãäåçèéêëìíîïðòóôõöùúûüýÿ ', 
+               'AAAAAACEEEEIIIIOOOOOUUUUYaaaaaaceeeeiiiioooooouuuuyy_');
                $fichier = preg_replace('/([^.a-z0-9]+)/i', '-', $fichier);
 
                if(move_uploaded_file($file['tmp_name'], $dossier . $fichier))
