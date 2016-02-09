@@ -24,7 +24,6 @@
 					</a>
         </li>
       </ul>
-     
       <ul class="nav navbar-nav navbar-right">
         <li>
 					<a href="#"><span class="glyphicon glyphicon-save" aria-hidden="true"></span></a>
