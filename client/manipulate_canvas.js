@@ -10,10 +10,11 @@ function ProcessingImage(src) {
         myImage.w = this.width;
         myImage.h = this.height;
 
-        var canvas = document.getElementById('canvas');
+        canvas = document.getElementById('canvas');
 
         myImage.initialx = canvas.width/2 - this.width/2;
         myImage.initialy = canvas.height/2 - this.height/2;
+
         myImage.x = myImage.initialx;
         myImage.y = myImage.initialy;
     }
@@ -27,7 +28,7 @@ ProcessingImage.prototype.draw = function(ctx) {
 }
 
 // Determine si un point est dans l'image
-ProcessingImage.prototype.contains = function(mx, my, scale) {
+ProcessingImage.prototype.contains = function(mx, my) {
 
   return  (this.x <= mx) && (this.x + (this.w) >= mx) &&
           (this.y <= my) && (this.y + (this.h) >= my);
@@ -55,15 +56,73 @@ Baseline.prototype.draw = function(ctx, image){
     
 }
 
-function CanvasState(canvas, image, baseline) {
+function Rectangle(rect){
+    this.rect = rect;
+    this.color = '#3498db';
+    this.selectedColor = '#e74c3c';
+    this.visible = true;
+    this.selected = false;
+}
+
+Rectangle.prototype.draw = function(ctx, image){
+    if(this.visible)
+    {
+        if(this.selected)
+            ctx.fillStyle = this.selectedColor;
+        else
+            ctx.fillStyle = this.color;
+
+        ctx.globalAlpha=0.2;
+        ctx.fillRect(image.x + this.rect.x,image.y + this.rect.y, this.rect.w, this.rect.h);
+
+    }
+}
+
+//Constructeur de la bounding box
+function BoundingBox(rects) {
+    this.rects = rects;
+
+}
+
+BoundingBox.prototype.draw = function(ctx, image){
+    for (index = 0; index < this.rects.length; index++) {
+        this.rects[index].draw(ctx, image);
+    }
+}
+BoundingBox.prototype.contains = function(mx, my, image){
+    for (index = 0; index < this.rects.length; index++) {
+        if((this.rects[index].rect.x + image.x <= mx) 
+            && (this.rects[index].rect.x + image.x + this.rects[index].rect.w >=mx)
+            && (this.rects[index].rect.y + image.y <= my) 
+            && (this.rects[index].rect.y + image.y + this.rects[index].rect.h >= my))
+            return index;
+    }
+    return 'false';
+}
+BoundingBox.prototype.select = function (id){
+    for (index = 0; index < this.rects.length; index++) {
+        this.rects[index].selected = false;
+    }
+    if(id != false)
+        this.rects[id].selected = true;
+}
+
+
+function CanvasState(canvas, image, baseline, boundingBox, previewCanvas) {
   
+    var myState = this;
+
     this.canvas = canvas;
     this.width = canvas.width;
     this.height = canvas.height;
     this.ctx = canvas.getContext('2d');
 
     this.image = image;
+
     this.baseline = baseline;
+    this.boundingBox = boundingBox;
+
+    this.previewCanvas = previewCanvas;
 
     this.dragging = false;
 
@@ -76,10 +135,32 @@ function CanvasState(canvas, image, baseline) {
     this.dragoffx = 0;
     this.dragoffy = 0;
 
-    var myState = this;
+   
 
     canvas.addEventListener('selectstart', function(e) { e.preventDefault(); return false; }, false);
   
+
+    canvas.addEventListener('click', function(e) {
+
+        var mouse = myState.getMouse(e);
+        var mx = mouse.x;
+        var my = mouse.y;
+
+        var id = myState.boundingBox.contains(mx, my, myState.image);
+        if(id != 'false')
+        {
+            myState.boundingBox.select(id);
+            myState.previewCanvas.zoomTo(myState.boundingBox.rects[id]);
+            myState.previewCanvas.visible = true;
+            $(".container_right").show();
+        }
+        else
+        {
+            myState.boundingBox.select(false);
+            $(".container_right").hide();
+        }
+
+    }, true);
     canvas.addEventListener('mousedown', function(e) {
 
         var mouse = myState.getMouse(e);
@@ -89,7 +170,7 @@ function CanvasState(canvas, image, baseline) {
         var image = myState.image;
 
         
-        if (image.contains(mx, my, myState.scale)) {
+        if (image.contains(mx, my)) {
         
             myState.dragoffx = mx - image.x;
             myState.dragoffy = my - image.y;             
@@ -166,9 +247,9 @@ function CanvasState(canvas, image, baseline) {
 
     }, true);
 
-  
     this.interval = 30;
     setInterval(function() { myState.draw(); }, myState.interval);
+
 }
 
 
@@ -199,6 +280,12 @@ CanvasState.prototype.draw = function() {
     this.image.draw(ctx);
 
     this.baseline.draw(ctx, this.image);
+
+    this.boundingBox.draw(ctx, this.image);
+
+
+    this.previewCanvas.draw();
+
     ctx.restore();
 
   }
@@ -216,10 +303,72 @@ CanvasState.prototype.getMouse = function(e) {
     return {x: mouseXT, y: mouseYT};
 }
 
+
+
+function PreviewCanvas(canvas, image)
+{
+    this.canvas = canvas;
+    this.width = canvas.width;
+    this.height = canvas.height;
+    this.ctx = canvas.getContext('2d');
+
+    this.image = image;
+
+    this.visible = false;
+    this.scale = 9;
+
+
+    var myPreviewCanvas = this;
+
+    
+}
+
+// Efface le canvas pour redessiner
+PreviewCanvas.prototype.clear = function() {
+    this.ctx.clearRect(0, 0, this.width, this.height);
+}
+// Dessine le canvas avec ces éléments
+PreviewCanvas.prototype.draw = function() {
+    if(this.visible)
+    {
+        var ctx = this.ctx;
+        this.clear();
+        ctx.save();
+
+        var newWidth = this.width * this.scale;
+        var newHeight = this.height * this.scale;
+        var panX = -((newWidth-this.width)/2);
+        var panY = -((newHeight-this.height)/2);
+
+        ctx.translate(panX, panY);
+
+        ctx.scale(this.scale,this.scale);
+        this.image.draw(ctx);
+        ctx.restore();
+    }
+   
+}
+PreviewCanvas.prototype.zoomTo = function(rect){
+
+    this.image.x = (this.width/2) - rect.rect.x - rect.rect.w/2;
+    this.image.y = (this.height/2) - rect.rect.y - rect.rect.h/2;
+}
+
 function init(src) {
     var image = new ProcessingImage(src);
+    var imagePreview = new ProcessingImage(src);
     var baseline = new Baseline([33, 94, 155]);
-    var s = new CanvasState(document.getElementById('canvas'), image, baseline);
+    var rect = new Rectangle({x:14, y:20, w:8, h: 14});
+    var rect2 = new Rectangle({x:23, y:20, w:8, h: 14});
+    var rect3 = new Rectangle({x:32, y:20, w:8, h: 14});
+    var boundingBox = new BoundingBox([rect, rect2, rect3]);
+
+
+
+    var previewCanvas = new PreviewCanvas(document.getElementById('small_canvas'), imagePreview);
+    var normalCanvas = new CanvasState(document.getElementById('canvas'), image, baseline, boundingBox, previewCanvas);
+    
+
 }
 
 

@@ -46,7 +46,7 @@
 			<span class="glyphicon glyphicon-repeat" id="zoom-reset"></span>
 		</div>
 		
-		<canvas id="canvas" height="500" width="500" data-girar="0"></canvas>
+		<canvas id="canvas" width="500" height="500" data-girar="0"></canvas>
 		<img class="loader" src="img/loader.gif">
 		<form enctype="multipart/form-data" action="" method="post" class="upload_image">
 
@@ -57,12 +57,18 @@
 			</div>
 		</form>
 	</div>
-	<div class="right col-md-4">
-		<div class="container_right">
+	<div class="right col-md-4" >
+		<div class="container_right" style="display:none;">
 			<button class="buttonPrevious btn btn-primary">Previous</button>
 			<button class="buttonNext btn btn-primary">Next</button>
 			
-			<!--<canvas id="small_canvas" height="500" width="500" data-girar="500"></canvas>-->
+			<div class="small-canvas">
+				<div class="content">
+        	<canvas id="small_canvas" data-girar="500"></canvas>
+        </div> 
+	    </div>
+
+		
 
 			<div class="container_option_base">
 
@@ -117,7 +123,7 @@
 		        	</div>
 	        	</div>
 			</div>
-	    </div>
+	  </div>
 
 	</div>
 	<div class="modal fade bs-example-modal-sm" tabindex="-1" role="dialog">
