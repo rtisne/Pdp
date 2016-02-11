@@ -71,6 +71,15 @@
 		
 
 			<div class="container_option_base">
+				<div class="letter">
+					<label id="label_letter">Letter : </label>
+		        	<input type="text" name="label_letter" id="letter-input"/>
+				</div>
+
+				<br>
+				<br>
+				<br>
+				<br>
 
 				<label id="title_modif">Modification base of bounding box</label><br><br>
 				<div class="field_modification_base">
@@ -121,8 +130,14 @@
 						</div>
 		        		<br>
 		        	</div>
+		        	<br>
+		        	<br>
+		        	<span class="glyphicon glyphicon-ok" id="valid_option"></span>
 	        	</div>
+	        	
+	        	
 			</div>
+
 	  </div>
 
 	</div>
