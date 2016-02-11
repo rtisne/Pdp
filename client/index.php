@@ -79,7 +79,6 @@
 				<br>
 				<br>
 				<br>
-				<br>
 
 				<label id="title_modif">Modification base of bounding box</label><br><br>
 				<div class="field_modification_base">
