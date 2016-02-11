@@ -103,7 +103,7 @@ BoundingBox.prototype.select = function (id){
     for (index = 0; index < this.rects.length; index++) {
         this.rects[index].selected = false;
     }
-    if(id != false)
+    if(id != 'false')
         this.rects[id].selected = true;
 }
 
@@ -156,7 +156,7 @@ function CanvasState(canvas, image, baseline, boundingBox, previewCanvas) {
         }
         else
         {
-            myState.boundingBox.select(false);
+            myState.boundingBox.select('false');
             $(".container_right").hide();
         }
 
