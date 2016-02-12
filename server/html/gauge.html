@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <script src="http://code.jquery.com/jquery-latest.js"></script>
+    <script type="text/javascript" src="//www.google.com/jsapi"></script>
+    <script type="text/javascript">
+      google.load("visualization", "1", {packages:["gauge"]});
+      google.setOnLoadCallback(initChart);
+         
+      function updateChart(value, chart, data, options)
+      {
+        data.setValue(0, 1, value);
+        chart.draw(data, options);   
+      }
+
+      function updateAjax(chart, data, options) {
+          $.ajax({
+              url : 'cpuvalue.txt',
+              success : function(value) { 
+                if (value=='ERR') window.location="index.html";
+                if (value > 0) updateChart(value,chart, data, options);
+              }
+          });
+      }
+      function initChart()
+      {
+       var chart = new google.visualization.Gauge(document.getElementById('chart_div'));
+       var data = google.visualization.arrayToDataTable([
+          ['Label', 'Value'],
+          ['CPU', 55]
+        ]);
+        var options = {
+          width: 400, height: 120,
+          redFrom: 90, redTo: 100,
+          yellowFrom:75, yellowTo: 90,
+          minorTicks: 5
+        };
+        setInterval(function() { updateAjax(chart, data, options); }, 1000);
+      }
+
+    </script>
+  <link rel="stylesheet" href="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/css/bootstrap.min.css">
+  </head>
+  <body>
+    <div id="chart_div" style="width: 150px; height: 120px; padding: 15px; margin: 0 auto"></div>    
+    <BR/><BR/>
+    <form method="post" action="index.html" style="max-width: 150px; padding: 15px; margin: 0 auto;">
+      <input type="submit" name="disconnect" value="Disconnect" class="btn btn-primary btn-block"/>
+    </form>
+  </body>
+</html>
