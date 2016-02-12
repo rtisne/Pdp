@@ -4,20 +4,6 @@ function ProcessingImage(src) {
     this.img = new Image();
     this.img.src = src;
 
-    var myImage = this;
-
-    this.img.onload = function() {
-        myImage.w = this.width;
-        myImage.h = this.height;
-
-        canvas = document.getElementById('canvas');
-
-        myImage.initialx = canvas.width/2 - this.width/2;
-        myImage.initialy = canvas.height/2 - this.height/2;
-
-        myImage.x = myImage.initialx;
-        myImage.y = myImage.initialy;
-    }
 }
 
 //Dessine l'image
@@ -47,8 +33,8 @@ Baseline.prototype.draw = function(ctx, image){
     {
         for (index = 0; index < this.lines.length; index++) {
             ctx.beginPath();
-            ctx.moveTo(image.x,image.y + this.lines[index]);
-            ctx.lineTo(image.x + image.w,image.y + this.lines[index]);
+            ctx.moveTo(image.x+ this.lines[index].xstart,image.y + this.lines[index].y);
+            ctx.lineTo(image.x + this.lines[index].xfinish,image.y + this.lines[index].y);
             ctx.strokeStyle = '#2ecc71';
             ctx.stroke();
         }   
@@ -135,6 +121,25 @@ function CanvasState(canvas, image, baseline, boundingBox, previewCanvas) {
     this.dragoffx = 0;
     this.dragoffy = 0;
 
+
+    this.image.img.onload = function(){
+        myState.image.w = this.width;
+        myState.image.h = this.height;
+
+
+        myState.image.initialx = myState.width/2 - this.width/2;
+        myState.image.initialy = myState.height/2 - this.height/2;
+
+        myState.image.x = myState.image.initialx;
+        myState.image.y = myState.image.initialy;
+
+
+        if(this.width > this.height)
+            myState.scale = myState.width /this.width;
+        else
+            myState.scale = myState.height /this.height;
+    }
+
    
 
     canvas.addEventListener('selectstart', function(e) { e.preventDefault(); return false; }, false);
@@ -200,7 +205,11 @@ function CanvasState(canvas, image, baseline, boundingBox, previewCanvas) {
     }, true);
     
     document.getElementById('zoom-reset').addEventListener('click', function(e){
-        myState.scale = 1;
+        if(this.width > this.height)
+            myState.scale = myState.width /myState.image.w;
+        else
+            myState.scale = myState.height /myState.image.h;
+
         myState.image.x = myState.image.initialx;
         myState.image.y = myState.image.initialy;
     }, true);
@@ -352,16 +361,20 @@ PreviewCanvas.prototype.zoomTo = function(rect){
 
     this.image.x = (this.width/2) - rect.rect.x - rect.rect.w/2;
     this.image.y = (this.height/2) - rect.rect.y - rect.rect.h/2;
+    if(rect.rect.w > rect.rect.h)
+        this.scale = this.width /rect.rect.w;
+    else
+        this.scale = this.height /rect.rect.h;
 }
 
 function init(src) {
     var image = new ProcessingImage(src);
     var imagePreview = new ProcessingImage(src);
-    var baseline = new Baseline([33, 94, 155]);
-    var rect = new Rectangle({x:14, y:20, w:8, h: 14});
-    var rect2 = new Rectangle({x:23, y:20, w:8, h: 14});
-    var rect3 = new Rectangle({x:32, y:20, w:8, h: 14});
-    var boundingBox = new BoundingBox([rect, rect2, rect3]);
+    var baseline = new Baseline([{xstart:50, y:90, xfinish:560}, {xstart:50, y:130, xfinish:570}]);
+    var box1 = new Rectangle({x:50, y:60, w:30, h: 30});
+    var box2 = new Rectangle({x:82, y:70, w:18, h: 20});
+    var box3 = new Rectangle({x:102, y:68, w:16, h: 22});
+    var boundingBox = new BoundingBox([box1, box2, box3]);
 
 
 
