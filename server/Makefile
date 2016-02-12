@@ -63,7 +63,7 @@ MAIN_OBJS = \
 		  Image.o \
 		  main.o
 
-BOUNDING = BoundingBox
+BOUNDINGBOX = BoundingBox
 
 CONNECTEDCOMPONENT= ConnectedComponent
 
@@ -87,7 +87,7 @@ IMAGE= Image
 %.o: %.cc
 	$(CXX) -c $< -o $@ $(CXXFLAGS) $(CPPFLAGS) $(DEFS) 
 	
-all: $(BOUNDINGBOX) $(CONNECTEDCOMPONENT) $(IMAGE)  $(CHARACTER) $(FONT) $(LINE) $(PARAGRAPH) $(MAIN)
+all: $(MAIN_NAME)
 	
 $(MAIN_NAME): $(MAIN_OBJS) $(LIB_STATIC_NAME)
 	rm -f $@
