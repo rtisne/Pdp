@@ -324,8 +324,10 @@ function PreviewCanvas(canvas, image)
     this.image = image;
 
     this.visible = false;
-    this.scale = 9;
+    this.scale = 1;
 
+
+    this.actualRect = null;
 
     var myPreviewCanvas = this;
 
@@ -352,8 +354,40 @@ PreviewCanvas.prototype.draw = function() {
         ctx.translate(panX, panY);
 
         ctx.scale(this.scale,this.scale);
+
         this.image.draw(ctx);
+
+         //UpLine
+        ctx.beginPath();
+        ctx.moveTo(0, this.image.y + this.actualRect.y);
+        ctx.lineTo(this.width, this.image.y + this.actualRect.y);
+        ctx.lineWidth = 1 / this.scale;
+        ctx.stroke();
+
+        //DownLine
+        ctx.beginPath();
+        ctx.moveTo(0, this.image.y + this.actualRect.y + this.actualRect.h);
+        ctx.lineTo(this.width, this.image.y + this.actualRect.y + this.actualRect.h);
+        ctx.lineWidth = 1 / this.scale;
+        ctx.stroke();
+
+        //LeftLine
+        ctx.beginPath();
+        ctx.moveTo(this.image.x + this.actualRect.x, 0);
+        ctx.lineTo(this.image.x + this.actualRect.x, this.height);
+        ctx.lineWidth = 1 / this.scale;
+        ctx.stroke();
+
+        //RightLine
+        ctx.beginPath();
+        ctx.moveTo(this.image.x + this.actualRect.x + this.actualRect.w, 0);
+        ctx.lineTo(this.image.x + this.actualRect.x + this.actualRect.w, this.height);
+        ctx.lineWidth = 1 / this.scale;
+        ctx.stroke();
+    
         ctx.restore();
+
+       
     }
    
 }
@@ -362,9 +396,10 @@ PreviewCanvas.prototype.zoomTo = function(rect){
     this.image.x = (this.width/2) - rect.rect.x - rect.rect.w/2;
     this.image.y = (this.height/2) - rect.rect.y - rect.rect.h/2;
     if(rect.rect.w > rect.rect.h)
-        this.scale = this.width /rect.rect.w;
+        this.scale = this.width /rect.rect.w - rect.rect.w / 37;
     else
-        this.scale = this.height /rect.rect.h;
+        this.scale = this.height /rect.rect.h - rect.rect.h / 37;
+    this.actualRect = rect.rect;
 }
 
 function init(src) {
