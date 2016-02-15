@@ -1,5 +1,5 @@
 #ifndef CONNECTEDCOMPONENT_H
-#define CONNECTEDCOMPONENT__H
+#define CONNECTEDCOMPONENT_H
 
 #include <opencv2/core/core.hpp>
 #include <opencv2/highgui/highgui.hpp>
@@ -26,4 +26,4 @@ private:
 
 };
 
-#endif // CONNECTEDCOMPONENT__H
+#endif // CONNECTEDCOMPONENT_H
