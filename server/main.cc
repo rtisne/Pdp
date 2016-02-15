@@ -29,7 +29,7 @@
 using namespace cv;
 using namespace std;
 
-RNG rng(12345);
+//RNG rng(12345);
 
 
 WebServer *webServer = NULL;
@@ -55,7 +55,23 @@ class MyDynamicRepository : public DynamicRepository
     {
       bool getPage(HttpRequest* request, HttpResponse *response)
       {
+        string path;
+        request->getParameter("path", path);
         if (!isValidSession(request))
+        {
+          Image * img = new Image(path);
+          img->BinarizedImage();
+          img->extractAllConnectedComponents();
+          std::vector<ConnectedComponent> ListTmpCC = img->getListCC();
+          for(int i= 0; i < ListTmpCC.size()-1; i++)
+            {
+              for(int j= 0; j < ListTmpCC[i].getListP().size()-1;j++)
+                {
+                  std::vector<cv::Point> ListTmp = ListTmpCC[i].getListP();
+                  cout << ListTmp[j] << endl;
+                }
+            }
+        }
         return fromString("SessionOK", response);
       }
     } startSession;
@@ -64,22 +80,9 @@ class MyDynamicRepository : public DynamicRepository
     {
       bool getPage(HttpRequest* request, HttpResponse *response)
       {
-        string param;
-
-        if (request->getParameter("pageId", param) && param == "LOGIN" && isValidSession(request))
-        {
-          response->forwardTo("gauge.html"); 
-          return true;
-        } 
-
-        if (request->hasParameter("disconnect")) // Button disconnect
-          request->removeSession();
 
         if (!isValidSession(request))
-          response->forwardTo("login.html");
-        else
-          response->forwardTo("gauge.html");       
-        
+          response->forwardTo("index.html");
         return true;
       }
 
@@ -111,35 +114,7 @@ int main(int argc, char** argv )
 
   MyDynamicRepository myRepo;
   webServer->addRepository(&myRepo);
-    if( argc != 2)
-    {
-     cout <<" Usage: display_image ImageToLoadAndDisplay" << endl;
-     return -1;
-    }
-    Image * img = new Image(argv[1]);
-  // Read the file
-    
-    if(! img->getImg().data )                              // Check for invalid input
-    {
-        cout <<  "Could not open or find the image" << endl ;
-        return -1;
-    }
-    img->BinarizedImage();
-
-    img->extractAllConnectedComponents();
-     
-     //Verification des données
-    std::vector<ConnectedComponent> ListTmpCC = img->getListCC();
-    for(int i= 0; i < ListTmpCC.size()-1; i++)
-    {
-        for(int j= 0; j < ListTmpCC[i].getListP().size()-1;j++)
-        {
-        std::vector<cv::Point> ListTmp = ListTmpCC[i].getListP();
-         cout << ListTmp[j] << endl;
-        }
-    }
-
-
+   /* 
     //affichage CC avec openCV + bounding Box
     vector<vector<Point> > contours_poly(ListTmpCC.size());
     vector<Rect> boundRect( ListTmpCC.size() );
@@ -162,7 +137,7 @@ int main(int argc, char** argv )
     imshow( "Contours", drawing );
         
     namedWindow( "Display window", WINDOW_AUTOSIZE );
-    imshow( "Display window", img->getImg()); 
+    imshow( "Display window", img->getImg()); */
 
   webServer->startService();
  
