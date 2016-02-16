@@ -20,8 +20,12 @@
 
 }
 .loader{
-	margin: auto;
 	display: none;
+	position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+	overflow: hidden;
 }
 .right{
 	height: 100%;
@@ -33,7 +37,7 @@
   flex-direction: column;
 }
 .container_right{
-	display: none;@
+	display: none;
 }
 
 .right_up{
@@ -128,16 +132,6 @@
 	text-align: right;
 }
 
-.buttonPrevious{
-	margin-top: 10px;
-	margin-left: 0px;
-} 
-
-.buttonNext {
-	margin:10px;
-	position: absolute;
-	right: 10px;
-}
 
 .small-canvas{
 	margin: auto;
@@ -155,7 +149,9 @@
   width:100%;
 }
 .button_nav_cc{
-	width: 100%;
+	margin: 0px !important;
+	margin-top: 10px !important;
+	width: 97%;
 	padding-left: 15px;
 	padding-right: 15px;
 }

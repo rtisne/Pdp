@@ -61,9 +61,13 @@
 		<div class="right col-md-4" >
 			<div class="container_right">
 				<div class="right_up">
-					<div class="button_nav_cc">
-						<button class="buttonPrevious btn btn-primary">Previous</button>
-						<button class="buttonNext btn btn-primary">Next</button>
+					<div class="button_nav_cc row">
+						<div class="col-md-3">
+							<button class="buttonPrevious btn btn-primary">Previous</button>
+						</div>
+						<div class="col-md-3 col-md-offset-6">
+							<button class="buttonNext btn btn-primary">Next</button>
+						</div>		
 					</div>
 					
 					<div class="small-canvas">
