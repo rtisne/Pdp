@@ -93,7 +93,7 @@
 						  		<label class="sr-only" for="up"></label>
 							    <div class="input-group">
 							      <div class="input-group-addon">Up</div>
-							      <input type="number" class="form-control" id="up">
+							      <input type="number" step="0.1" class="form-control" id="up">
 							    </div>
 						  	</div> 
 						  </div>
@@ -101,7 +101,7 @@
 						    <label class="sr-only" for="down"></label>
 						    <div class="input-group">
 						      <div class="input-group-addon">Down</div>
-						      <input type="number" class="form-control" id="down">
+						      <input type="number" step="0.1" class="form-control" id="down">
 						    </div>
 						  </div>
 						</div>		
@@ -110,14 +110,14 @@
 						    <label class="sr-only" for="left"></label>
 						    <div class="input-group">
 						      <div class="input-group-addon">Left</div>
-						      <input type="number" class="form-control" id="left">
+						      <input type="number" step="0.1" class="form-control" id="left">
 						    </div>
 						  </div>
 						  <div class="form-group col-sm-5">
 						    <label class="sr-only" for="up"></label>
 						    <div class="input-group">
 						      <div class="input-group-addon">Right</div>
-						      <input type="number" class="form-control" id="right">
+						      <input type="number" step="0.1" class="form-control" id="right">
 						    </div>
 						  </div>
 						</div>		

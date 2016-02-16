@@ -255,6 +255,27 @@ function CanvasState(canvas, image, baseline, boundingBox, previewCanvas) {
           });   
 
     }, true);
+    
+    //Déplacement de la base UP du caractère
+    document.getElementById('up').addEventListener('change', function(e){
+        myState.previewCanvas.position_up_line = $("#up").val();
+    }, true);
+
+    //Déplacement de la base DOWN du caractère
+    document.getElementById('down').addEventListener('change', function(e){
+        myState.previewCanvas.position_down_line = $("#down").val();
+    }, true);
+
+    //Déplacement de la base LEFT du caractère
+    document.getElementById('left').addEventListener('change', function(e){
+        myState.previewCanvas.position_left_line = $("#left").val();
+    }, true);
+
+    //Déplacement de la base RIGHT du caractère
+    document.getElementById('right').addEventListener('change', function(e){
+        myState.previewCanvas.position_right_line = $("#right").val();
+    }, true);
+
 
     this.interval = 30;
     setInterval(function() { myState.draw(); }, myState.interval);
@@ -329,6 +350,13 @@ function PreviewCanvas(canvas, image)
 
     this.actualRect = null;
 
+    this.position_up_line = 0;
+    this.position_down_line = 0;
+    this.position_left_line = 0;
+    this.position_right_line = 0;
+
+    
+
     var myPreviewCanvas = this;
 
     
@@ -356,32 +384,32 @@ PreviewCanvas.prototype.draw = function() {
         ctx.scale(this.scale,this.scale);
 
         this.image.draw(ctx);
-
+        
          //UpLine
         ctx.beginPath();
-        ctx.moveTo(0, this.image.y + this.actualRect.y);
-        ctx.lineTo(this.width, this.image.y + this.actualRect.y);
+        ctx.moveTo(0, this.position_up_line);
+        ctx.lineTo(this.width, this.position_up_line);
         ctx.lineWidth = 1 / this.scale;
         ctx.stroke();
 
         //DownLine
         ctx.beginPath();
-        ctx.moveTo(0, this.image.y + this.actualRect.y + this.actualRect.h);
-        ctx.lineTo(this.width, this.image.y + this.actualRect.y + this.actualRect.h);
+        ctx.moveTo(0, this.position_down_line);
+        ctx.lineTo(this.width, this.position_down_line);
         ctx.lineWidth = 1 / this.scale;
         ctx.stroke();
 
         //LeftLine
         ctx.beginPath();
-        ctx.moveTo(this.image.x + this.actualRect.x, 0);
-        ctx.lineTo(this.image.x + this.actualRect.x, this.height);
+        ctx.moveTo(this.position_left_line, 0);
+        ctx.lineTo(this.position_left_line, this.height);
         ctx.lineWidth = 1 / this.scale;
         ctx.stroke();
 
         //RightLine
         ctx.beginPath();
-        ctx.moveTo(this.image.x + this.actualRect.x + this.actualRect.w, 0);
-        ctx.lineTo(this.image.x + this.actualRect.x + this.actualRect.w, this.height);
+        ctx.moveTo(this.position_right_line, 0);
+        ctx.lineTo(this.position_right_line, this.height);
         ctx.lineWidth = 1 / this.scale;
         ctx.stroke();
     
@@ -400,6 +428,16 @@ PreviewCanvas.prototype.zoomTo = function(rect){
     else
         this.scale = this.height /rect.rect.h - rect.rect.h / 37;
     this.actualRect = rect.rect;
+
+    this.position_up_line = this.image.y + this.actualRect.y;
+    this.position_down_line = this.image.y + this.actualRect.y + this.actualRect.h;
+    this.position_left_line = this.image.x + this.actualRect.x;
+    this.position_right_line = this.image.x + this.actualRect.x + this.actualRect.w;
+
+    $("#up").val(this.position_up_line);
+    $("#down").val(this.position_down_line);
+    $("#left").val(this.position_left_line);
+    $("#right").val(this.position_right_line);
 }
 
 function init(src) {
