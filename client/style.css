@@ -113,14 +113,6 @@
 	height: 40px;
 	text-align: right;
 }
-.field_modification_base{
-	position: absolute;
-	right: 25%;
-	display: flex;
-	flex-direction:column;
-	align-item: center;
-
-}
 
 .buttonPrevious{
 	margin-top: 10px;
@@ -153,7 +145,13 @@
 	height: 100%;
 }
 
-
-
-
-
+.select-form{
+	min-width: 150px;
+}
+.input-group-btn:last-child > .form-control {
+  margin-left: -1px;
+  width: auto;
+}
+.field_modification_base{
+	margin-top:20px;
+}
