@@ -9,6 +9,7 @@
 
 
 #include "BoundingBox.h"
+#include "Character.h"
 
 
 
@@ -18,11 +19,13 @@ public:
     ConnectedComponent();
     void setListP(std::vector<cv::Point> L);
     std::vector<cv::Point> getListP();
-    void initBB();
+    void initBoundingBox();
     int sizeListP();
+    void initCharacter(std::string name);
 private:
    std::vector<cv::Point> ListP;
    BoundingBox BB;
+   Character C;
 
 };
 

@@ -19,9 +19,9 @@ std::string Character::getLabel()
 	return Label;
 }
 
-void Character::setBase(int X)
+void Character::setBase(int y)
 {
-	Base = X;
+	Base = y;
 }
 
 int Character::getBase()

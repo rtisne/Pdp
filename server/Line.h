@@ -14,11 +14,12 @@ class Line
 {
 public:
     Line();
-    void setBaseline(int X);
+    void initBaseline();
+    void setBaseline(int y);
     int getBaseline();
 private:
    	int Baseline;
-   	std::vector<Character> ListCharacter();
+   	std::vector<Character> ListCharacter;
 };
 
 #endif // LINE__H
