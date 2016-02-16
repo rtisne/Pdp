@@ -135,15 +135,15 @@
 				</div>
 				<div class="right_down">
 					<ul class="row">
-						<li class="col-sm-3">A <span class="badge">45</span></li>
-						<li class="col-sm-3">F <span class="badge">67</span></li>
-						<li class="col-sm-3">Q <span class="badge">23</span></li>
-						<li class="col-sm-3">P <span class="badge">35</span></li>
-						<li class="col-sm-3">U+311C <span class="badge">4</span></li>
-						<li class="col-sm-3">V <span class="badge">56</span></li>
-						<li class="col-sm-3">U+26BE <span class="badge">2</span></li>
-						<li class="col-sm-3">G <span class="badge">9</span></li>
-						<li class="col-sm-3">R <span class="badge">84</span></li>
+						<li class="col-sm-3">A <span class="badge pull-right">45</span></li>
+						<li class="col-sm-3">F <span class="badge pull-right">67</span></li>
+						<li class="col-sm-3">Q <span class="badge pull-right">23</span></li>
+						<li class="col-sm-3">P <span class="badge pull-right">35</span></li>
+						<li class="col-sm-3">U+311C <span class="badge pull-right">4</span></li>
+						<li class="col-sm-3">V <span class="badge pull-right">56</span></li>
+						<li class="col-sm-3">U+26BE <span class="badge pull-right">2</span></li>
+						<li class="col-sm-3">G <span class="badge pull-right">9</span></li>
+						<li class="col-sm-3">R <span class="badge pull-right">84</span></li>
 					</ul>
 				</div>
 				

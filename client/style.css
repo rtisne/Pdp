@@ -38,7 +38,7 @@
 }
 
 .right_down{
-	width: 100%;
+	width: 96%;
 	border-top: solid 2px #e7e7e7;
 	flex:2;
   display: flex;
@@ -174,9 +174,14 @@
 .right_down{
 	padding-top: 10px;
 }
+.right_down ul{
+	margin: 0 !important;
+	padding: 0 !important;
+}
 .right_down ul li{
 	list-style: none;
 	margin-bottom: 5px;
+	font-size: .9em;
 }
 .right_down ul li:hover{
 	color: #C9302C;
