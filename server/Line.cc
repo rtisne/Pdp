@@ -7,10 +7,20 @@ Line::Line()
 
 }
 
-
-void Line::setBaseline(int X)
+void Line::initBaseline()
 {
-	Baseline = X;
+  int i;
+  int SommeBaseline = 0;
+  for(i= 0; (unsigned)i < ListCharacter.size()-1; i++)
+    {
+      SommeBaseline += ListCharacter[i].getBase();
+    }
+    Baseline = (SommeBaseline / i);
+}
+
+void Line::setBaseline(int y)
+{
+	Baseline = y;
 }
 
 int Line::getBaseline()

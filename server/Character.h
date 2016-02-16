@@ -7,7 +7,6 @@
 #include <stdio.h>
 #include <opencv2/imgproc/imgproc.hpp>
 
-#include "ConnectedComponent.h"
 
 
 class Character
@@ -16,14 +15,13 @@ public:
     Character();
     void setLabel(std::string L);
     std::string getLabel();
-    void setBase(int X);
+    void setBase(int y);
     int getBase();
     void setImg(cv::Mat P);
     cv::Mat getImg();
 private:
     std::string Label;
     cv::Mat Img;
-   	ConnectedComponent CC;
    	int Base;
 };
 

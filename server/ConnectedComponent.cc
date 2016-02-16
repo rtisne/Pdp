@@ -24,7 +24,7 @@ int ConnectedComponent::sizeListP()
 	return ListP.size();
 }
 
-void ConnectedComponent::initBB()
+void ConnectedComponent::initBoundingBox()
 {
 	cv::Point P_Max;
 	 P_Max.x = ListP[0].x;
@@ -32,7 +32,7 @@ void ConnectedComponent::initBB()
 	cv::Point P_Min;
 	 P_Min.x = ListP[0].x;
 	 P_Min.y = ListP[0].y;
-          for(int i= 1; i < ListP.size()-1; i++)
+          for(int i= 1; (unsigned)i < ListP.size()-1; i++)
             {
                   cv::Point P = ListP[i];
                   if(P.y < P_Min.y && P.x < P_Min.x)
@@ -54,3 +54,20 @@ void ConnectedComponent::initBB()
     BB.setY(P_Min);
 }
 
+void ConnectedComponent::initCharacter(std::string name)
+{
+  C.setLabel(name);
+
+   int Base;
+   Base = ListP[0].y;
+          for(int i= 1; (unsigned)i < ListP.size()-1; i++)
+            {
+              cv::Point P = ListP[i];
+              if(P.y > Base)
+               {
+                 Base = P.y;
+               }
+            }
+  C.setBase(Base);
+
+}

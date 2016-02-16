@@ -63,9 +63,9 @@ class MyDynamicRepository : public DynamicRepository
           img->BinarizedImage();
           img->extractAllConnectedComponents();
           std::vector<ConnectedComponent> ListTmpCC = img->getListCC();
-          for(int i= 0; i < ListTmpCC.size()-1; i++)
+          for(int i= 0; (unsigned)i < ListTmpCC.size()-1; i++)
             {
-              for(int j= 0; j < ListTmpCC[i].getListP().size()-1;j++)
+              for(int j= 0; (unsigned)j < ListTmpCC[i].getListP().size()-1;j++)
                 {
                   std::vector<cv::Point> ListTmp = ListTmpCC[i].getListP();
                   cout << ListTmp[j] << endl;

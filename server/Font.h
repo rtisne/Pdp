@@ -18,9 +18,13 @@ public:
     std::string getName();
     void ExportToBox();
     void ExportToOd();
+    void initBaseline();
+    void setBaseline(int y);
+    int getBaseline();
 private:
    	std::string Name;
-   	std::vector<Character> ListCharacter();
+   	std::vector<Character> ListCharacter;
+   	int Baseline;
 };
 
 #endif // FONT__H
