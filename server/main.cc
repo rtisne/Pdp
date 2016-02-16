@@ -25,6 +25,7 @@
 #include <deque>
 
 #include "Image.h"
+#include "Font.h"
 
 using namespace cv;
 using namespace std;
@@ -33,6 +34,8 @@ using namespace std;
 
 
 WebServer *webServer = NULL;
+Image * img;
+Font * font;
 
 void exitFunction( int dummy )
 {
@@ -59,7 +62,7 @@ class MyDynamicRepository : public DynamicRepository
         request->getParameter("path", path);
         if (!isValidSession(request))
         {
-          Image * img = new Image(path);
+          img = new Image(path);
           img->BinarizedImage();
           img->extractAllConnectedComponents();
           std::vector<ConnectedComponent> ListTmpCC = img->getListCC();
@@ -75,6 +78,26 @@ class MyDynamicRepository : public DynamicRepository
         return fromString("SessionOK", response);
       }
     } startSession;
+
+    class createCharacter: public MyDynamicPage
+    {
+      bool getPage(HttpRequest* request, HttpResponse *response)
+      {
+        string numCC;
+        string nameChar;
+        request->getParameter("numCC", numCC);
+        request->getParameter("nameChar", nameChar);
+        if (!isValidSession(request))
+        {
+          std::vector<ConnectedComponent> ListTmp;
+          ListTmp = img->getListCC();
+          //ListTmp[numCC].initCharacter(nameChar);
+          //font->addCharacter(ListTmp[numCC].getCharacter());
+          img->setListCC(ListTmp);
+        }
+        return fromString("CharacterOK", response);
+      }
+    } createCharacter;
 
     class Controller: public MyDynamicPage
     {

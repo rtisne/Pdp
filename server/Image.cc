@@ -17,6 +17,11 @@ cv::Mat Image::getImg()
 	return Img;
 }
 
+void Image::setListCC(std::vector<ConnectedComponent> L)
+{
+  ListCC = L;
+}
+
 std::vector<ConnectedComponent> Image::getListCC()
 {
 	return ListCC;

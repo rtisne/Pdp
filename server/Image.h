@@ -17,6 +17,7 @@ public:
     Image(std::string path);
     void setImg(cv::Mat P);
     cv::Mat getImg();
+    void setListCC(std::vector<ConnectedComponent> L);
     std::vector<ConnectedComponent> getListCC();
     void BinarizedImage();
     void extractConnectedComponent(cv::Mat &input,const cv::Point &seed,ConnectedComponent &cc);

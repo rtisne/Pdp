@@ -22,6 +22,8 @@ public:
     void initBoundingBox();
     int sizeListP();
     void initCharacter(std::string name);
+    void setCharacter(Character c);
+    Character getCharacter();
 private:
    std::vector<cv::Point> ListP;
    BoundingBox BB;

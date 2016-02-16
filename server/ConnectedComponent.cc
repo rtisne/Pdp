@@ -71,3 +71,13 @@ void ConnectedComponent::initCharacter(std::string name)
   C.setBase(Base);
 
 }
+
+void ConnectedComponent::setCharacter(Character c)
+{
+   C = c;
+}
+
+Character ConnectedComponent::getCharacter()
+{
+  return C;
+}

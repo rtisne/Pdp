@@ -49,3 +49,8 @@ int Font::getBaseline()
 {
 	return Baseline;
 }
+
+void Font::addCharacter(Character c)
+{
+  ListCharacter.push_back(c);
+}

@@ -21,6 +21,7 @@ public:
     void initBaseline();
     void setBaseline(int y);
     int getBaseline();
+    void addCharacter(Character c);
 private:
    	std::string Name;
    	std::vector<Character> ListCharacter;
