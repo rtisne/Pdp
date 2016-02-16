@@ -13,7 +13,7 @@
 	height: 100%;
 	padding: 0px !important;
 	min-height: 100%;  
-  	min-height: 100vh;
+  min-height: 100vh;
 }
 .upload_image{
 	margin: auto;
@@ -28,8 +28,22 @@
 	border-left: solid 1px #e7e7e7;
 	-webkit-box-shadow: -5px 0px 5px -3px #e7e7e7;
   box-shadow: -5px 0px 5px -3px #e7e7e7;
- 
+  padding: 0 !important;
+  display: flex;
+  flex-direction: column;
 }
+
+.right_up{
+	width: 100%;
+}
+
+.right_down{
+	width: 100%;
+	border-top: solid 2px #e7e7e7;
+	flex:2;
+  display: flex;
+}
+
 #canvas{
 	width: 100%;
 	height: 100%;
@@ -43,9 +57,6 @@
   left: 50%;
   transform: translate(-50%, -50%);
 	overflow: hidden;
-
-
-
 
 }
 .fileUpload input.upload {
@@ -135,10 +146,15 @@
   overflow:hidden;
 }
 .content {
-    position:absolute;
-    margin: auto;
-    height:100%;
-    width:100%;
+  position:absolute;
+  margin: auto;
+  height:100%;
+  width:100%;
+}
+.button_nav_cc{
+	width: 100%;
+	padding-left: 15px;
+	padding-right: 15px;
 }
 #small_canvas{
 	width: 100%;
@@ -155,3 +171,18 @@
 .field_modification_base{
 	margin-top:20px;
 }
+.right_down{
+	padding-top: 10px;
+}
+.right_down ul li{
+	list-style: none;
+	margin-bottom: 5px;
+}
+.right_down ul li:hover{
+	color: #C9302C;
+	cursor: pointer;
+}
+.right_down ul li:hover .badge{
+	background-color: #C9302C;
+}
+

@@ -5,6 +5,7 @@
 	<title>Pdp client</title>
 	<link href="style.css" rel="stylesheet">
 	<link href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css" rel="stylesheet">
+	<link href="css/normalize.css" rel="stylesheet">
 	
 </head>
 <body>
@@ -59,74 +60,93 @@
 		</div>
 		<div class="right col-md-4" >
 			<div class="container_right">
-				<button class="buttonPrevious btn btn-primary">Previous</button>
-				<button class="buttonNext btn btn-primary">Next</button>
-
-				<div class="small-canvas">
-					<div class="content">
-						<canvas id="small_canvas" data-girar="500"></canvas>
-					</div> 
-				</div>
-
-
-
-				<div class="container_option_base">
-					<div class="row">
-					  
-			      <div class="input-group col-sm-6 col-sm-offset-3">
-			        <input class="form-control" type="text" value="" placeholder="" name="q">
-			        <div class="input-group-btn">
-			          <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><span id="mydropdowndisplay">Letter</span> <span class="caret"></span></button>
-			          <ul class="dropdown-menu" id="mydropdownmenu">
-			            <li><a href="#">Letter</a></li>
-			            <li><a href="#">Unicode</a></li>
-			          </ul>
-			          <input type="hidden" id="mydropwodninput" name="category">
-			        </div><!-- /btn-group -->
-			      </div>
+				<div class="right_up">
+					<div class="button_nav_cc">
+						<button class="buttonPrevious btn btn-primary">Previous</button>
+						<button class="buttonNext btn btn-primary">Next</button>
+					</div>
+					
+					<div class="small-canvas">
+						<div class="content">
+							<canvas id="small_canvas" data-girar="500"></canvas>
+						</div> 
 					</div>
 
-					<div class="field_modification_base">
+
+
+					<div class="container_option_base">
 						<div class="row">
-						  <div class="form-group col-sm-5 col-sm-offset-1">
-						  	<div class="group">
-						  		<label class="sr-only" for="up"></label>
+						  
+				      <div class="input-group col-sm-6 col-sm-offset-3">
+				        <input class="form-control" type="text" value="" placeholder="" name="q">
+				        <div class="input-group-btn">
+				          <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><span id="mydropdowndisplay">Letter</span> <span class="caret"></span></button>
+				          <ul class="dropdown-menu" id="mydropdownmenu">
+				            <li><a href="#">Letter</a></li>
+				            <li><a href="#">Unicode</a></li>
+				          </ul>
+				          <input type="hidden" id="mydropwodninput" name="category">
+				        </div><!-- /btn-group -->
+				      </div>
+						</div>
+
+						<div class="field_modification_base">
+							<div class="row">
+							  <div class="form-group col-sm-5 col-sm-offset-1">
+							  	<div class="group">
+							  		<label class="sr-only" for="up"></label>
+								    <div class="input-group">
+								      <div class="input-group-addon">Up</div>
+								      <input type="number" class="form-control" id="up">
+								    </div>
+							  	</div> 
+							  </div>
+							  <div class="form-group col-sm-5">
+							    <label class="sr-only" for="down"></label>
 							    <div class="input-group">
-							      <div class="input-group-addon">Up</div>
-							      <input type="number" class="form-control" id="up">
+							      <div class="input-group-addon">Down</div>
+							      <input type="number" class="form-control" id="down">
 							    </div>
-						  	</div> 
-						  </div>
-						  <div class="form-group col-sm-5">
-						    <label class="sr-only" for="down"></label>
-						    <div class="input-group">
-						      <div class="input-group-addon">Down</div>
-						      <input type="number" class="form-control" id="down">
-						    </div>
-						  </div>
-						</div>		
-						<div class="row">
-						  <div class="form-group col-sm-5 col-sm-offset-1">
-						    <label class="sr-only" for="left"></label>
-						    <div class="input-group">
-						      <div class="input-group-addon">Left</div>
-						      <input type="number" class="form-control" id="left">
-						    </div>
-						  </div>
-						  <div class="form-group col-sm-5">
-						    <label class="sr-only" for="up"></label>
-						    <div class="input-group">
-						      <div class="input-group-addon">Right</div>
-						      <input type="number" class="form-control" id="right">
-						    </div>
-						  </div>
-						</div>		
+							  </div>
+							</div>		
+							<div class="row">
+							  <div class="form-group col-sm-5 col-sm-offset-1">
+							    <label class="sr-only" for="left"></label>
+							    <div class="input-group">
+							      <div class="input-group-addon">Left</div>
+							      <input type="number" class="form-control" id="left">
+							    </div>
+							  </div>
+							  <div class="form-group col-sm-5">
+							    <label class="sr-only" for="up"></label>
+							    <div class="input-group">
+							      <div class="input-group-addon">Right</div>
+							      <input type="number" class="form-control" id="right">
+							    </div>
+							  </div>
+							</div>		
+						</div>
+						<p>
+						  <button type="button" class="btn btn-primary">Save changes</button>
+						  <button type="button" class="btn btn-default">Cancel</button>
+						</p>
 					</div>
-					<p>
-					  <button type="button" class="btn btn-primary">Save changes</button>
-					  <button type="button" class="btn btn-default">Cancel</button>
-					</p>
+					
 				</div>
+				<div class="right_down">
+					<ul class="row">
+						<li class="col-sm-3">A <span class="badge">45</span></li>
+						<li class="col-sm-3">F <span class="badge">67</span></li>
+						<li class="col-sm-3">Q <span class="badge">23</span></li>
+						<li class="col-sm-3">P <span class="badge">35</span></li>
+						<li class="col-sm-3">U+311C <span class="badge">4</span></li>
+						<li class="col-sm-3">V <span class="badge">56</span></li>
+						<li class="col-sm-3">U+26BE <span class="badge">2</span></li>
+						<li class="col-sm-3">G <span class="badge">9</span></li>
+						<li class="col-sm-3">R <span class="badge">84</span></li>
+					</ul>
+				</div>
+				
 			</div>
 
 		</div>
