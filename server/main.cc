@@ -32,7 +32,6 @@ using namespace std;
 
 //RNG rng(12345);
 
-
 WebServer *webServer = NULL;
 Image * img;
 Font * font;
@@ -79,6 +78,7 @@ class MyDynamicRepository : public DynamicRepository
       }
     } startSession;
 
+
     class createCharacter: public MyDynamicPage
     {
       bool getPage(HttpRequest* request, HttpResponse *response)
@@ -99,13 +99,27 @@ class MyDynamicRepository : public DynamicRepository
       }
     } createCharacter;
 
+    class upload: public MyDynamicPage
+    {
+
+      bool getPage(HttpRequest* request, HttpResponse *response)
+      {
+        string path;
+        request->getParameter("image", path);
+        
+        return true;
+      }
+
+    } upload;
+
+
     class Controller: public MyDynamicPage
     {
       bool getPage(HttpRequest* request, HttpResponse *response)
       {
 
         if (!isValidSession(request))
-          response->forwardTo("index.html");
+          response->forwardTo("index.php");
         return true;
       }
 
@@ -115,6 +129,7 @@ class MyDynamicRepository : public DynamicRepository
     MyDynamicRepository() : DynamicRepository()
     {
       add("startSession.txt",&startSession);
+      add("upload.txt",&upload);
       add("index.html",&controller);
     }
 };
@@ -123,44 +138,19 @@ class MyDynamicRepository : public DynamicRepository
 
 int main(int argc, char** argv )
 {
-  // connect signals
   signal( SIGTERM, exitFunction );
   signal( SIGINT, exitFunction );
   
   NVJ_LOG->addLogOutput(new LogStdOutput);
   AuthPAM::start(); 
   webServer = new WebServer;
-  //webServer->setUseSSL(true, "../mycert.pem");
   LocalRepository myLocalRepo;
-  myLocalRepo.addDirectory("", "./html"); 
+  myLocalRepo.addDirectory("", "../client/"); 
   webServer->addRepository(&myLocalRepo);
 
   MyDynamicRepository myRepo;
   webServer->addRepository(&myRepo);
-   /* 
-    //affichage CC avec openCV + bounding Box
-    vector<vector<Point> > contours_poly(ListTmpCC.size());
-    vector<Rect> boundRect( ListTmpCC.size() );
-
-    for( int i = 0; i < ListTmpCC.size(); i++ )
-     { approxPolyDP( Mat(ListTmpCC[i].getListP()), contours_poly[i], 3, true );
-       boundRect[i] = boundingRect( Mat(contours_poly[i]) );
-     }
-
-      Mat drawing = Mat::zeros( img->getImg().size(), CV_8UC3 );
-    for( int i = 0; i< ListTmpCC.size(); i++ )
-     {
-       Scalar color = Scalar( rng.uniform(0, 255), rng.uniform(0,255), rng.uniform(0,255) );
-       drawContours( drawing, contours_poly, i, color, 1, 8, vector<Vec4i>(), 0, Point() );
-       rectangle( drawing, boundRect[i].tl(), boundRect[i].br(), color, 2, 8, 0 );
-     }
-
-
-     namedWindow( "Contours", CV_WINDOW_AUTOSIZE );
-    imshow( "Contours", drawing );
-        
-    namedWindow( "Display window", WINDOW_AUTOSIZE );
-    imshow( "Display window", img->getImg()); */
+ 
 
   webServer->startService();
  
