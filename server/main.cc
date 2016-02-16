@@ -82,7 +82,7 @@ class MyDynamicRepository : public DynamicRepository
       {
 
         if (!isValidSession(request))
-          response->forwardTo("index.html");
+          response->forwardTo("index.php");
         return true;
       }
 
@@ -109,7 +109,7 @@ int main(int argc, char** argv )
   webServer = new WebServer;
   //webServer->setUseSSL(true, "../mycert.pem");
   LocalRepository myLocalRepo;
-  myLocalRepo.addDirectory("", "./html"); 
+  myLocalRepo.addDirectory("", "../client/"); 
   webServer->addRepository(&myLocalRepo);
 
   MyDynamicRepository myRepo;

@@ -1,5 +1,5 @@
 <?php
-
+header('Access-Control-Allow-Origin: *');
 $data = array();
 
 if(isset($_GET['image']))

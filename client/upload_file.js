@@ -20,7 +20,7 @@ function prepareUpload(event)
     $('form').hide();
     $('.loader').show();
     $.ajax({
-        url: 'upload.php?image',
+        url: 'http://localhost:8888/Pdp/client/upload.php?image',
         type: 'POST',
         data: data,
         cache: false,
@@ -36,9 +36,18 @@ function prepareUpload(event)
                 
                 $('.loader').hide();
                 var parsedData = JSON.parse(data);
-                console.log(parsedData['files']);
-                console.log(parsedData);
-                init(parsedData['files']);
+                console.log("../client/"+parsedData['files']);
+                //init(parsedData['files']);
+                  $.ajax(
+                  {
+                    type: "POST",
+                    url: "startSession.txt",
+                    data: "path="+ "../client/"+parsedData['files'],
+                    success: function(html){    
+                      console.log(html);
+                         
+                    },
+                  });
             }
             else
             {
