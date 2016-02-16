@@ -58,7 +58,7 @@ Rectangle.prototype.draw = function(ctx, image){
         else
             ctx.fillStyle = this.color;
 
-        ctx.globalAlpha=0.2;
+        ctx.globalAlpha=0.4;
         ctx.fillRect(image.x + this.rect.x,image.y + this.rect.y, this.rect.w, this.rect.h);
 
     }
@@ -234,8 +234,8 @@ function CanvasState(canvas, image, baseline, boundingBox, previewCanvas) {
             type: 'POST',
             data: data,
             cache: false,
-            processData: false, // Don't process the files
-            contentType: false, // Set content type to false as jQuery will tell the server its a query string request
+            processData: false, 
+            contentType: false,
             success: function(data, textStatus, jqXHR)
             {
                 var parsedData = JSON.parse(data);

@@ -6,11 +6,10 @@ function prepareUpload(event)
 {
   files = event.target.files;
 
-  event.stopPropagation(); // Stop stuff happening
-    event.preventDefault(); // Totally stop stuff happening
+  event.stopPropagation();
+    event.preventDefault();
 
 
-    // Create a formdata object and add the files
     var data = new FormData();
     $.each(files, function(key, value)
     {

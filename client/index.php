@@ -164,9 +164,24 @@
 						<button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
 						<button id="valid-reset" type="button" class="btn btn-primary">Yes</button>
 					</div>
-				</div><!-- /.modal-content -->
-			</div><!-- /.modal-dialog -->
+				</div>
+			</div>
 
+		</div>
+		<div class="modal fade" tabindex="-1" role="dialog" id="baseline_modal">
+		  <div class="modal-dialog">
+		    <div class="modal-content">
+		      <div class="modal-header">
+		        <h4 class="modal-title">Baseline validation</h4>
+		      </div>
+		      <div class="modal-body">
+		        <img src="images/image.png" width="300">
+		      </div>
+		      <div class="modal-footer">
+		        <button type="button" class="btn btn-primary">Save changes</button>
+		      </div>
+		    </div>
+		  </div>
 		</div>
 
 	</div>

@@ -9,3 +9,5 @@ $('#mydropdownmenu > li').click(function(e){
   $('#mydropwodninput').val(selected);
   $('#mydropdowndisplay').text(selected);
 });
+
+//$('#baseline_modal').modal();

@@ -32,6 +32,9 @@
   display: flex;
   flex-direction: column;
 }
+.container_right{
+	display: none;@
+}
 
 .right_up{
 	width: 100%;
