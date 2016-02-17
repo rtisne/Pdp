@@ -108,6 +108,7 @@
 							  <div class="form-group col-sm-5">
 							    <label class="sr-only" for="down"></label>
 							    <div class="input-group">
+
 							      <div class="input-group-addon">Down</div>
 							      <input type="number" class="form-control" id="down">
 							    </div>
@@ -134,6 +135,7 @@
 						  <button type="button" class="btn btn-primary">Save changes</button>
 						  <button type="button" class="btn btn-default">Cancel</button>
 						</p>
+
 					</div>
 					
 				</div>
