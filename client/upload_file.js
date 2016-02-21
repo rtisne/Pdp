@@ -16,7 +16,7 @@ function prepareUpload(event)
         data.append(key, value);
     });
 
-    $('form').hide();
+    $('.fileUpload').hide();
     $('.loader').show();
 
     $.ajax({

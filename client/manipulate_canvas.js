@@ -157,12 +157,6 @@ function CanvasState(canvas, image, baseline, boundingBox, previewCanvas) {
             myState.boundingBox.select(id);
             myState.previewCanvas.zoomTo(myState.boundingBox.rects[id]);
             myState.previewCanvas.visible = true;
-            $(".container_right").show();
-        }
-        else
-        {
-            myState.boundingBox.select('false');
-            $(".container_right").hide();
         }
 
     }, true);
@@ -453,6 +447,11 @@ function init(src) {
 
     var previewCanvas = new PreviewCanvas(document.getElementById('small_canvas'), imagePreview);
     var normalCanvas = new CanvasState(document.getElementById('canvas'), image, baseline, boundingBox, previewCanvas);
+
+    $(".container_right").show();
+    normalCanvas.boundingBox.select(0);
+    normalCanvas.previewCanvas.zoomTo(normalCanvas.boundingBox.rects[0]);
+    normalCanvas.previewCanvas.visible = true;
     
 
 }

@@ -1,6 +1,7 @@
 $(function() {
     $("#canvas").hide();
     $('.loader').hide();
+    $('.container_right').hide();
 });
 
 $('#mydropdownmenu > li').click(function(e){
