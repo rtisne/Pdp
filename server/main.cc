@@ -32,9 +32,13 @@ using namespace std;
 
 //RNG rng(12345);
 
+
+
+#define UPLOAD_DIR "../client/data"
+
 WebServer *webServer = NULL;
-Image * img;
-Font * font;
+
+LocalRepository *myUploadRepo = NULL;
 
 void exitFunction( int dummy )
 {
@@ -53,64 +57,76 @@ class MyDynamicRepository : public DynamicRepository
           return myAttribute != NULL;
         }
     };
-    class startSession: public MyDynamicPage
+
+    class Uploader: public DynamicPage
     {
       bool getPage(HttpRequest* request, HttpResponse *response)
       {
-        string path;
-        request->getParameter("path", path);
-        if (!isValidSession(request))
+        if (!request->isMultipartContent())
+          return false;
+
+        MPFD::Parser *parser=request->getMPFDparser();
+
+        std::map<std::string,MPFD::Field *> fields=parser->GetFieldsMap();
+        std::map<std::string,MPFD::Field *>::iterator it;
+        for (it=fields.begin();it!=fields.end();it++) 
         {
-          img = new Image(path);
-          img->BinarizedImage();
-          img->extractAllConnectedComponents();
-          std::vector<ConnectedComponent> ListTmpCC = img->getListCC();
-          for(int i= 0; (unsigned)i < ListTmpCC.size()-1; i++)
-            {
-              for(int j= 0; (unsigned)j < ListTmpCC[i].getListP().size()-1;j++)
-                {
-                  std::vector<cv::Point> ListTmp = ListTmpCC[i].getListP();
-                  cout << ListTmp[j] << endl;
-                }
-            }
+          if (fields[it->first]->GetType()==MPFD::Field::TextType)
+           return false;
+          else
+          {
+            NVJ_LOG->append(NVJ_INFO, "Got file field: [" + it->first + "] Filename:[" + fields[it->first]->GetFileName() + "] TempFilename:["  + fields[it->first]->GetTempFileName() + "]\n");
+
+            // Copy files to upload directory
+            std::ifstream  src( fields[it->first]->GetTempFileName().c_str(), std::ios::binary);
+            string dstFilename= string(UPLOAD_DIR)+'/'+fields[it->first]->GetFileName();
+            std::ofstream  dst( dstFilename.c_str(), std::ios::binary);
+            if (!src || !dst)
+              NVJ_LOG->append(NVJ_ERROR, "Copy error: check read/write permissions");
+            else
+              dst << src.rdbuf();
+            src.close();
+            dst.close();
+            myUploadRepo->reload();
+            return fromString(fields[it->first]->GetFileName(), response); 
+          }
         }
-        return fromString("SessionOK", response);
-      }
-    } startSession;
-
-
-    class createCharacter: public MyDynamicPage
-    {
-      bool getPage(HttpRequest* request, HttpResponse *response)
-      {
-        string numCC;
-        string nameChar;
-        request->getParameter("numCC", numCC);
-        request->getParameter("nameChar", nameChar);
-        if (!isValidSession(request))
-        {
-          std::vector<ConnectedComponent> ListTmp;
-          ListTmp = img->getListCC();
-          //ListTmp[numCC].initCharacter(nameChar);
-          //font->addCharacter(ListTmp[numCC].getCharacter());
-          img->setListCC(ListTmp);
-        }
-        return fromString("CharacterOK", response);
-      }
-    } createCharacter;
-
-    class upload: public MyDynamicPage
-    {
-
-      bool getPage(HttpRequest* request, HttpResponse *response)
-      {
-        string path;
-        request->getParameter("image", path);
-        
         return true;
       }
 
-    } upload;
+    } uploader;
+
+
+
+
+
+
+
+    class getBoundingBox: public MyDynamicPage
+    {
+      bool getPage(HttpRequest* request, HttpResponse *response)
+      {
+        // string path;
+        // request->getParameter("path", path);
+        // if (!isValidSession(request))
+        // {
+        //   Image * img = new Image(path);
+        //   img->BinarizedImage();
+        //   img->extractAllConnectedComponents();
+        //   std::vector<ConnectedComponent> ListTmpCC = img->getListCC();
+        //   for(int i= 0; i < ListTmpCC.size()-1; i++)
+        //     {
+        //       for(int j= 0; j < ListTmpCC[i].getListP().size()-1;j++)
+        //         {
+        //           std::vector<cv::Point> ListTmp = ListTmpCC[i].getListP();
+        //           cout << ListTmp[j] << endl;
+        //         }
+        //     }
+        // }
+        
+      }
+    } getBoundingBox;
+
 
 
     class Controller: public MyDynamicPage
@@ -128,8 +144,10 @@ class MyDynamicRepository : public DynamicRepository
   public:
     MyDynamicRepository() : DynamicRepository()
     {
-      add("startSession.txt",&startSession);
-      add("upload.txt",&upload);
+
+      add("getBoundingBox.txt",&getBoundingBox);
+      add("uploader.txt",&uploader);
+
       add("index.html",&controller);
     }
 };
@@ -144,13 +162,18 @@ int main(int argc, char** argv )
   NVJ_LOG->addLogOutput(new LogStdOutput);
   AuthPAM::start(); 
   webServer = new WebServer;
-  LocalRepository myLocalRepo;
-  myLocalRepo.addDirectory("", "../client/"); 
-  webServer->addRepository(&myLocalRepo);
+
+  //webServer->setUseSSL(true, "../mycert.pem");
+  LocalRepository *myLocalRepo = new LocalRepository("", "../client/");
+  //myLocalRepo.addDirectory("", "../client/"); 
+  webServer->addRepository(myLocalRepo);
 
   MyDynamicRepository myRepo;
   webServer->addRepository(&myRepo);
- 
+
+  myUploadRepo = new LocalRepository("upload", "./upload");
+  webServer->addRepository(myUploadRepo);
+
 
   webServer->startService();
  

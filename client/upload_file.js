@@ -6,9 +6,9 @@ function prepareUpload(event)
 {
   files = event.target.files;
 
-  event.stopPropagation();
-    event.preventDefault();
 
+    event.stopPropagation(); 
+    event.preventDefault(); 
 
     var data = new FormData();
     $.each(files, function(key, value)
@@ -20,7 +20,7 @@ function prepareUpload(event)
     $('.loader').show();
 
     $.ajax({
-        url: 'upload.php?image',
+        url: 'uploader.txt',
         type: 'POST',
         data: data,
         cache: false,
@@ -35,10 +35,10 @@ function prepareUpload(event)
                 $('.navbar-nav').show();
                 
                 $('.loader').hide();
-                var parsedData = JSON.parse(data);
-                console.log(parsedData['files']);
-                init(parsedData['files']);
-            }
+
+                init("data/" + data);
+            }    
+
             else
             {
                 console.log('ERRORS: ' + data.error);
