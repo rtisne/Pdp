@@ -1,3 +1,127 @@
+function Controller(canvas, previewCanvas) {
+    this.canvas = canvas;
+    this.previewCanvas = previewCanvas;
+
+    var controller = this;
+
+    // Initialisation
+    $(".container_right").show();
+    this.canvas.boundingBox.select(0);
+    this.previewCanvas.zoomTo(this.canvas.boundingBox.rects[0]);
+    this.previewCanvas.visible = true;
+
+
+    // Détection des clics 
+    canvas.canvas.addEventListener('selectstart', function(e) { e.preventDefault(); return false; }, false);
+    canvas.canvas.addEventListener('click',function(e) { 
+        var mouse = controller.canvas.getMouse(e);
+        var mx = mouse.x;
+        var my = mouse.y;
+
+        var id = controller.canvas.boundingBox.contains(mx, my, controller.canvas.image);
+        if(id != 'false')
+        {   
+            var mergeButton = document.getElementById("mergeButton");
+            if(e.metaKey)
+            {
+                controller.canvas.boundingBox.addToSelection(id);
+                mergeButton.disabled=false;
+            }
+            else
+            {
+                controller.canvas.boundingBox.select(id);
+                controller.previewCanvas.zoomTo(controller.canvas.boundingBox.rects[id]);
+                controller.previewCanvas.visible = true;
+                mergeButton.disabled="disabled";
+            }    
+        }
+    }, true);
+
+    // Détection Déplacement de l'image
+    canvas.canvas.addEventListener('mousedown', function(e) { canvas.onMouseDown(e); }, true);
+    canvas.canvas.addEventListener('mousemove', function(e) { canvas.onMouseMove(e);}, true);
+    canvas.canvas.addEventListener('mouseup', function(e) { canvas.onMouseUp(e);}, true);
+    
+    // Détection zoom
+    document.getElementById('zoom-in').addEventListener('click', function(e){ canvas.zoomIn();}, true);
+    document.getElementById('zoom-out').addEventListener('click', function(e){ canvas.zoomOut();}, true);
+    document.getElementById('zoom-reset').addEventListener('click', function(e){ canvas.zoomReset();}, true);
+
+    // Détection checkbox baseline
+    document.getElementById('baseline').addEventListener('change', function(e){
+        if(this.checked){
+            controller.canvas.baseline.visible = true;
+        }
+        else{
+            controller.canvas.baseline.visible = false;
+        }     
+    }, true);
+
+    //Déplacement de la base UP du caractère
+    document.getElementById('up').addEventListener('change', function(e){
+        controller.previewCanvas.position_up_line = $("#up").val();
+    }, true);
+
+    //Déplacement de la base DOWN du caractère
+    document.getElementById('down').addEventListener('change', function(e){
+        controller.previewCanvas.position_down_line = $("#down").val();
+    }, true);
+
+    //Déplacement de la base LEFT du caractère
+    document.getElementById('left').addEventListener('change', function(e){
+        controller.previewCanvas.position_left_line = $("#left").val();
+    }, true);
+
+    //Déplacement de la base RIGHT du caractère
+    document.getElementById('right').addEventListener('change', function(e){
+        controller.previewCanvas.position_right_line = $("#right").val();
+    }, true);
+
+    // Détection boutton reset
+     document.getElementById('valid-reset').addEventListener('click', function(e){
+              
+        var data = new FormData();
+        data.append('file', controller.canvas.image.img.src);
+
+        $.ajax({
+            url: 'remove.php?restart',
+            type: 'POST',
+            data: data,
+            cache: false,
+            processData: false, 
+            contentType: false,
+            success: function(data, textStatus, jqXHR)
+            {
+                var parsedData = JSON.parse(data);
+                if (parsedData == true) {
+                    location.reload();
+                    console.log("Page réinitialisée.");    
+                }
+                else
+                {
+                    console.log('ERRORS: ' + data.error);
+                }
+            },
+            error: function(jqXHR, textStatus, errorThrown)
+            {
+                console.log('ERRORS: ' + textStatus);
+            }
+          });   
+
+    }, true);
+
+    // Affichage
+    this.interval = 30;
+    setInterval(function() { controller.draw(); }, controller.interval);
+
+}
+
+Controller.prototype.draw = function(){
+    this.canvas.draw();
+    this.previewCanvas.draw();
+
+}
+
 // Constructeur de la classe ProcessingImage
 function ProcessingImage(src) {
 
@@ -92,9 +216,12 @@ BoundingBox.prototype.select = function (id){
     if(id != 'false')
         this.rects[id].selected = true;
 }
+BoundingBox.prototype.addToSelection = function (id){
+    if(id != 'false')
+        this.rects[id].selected = true;
+}
 
-
-function CanvasState(canvas, image, baseline, boundingBox, previewCanvas) {
+function CanvasState(canvas, image, baseline, boundingBox) {
   
     var myState = this;
 
@@ -107,8 +234,6 @@ function CanvasState(canvas, image, baseline, boundingBox, previewCanvas) {
 
     this.baseline = baseline;
     this.boundingBox = boundingBox;
-
-    this.previewCanvas = previewCanvas;
 
     this.dragging = false;
 
@@ -140,142 +265,52 @@ function CanvasState(canvas, image, baseline, boundingBox, previewCanvas) {
             myState.scale = myState.height /this.height;
     }
 
-   
-
-    canvas.addEventListener('selectstart', function(e) { e.preventDefault(); return false; }, false);
-  
-
-    canvas.addEventListener('click', function(e) {
-
-        var mouse = myState.getMouse(e);
-        var mx = mouse.x;
-        var my = mouse.y;
-
-        var id = myState.boundingBox.contains(mx, my, myState.image);
-        if(id != 'false')
-        {
-            myState.boundingBox.select(id);
-            myState.previewCanvas.zoomTo(myState.boundingBox.rects[id]);
-            myState.previewCanvas.visible = true;
-        }
-
-    }, true);
-    canvas.addEventListener('mousedown', function(e) {
-
-        var mouse = myState.getMouse(e);
-        var mx = mouse.x;
-        var my = mouse.y;
-
-        var image = myState.image;
-
-        
-        if (image.contains(mx, my)) {
-        
-            myState.dragoffx = mx - image.x;
-            myState.dragoffy = my - image.y;             
-            myState.dragging = true;
-            return;
-          }
-    }, true);
-
-    canvas.addEventListener('mousemove', function(e) {
-        if (myState.dragging){
-            var mouse = myState.getMouse(e);
-            image.x = (mouse.x) - myState.dragoffx;
-            image.y = (mouse.y) - myState.dragoffy; 
-        }
-    }, true);
-
-    canvas.addEventListener('mouseup', function(e) {
-        myState.dragging = false;
-    }, true);
-
-    document.getElementById('zoom-in').addEventListener('click', function(e){
-        myState.scale += 0.1;
-    }, true);
-
-    document.getElementById('zoom-out').addEventListener('click', function(e){
-        myState.scale -= 0.1;
-    }, true);
-    
-    document.getElementById('zoom-reset').addEventListener('click', function(e){
-        if(this.width > this.height)
-            myState.scale = myState.width /myState.image.w;
-        else
-            myState.scale = myState.height /myState.image.h;
-
-        myState.image.x = myState.image.initialx;
-        myState.image.y = myState.image.initialy;
-    }, true);
-
-    document.getElementById('baseline').addEventListener('change', function(e){
-        if(this.checked){
-            myState.baseline.visible = true;
-        }
-        else{
-            myState.baseline.visible = false;
-        }     
-    }, true);
-
-
-    document.getElementById('valid-reset').addEventListener('click', function(e){
-              
-        var data = new FormData();
-        data.append('file', myState.image.img.src);
-
-        $.ajax({
-            url: 'remove.php?restart',
-            type: 'POST',
-            data: data,
-            cache: false,
-            processData: false, 
-            contentType: false,
-            success: function(data, textStatus, jqXHR)
-            {
-                var parsedData = JSON.parse(data);
-                if (parsedData == true) {
-                    location.reload();
-                    console.log("Page réinitialisée.");    
-                }
-                else
-                {
-                    console.log('ERRORS: ' + data.error);
-                }
-            },
-            error: function(jqXHR, textStatus, errorThrown)
-            {
-                console.log('ERRORS: ' + textStatus);
-            }
-          });   
-
-    }, true);
-    
-    //Déplacement de la base UP du caractère
-    document.getElementById('up').addEventListener('change', function(e){
-        myState.previewCanvas.position_up_line = $("#up").val();
-    }, true);
-
-    //Déplacement de la base DOWN du caractère
-    document.getElementById('down').addEventListener('change', function(e){
-        myState.previewCanvas.position_down_line = $("#down").val();
-    }, true);
-
-    //Déplacement de la base LEFT du caractère
-    document.getElementById('left').addEventListener('change', function(e){
-        myState.previewCanvas.position_left_line = $("#left").val();
-    }, true);
-
-    //Déplacement de la base RIGHT du caractère
-    document.getElementById('right').addEventListener('change', function(e){
-        myState.previewCanvas.position_right_line = $("#right").val();
-    }, true);
-
-
-    this.interval = 30;
-    setInterval(function() { myState.draw(); }, myState.interval);
-
 }
 
+CanvasState.prototype.onMouseDown= function(e){
+    var mouse = this.getMouse(e);
+    var mx = mouse.x;
+    var my = mouse.y;
+
+    var image = this.image;
+
+    
+    if (image.contains(mx, my)) {
+    
+        this.dragoffx = mx - image.x;
+        this.dragoffy = my - image.y;             
+        this.dragging = true;
+        return;
+      }
+}
+
+CanvasState.prototype.onMouseMove = function(e){
+    if (this.dragging){
+        var mouse = this.getMouse(e);
+        this.image.x = (mouse.x) - this.dragoffx;
+        this.image.y = (mouse.y) - this.dragoffy; 
+    }
+}
+
+CanvasState.prototype.onMouseUp = function(e){
+    this.dragging = false;
+}
+
+CanvasState.prototype.zoomIn = function(){
+    this.scale += 0.1;
+}
+CanvasState.prototype.zoomOut = function(){
+    this.scale -= 0.1;
+}
+CanvasState.prototype.zoomReset = function(){
+    if(this.width > this.height)
+        this.scale = this.width /this.image.w;
+    else
+        this.scale = this.height /this.image.h;
+
+    this.image.x = this.image.initialx;
+    this.image.y = this.image.initialy;
+}
 
 // Efface le canvas pour redessiner
 CanvasState.prototype.clear = function() {
@@ -298,7 +333,6 @@ CanvasState.prototype.draw = function() {
 
     ctx.translate(this.panX, this.panY);
 
-
     ctx.scale(this.scale, this.scale);
     
     this.image.draw(ctx);
@@ -306,9 +340,6 @@ CanvasState.prototype.draw = function() {
     this.baseline.draw(ctx, this.image);
 
     this.boundingBox.draw(ctx, this.image);
-
-
-    this.previewCanvas.draw();
 
     ctx.restore();
 
@@ -446,12 +477,11 @@ function init(src) {
 
 
     var previewCanvas = new PreviewCanvas(document.getElementById('small_canvas'), imagePreview);
-    var normalCanvas = new CanvasState(document.getElementById('canvas'), image, baseline, boundingBox, previewCanvas);
+    var normalCanvas = new CanvasState(document.getElementById('canvas'), image, baseline, boundingBox);
 
-    $(".container_right").show();
-    normalCanvas.boundingBox.select(0);
-    normalCanvas.previewCanvas.zoomTo(normalCanvas.boundingBox.rects[0]);
-    normalCanvas.previewCanvas.visible = true;
+    var controller = new Controller(normalCanvas, previewCanvas);
+
+   
     
 
 }

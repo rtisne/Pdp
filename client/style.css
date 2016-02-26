@@ -119,13 +119,13 @@ body {
 
 .right_up{
 	width: 100%;
-	height: 70vh;
+	min-height: 65%;
 }
 
 .right_down{
 	border-top: solid 2px #e7e7e7;
 	flex:1;
-	height: 30vh;
+	height: 35%;
 }
 
 #canvas{
@@ -135,7 +135,7 @@ body {
 }
 
 .fileUpload {
-	width: 100px;
+	width: 120px;
 	position: relative;
  
 
@@ -246,7 +246,9 @@ body {
   width: auto;
 }
 .field_modification_base{
-	margin-top:20px;
+	margin-top:5px;
+	margin-bottom: 10px;
+
 }
 .right_down ul{
 	margin: 0 !important;
@@ -276,11 +278,19 @@ body {
 	padding-left: 0px !important;
 }
 .letter-list :nth-child(odd){
-  background-color:grey;
+  background-color:#a3a1a1;
 }
 .letter-list :nth-child(even){
   background-color:#F0F0F0;
 }
 .letter-number{
 	background-color:transparent !important;
+}
+.made_with{
+	position: absolute;
+	bottom: 5px;
+	left: 5px;
+}
+.controls{
+	padding-left: 5px;
 }

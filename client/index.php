@@ -6,6 +6,17 @@
 	<link href="style.css" rel="stylesheet">
 	<link href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css" rel="stylesheet">
 	<link href="css/normalize.css" rel="stylesheet">
+
+	<script type="text/javascript" src="https://code.jquery.com/jquery-2.2.0.min.js" ></script>
+	<script type="text/javascript" src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js" ></script>
+	<script type="text/javascript">
+		$(function() {
+	    $("#canvas").hide();
+	    $('.loader').hide();
+	    $('.container_right').hide();
+		});
+	</script>
+	
 	
 </head>
 <body class="fill-height">
@@ -51,7 +62,7 @@
 				<canvas id="canvas" width="500" height="500" data-girar="0"></canvas>
 				<img class="loader" src="img/loader.gif">
 				<div class="fileUpload btn btn-primary">
-					<span>Upload</span>
+					<span>Choose Image</span>
 					<input type="file" class="upload" name="image"/>
 				</div>
 			</div>
@@ -60,10 +71,10 @@
 					<div class="right_up">
 						<div class="button_nav_cc row">
 							<div class="col-md-3">
-								<button class="buttonPrevious btn btn-primary">Previous</button>
+								<button class="buttonPrevious btn btn-default">Previous</button>
 							</div>
 							<div class="col-md-3 col-md-offset-6">
-								<button class="buttonNext btn btn-primary">Next</button>
+								<button class="buttonNext btn btn-default">Next</button>
 							</div>		
 						</div>
 						
@@ -72,28 +83,7 @@
 								<canvas id="small_canvas" data-girar="500"></canvas>
 							</div> 
 						</div>
-
-
-
 						<div class="container_option_base">
-							<div class="row">
-							  
-					      <div class="input-group col-sm-6 col-sm-offset-1">
-					        <input class="form-control" type="text" value="" placeholder="" name="q">
-					        <div class="input-group-btn">
-					          <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><span id="mydropdowndisplay">Letter</span> <span class="caret"></span></button>
-					          <ul class="dropdown-menu" id="mydropdownmenu">
-					            <li><a href="#">Letter</a></li>
-					            <li><a href="#">Unicode</a></li>
-					          </ul>
-					          <input type="hidden" id="mydropwodninput" name="category">
-					        </div>
-					      </div>
-								<div class="col-sm-3 add-button">
-									<button type="button" class="btn btn-primary">Add</button>
-								</div>
-							</div>
-
 							<div class="field_modification_base">
 								<div class="row">
 								  <div class="form-group col-sm-5 col-sm-offset-1 modif-line-value">
@@ -131,7 +121,28 @@
 								  </div>
 								</div>		
 							</div>
-						
+							<div class="row controls">
+					      <div class="input-group col-sm-5">
+					        <input class="form-control" type="text" value="" placeholder="" name="q">
+					        <div class="input-group-btn">
+					          <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><span id="mydropdowndisplay">Letter</span> <span class="caret"></span></button>
+					          <ul class="dropdown-menu" id="mydropdownmenu">
+					            <li><a href="#">Letter</a></li>
+					            <li><a href="#">Unicode</a></li>
+					          </ul>
+					          <input type="hidden" id="mydropwodninput" name="category">
+					        </div>
+					      </div>
+								<div class="col-sm-2 add-button">
+									<button type="button" class="btn btn-primary">Add</button>
+								</div>
+								<div class="col-sm-2 add-button">
+									<button type="button" class="btn btn-danger">Delete</button>
+								</div>
+								<div class="col-sm-2 add-button">
+									<button type="button" class="btn btn-default" id="mergeButton" disabled="disabled">Merge</button>
+								</div>
+							</div>
 
 						</div>
 						
@@ -224,7 +235,7 @@
 							<li class="col-sm-15">R <span class="pull-right letter-number">84</span></li>
 							<li class="col-sm-15">R <span class="pull-right letter-number">84</span></li>
 							<li class="col-sm-15">R <span class="pull-right letter-number">84</span></li>
-							<li class="col-sm-15">R <span class="pull-right letter-number">84</span></li>
+							<li class="col-sm-15">F <span class="pull-right letter-number">4</span></li>
 						</ul>
 					</div>
 					
@@ -266,11 +277,12 @@
 			</div>
 		</div>
 	</div>
-	<script type="text/javascript" src="https://code.jquery.com/jquery-2.2.0.min.js" ></script>
-	<script type="text/javascript" src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js" ></script>
-	<script type="text/javascript" src="manipulate_canvas.js" ></script>
-	<script type="text/javascript" src="init.js" ></script>
-	<script type="text/javascript" src="upload_file.js" ></script>
 
+	<div class="made_with">
+		Made with <a href="https://github.com/titi38/libnavajo">libnavajo</a>
+	</div>
+	<script type="text/javascript" src="init.js" ></script>
+	<script type="text/javascript" src="manipulate_canvas.js" ></script>
+	<script type="text/javascript" src="upload_file.js" ></script>
 </body>
 </html>
