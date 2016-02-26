@@ -40,6 +40,8 @@ WebServer *webServer = NULL;
 
 LocalRepository *myUploadRepo = NULL;
 
+string imagePath;
+
 void exitFunction( int dummy )
 {
    if (webServer != NULL) webServer->stopService();
@@ -65,7 +67,7 @@ class MyDynamicRepository : public DynamicRepository
         if (!request->isMultipartContent())
           return false;
 
-        MPFD::Parser *parser=request->getMPFDparser();
+        MPFD::Parser *parser = request->getMPFDparser();
 
         std::map<std::string,MPFD::Field *> fields=parser->GetFieldsMap();
         std::map<std::string,MPFD::Field *>::iterator it;
@@ -77,7 +79,6 @@ class MyDynamicRepository : public DynamicRepository
           {
             NVJ_LOG->append(NVJ_INFO, "Got file field: [" + it->first + "] Filename:[" + fields[it->first]->GetFileName() + "] TempFilename:["  + fields[it->first]->GetTempFileName() + "]\n");
 
-            // Copy files to upload directory
             std::ifstream  src( fields[it->first]->GetTempFileName().c_str(), std::ios::binary);
             string dstFilename= string(UPLOAD_DIR)+'/'+fields[it->first]->GetFileName();
             std::ofstream  dst( dstFilename.c_str(), std::ios::binary);
@@ -88,6 +89,7 @@ class MyDynamicRepository : public DynamicRepository
             src.close();
             dst.close();
             myUploadRepo->reload();
+            imagePath = dstFilename;
             return fromString(fields[it->first]->GetFileName(), response); 
           }
         }
@@ -96,35 +98,38 @@ class MyDynamicRepository : public DynamicRepository
 
     } uploader;
 
-
-
-
-
-
-
     class getBoundingBox: public MyDynamicPage
     {
       bool getPage(HttpRequest* request, HttpResponse *response)
       {
-        // string path;
-        // request->getParameter("path", path);
-        // if (!isValidSession(request))
-        // {
-        //   Image * img = new Image(path);
-        //   img->BinarizedImage();
-        //   img->extractAllConnectedComponents();
-        //   std::vector<ConnectedComponent> ListTmpCC = img->getListCC();
-        //   for(int i= 0; i < ListTmpCC.size()-1; i++)
-        //     {
-        //       for(int j= 0; j < ListTmpCC[i].getListP().size()-1;j++)
-        //         {
-        //           std::vector<cv::Point> ListTmp = ListTmpCC[i].getListP();
-        //           cout << ListTmp[j] << endl;
-        //         }
-        //     }
-        // }
-        
+
+        Image * img = new Image(imagePath);
+        img->BinarizedImage();
+        img->extractAllConnectedComponents();
+        std::vector<ConnectedComponent> ListTmpCC = img->getListCC();
+        string json = "{";
+        for(int i= 0; i < ListTmpCC.size()-1; i++)
+        {
+
+          Rect rect = boundingRect(ListTmpCC[i].getListP());
+       
+          json += ("\" "+ to_string(i) +"\":{");
+          json += ("\"x\":" + to_string(rect.x) + ",");
+          json += ("\"y\":" + to_string(rect.y) + ",");
+          json += ("\"width\":" + to_string(rect.width) + ",");
+          json += ("\"height\":" + to_string(rect.height));
+          json += ("}");
+
+          if(i != ListTmpCC.size()-2)
+          {
+            json += (",");
+          }
+        }
+        json += ("}");
+        //cout << json <<endl;
+        return fromString(json, response); 
       }
+        
     } getBoundingBox;
 
 
@@ -144,11 +149,9 @@ class MyDynamicRepository : public DynamicRepository
   public:
     MyDynamicRepository() : DynamicRepository()
     {
-
-      add("getBoundingBox.txt",&getBoundingBox);
       add("uploader.txt",&uploader);
-
       add("index.html",&controller);
+      add("getBoundingBox.txt",&getBoundingBox);
     }
 };
 

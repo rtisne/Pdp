@@ -35,8 +35,20 @@ function prepareUpload(event)
                 $('.navbar-nav').show();
                 
                 $('.loader').hide();
+                var url = "data/" + data;
+                //init("data/" + data);
 
-                init("data/" + data);
+
+                 $.ajax({
+                    url: 'getBoundingBox.txt',
+                    type: 'POST',
+                    success: function(data, textStatus, jqXHR)
+                    {
+                      console.log(JSON.parse(data));
+                      init(url, JSON.parse(data));
+                    
+                    }
+                  });
             }    
 
             else

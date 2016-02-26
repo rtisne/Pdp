@@ -267,7 +267,7 @@
 			        <h4 class="modal-title">Baseline validation</h4>
 			      </div>
 			      <div class="modal-body">
-			        <img src="images/image.png" width="300">
+			        
 			      </div>
 			      <div class="modal-footer">
 			        <button type="button" class="btn btn-primary">Save changes</button>

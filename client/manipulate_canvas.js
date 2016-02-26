@@ -465,14 +465,21 @@ PreviewCanvas.prototype.zoomTo = function(rect){
     $("#right").val(this.position_right_line);
 }
 
-function init(src) {
+function init(src, boundingBox) {
     var image = new ProcessingImage(src);
     var imagePreview = new ProcessingImage(src);
     var baseline = new Baseline([{xstart:50, y:90, xfinish:560}, {xstart:50, y:130, xfinish:570}]);
-    var box1 = new Rectangle({x:50, y:60, w:30, h: 30});
-    var box2 = new Rectangle({x:82, y:70, w:18, h: 20});
-    var box3 = new Rectangle({x:102, y:68, w:16, h: 22});
-    var boundingBox = new BoundingBox([box1, box2, box3]);
+    // var box1 = new Rectangle({x:50, y:60, w:30, h: 30});
+    // var box2 = new Rectangle({x:82, y:70, w:18, h: 20});
+    // var box3 = new Rectangle({x:102, y:68, w:16, h: 22});
+    var listRect = new Array();
+    console.log(boundingBox);
+    for (var rect in boundingBox) {
+        console.log(boundingBox[rect]);
+        listRect.push(new Rectangle({x:boundingBox[rect].x, y:boundingBox[rect].y, w:boundingBox[rect].width, h: boundingBox[rect].height}));
+    }
+    console.log(listRect);
+    var boundingBox = new BoundingBox(listRect);
 
 
 
