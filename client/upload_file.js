@@ -6,12 +6,8 @@ function prepareUpload(event)
 {
   files = event.target.files;
 
-  event.stopPropagation(); // Stop stuff happening
-    event.preventDefault(); // Totally stop stuff happening
-
-    // START A LOADING SPINNER HERE
-
-    // Create a formdata object and add the files
+  event.stopPropagation(); 
+    event.preventDefault(); 
     var data = new FormData();
     $.each(files, function(key, value)
     {
@@ -20,7 +16,7 @@ function prepareUpload(event)
     $('form').hide();
     $('.loader').show();
     $.ajax({
-        url: 'http://localhost:8888/Pdp/client/upload.php?image',
+        url: 'uploader.txt',
         type: 'POST',
         data: data,
         cache: false,
@@ -35,20 +31,8 @@ function prepareUpload(event)
                 $('.navbar-nav').show();
                 
                 $('.loader').hide();
-                var parsedData = JSON.parse(data);
-                console.log("../client/"+parsedData['files']);
-                //init(parsedData['files']);
-                  $.ajax(
-                  {
-                    type: "POST",
-                    url: "startSession.txt",
-                    data: "path="+ "../client/"+parsedData['files'],
-                    success: function(html){    
-                      console.log(html);
-                         
-                    },
-                  });
-            }
+                init("data/" + data);
+            }    
             else
             {
                 // Handle errors here
