@@ -415,6 +415,7 @@ PreviewCanvas.prototype.draw = function() {
         ctx.moveTo(0, this.position_up_line);
         ctx.lineTo(this.width, this.position_up_line);
         ctx.lineWidth = 1 / this.scale;
+        ctx.strokeStyle = '#ff0000';
         ctx.stroke();
 
         //DownLine
@@ -422,6 +423,7 @@ PreviewCanvas.prototype.draw = function() {
         ctx.moveTo(0, this.position_down_line);
         ctx.lineTo(this.width, this.position_down_line);
         ctx.lineWidth = 1 / this.scale;
+        ctx.strokeStyle = '#ff0000';
         ctx.stroke();
 
         //LeftLine
@@ -429,6 +431,7 @@ PreviewCanvas.prototype.draw = function() {
         ctx.moveTo(this.position_left_line, 0);
         ctx.lineTo(this.position_left_line, this.height);
         ctx.lineWidth = 1 / this.scale;
+        ctx.strokeStyle = '#ff0000';
         ctx.stroke();
 
         //RightLine
@@ -436,6 +439,7 @@ PreviewCanvas.prototype.draw = function() {
         ctx.moveTo(this.position_right_line, 0);
         ctx.lineTo(this.position_right_line, this.height);
         ctx.lineWidth = 1 / this.scale;
+        ctx.strokeStyle = '#ff0000';
         ctx.stroke();
     
         ctx.restore();

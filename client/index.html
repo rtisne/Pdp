@@ -3,7 +3,7 @@
 <head>
 	<meta charset="UTF-8">
 	<title>Pdp client</title>
-	<link href="style.css" rel="stylesheet">
+	<link href="css/style.css" rel="stylesheet">
 	<link href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css" rel="stylesheet">
 	<link href="css/normalize.css" rel="stylesheet">
 
@@ -12,8 +12,8 @@
 	<script type="text/javascript">
 		$(function() {
 	    $("#canvas").hide();
-	    $('.loader').hide();
 	    $('.container_right').hide();
+	    $('.loader').hide();
 		});
 	</script>
 	
@@ -91,7 +91,7 @@
 								  		<label class="sr-only" for="up"></label>
 									    <div class="input-group">
 									      <div class="input-group-addon">Up</div>
-									      <input type="number" class="form-control" id="up">
+									      <input type="number" class="form-control" step="0.1" id="up">
 									    </div>
 								  	</div> 
 								  </div>
@@ -100,7 +100,7 @@
 								    <div class="input-group">
 
 								      <div class="input-group-addon">Down</div>
-								      <input type="number" class="form-control" id="down">
+								      <input type="number" class="form-control" step="0.1" id="down">
 								    </div>
 								  </div>
 								</div>		
@@ -109,14 +109,14 @@
 								    <label class="sr-only" for="left"></label>
 								    <div class="input-group">
 								      <div class="input-group-addon">Left</div>
-								      <input type="number" class="form-control" id="left">
+								      <input type="number" class="form-control" step="0.1" id="left">
 								    </div>
 								  </div>
 								  <div class="form-group col-sm-5 modif-line-value">
 								    <label class="sr-only" for="up"></label>
 								    <div class="input-group">
 								      <div class="input-group-addon">Right</div>
-								      <input type="number" class="form-control" id="right">
+								      <input type="number" class="form-control" step="0.1" id="right">
 								    </div>
 								  </div>
 								</div>		
@@ -281,8 +281,8 @@
 	<div class="made_with">
 		Made with <a href="https://github.com/titi38/libnavajo">libnavajo</a>
 	</div>
-	<script type="text/javascript" src="init.js" ></script>
-	<script type="text/javascript" src="manipulate_canvas.js" ></script>
-	<script type="text/javascript" src="upload_file.js" ></script>
+	<script type="text/javascript" src="js/init.js" ></script>
+	<script type="text/javascript" src="js/manipulate_canvas.js" ></script>
+	<script type="text/javascript" src="js/upload_file.js" ></script>
 </body>
 </html>
