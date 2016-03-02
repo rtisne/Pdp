@@ -138,22 +138,22 @@ void Image::extractAllConnectedComponents()
 void Image::putInLine()
 {
 
-  Line * L = new Line();
-  L->addConnectedComponent(ListCC[0]);
-  int maxEcart = 0;
+ // Line * L = new Line();
+ // L->addConnectedComponent(ListCC[0]);
+ // int maxEcart = 0;
 
-  for(int i= 1; i < ListCC.size()-1; i++)
-    {
-      if (ListCC[i].getBoundingBox().getHeight()  >= maxEcart)
-      {
-        maxEcart = ListCC[i].getBoundingBox().getHeight();
-      }
-      if(ListCC[i].getBase > ListCC[i+1].getBase)
-        ListLine.push_back(L);
-        Line * L2 = new Line();
+ // for(int i= 1; i < ListCC.size()-1; i++)
+  //  {
+   //   if (ListCC[i].getBoundingBox().getHeight()  >= maxEcart)
+    //  {
+     //   maxEcart = ListCC[i].getBoundingBox().getHeight();
+     // }
+     // if(ListCC[i].getBase > ListCC[i+1].getBase)
+      //  ListLine.push_back(L);
+       // Line * L2 = new Line();
 
-      }
-    }
-
+   // }
 }
+
+
 

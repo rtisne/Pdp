@@ -55,7 +55,7 @@ void ConnectedComponent::initBoundingBox()
     BB.setWidth(P_Max.x - P_Min.x);
 }
 
-void ConnectedComponent::getBoundingBox()
+BoundingBox ConnectedComponent::getBoundingBox()
 {
   return BB;
 }

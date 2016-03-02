@@ -20,7 +20,7 @@ public:
     void setListP(std::vector<cv::Point> L);
     std::vector<cv::Point> getListP();
     void initBoundingBox();
-    void getBoundingBox();
+    BoundingBox getBoundingBox();
     int sizeListP();
     void initCharacter(std::string name);
     void setCharacter(Character c);
