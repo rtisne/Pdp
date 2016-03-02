@@ -20,10 +20,13 @@ public:
     cv::Mat getImg();
     void setListCC(std::vector<ConnectedComponent> L);
     std::vector<ConnectedComponent> getListCC();
+    void setListLine(std::vector<Line> L);
+    std::vector<Line> getListLine();
     void BinarizedImage();
     void extractConnectedComponent(cv::Mat &input,const cv::Point &seed,ConnectedComponent &cc);
     void extractAllConnectedComponents();
     void putInLine();
+
 private:
    cv::Mat Img;
    std::vector<ConnectedComponent> ListCC;

@@ -18,6 +18,8 @@ public:
     void initBaseline();
     void setBaseline(int y);
     int getBaseline();
+    void setListCC(std::vector<ConnectedComponent> L);
+    std::vector<ConnectedComponent> getListCC();
     void addConnectedComponent(ConnectedComponent cc);
 private:
    	int Baseline;

@@ -32,3 +32,13 @@ void Line::addConnectedComponent(ConnectedComponent cc)
 {
 	 ListCC.push_back(cc);
 }
+
+void Line::setListCC(std::vector<ConnectedComponent> L)
+{
+  ListCC = L;
+}
+
+std::vector<ConnectedComponent> Line::getListCC()
+{
+  return ListCC;
+}

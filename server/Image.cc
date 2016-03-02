@@ -27,6 +27,16 @@ std::vector<ConnectedComponent> Image::getListCC()
 	return ListCC;
 }
 
+void Image::setListLine(std::vector<Line> L)
+{
+  ListLine = L;
+}
+
+std::vector<Line> Image::getListLine()
+{
+  return ListLine;
+}
+
 void Image::BinarizedImage()
 {
   cv::Mat Image_Bin;
@@ -112,7 +122,7 @@ void Image::extractAllConnectedComponents()
   assert(Img.type() == CV_8U);
 
   ListCC.clear();
-  ListCC.reserve(Img.rows); //arbitrary
+  ListCC.reserve(Img.rows);
 
   cv::Mat tmp = Img.clone();
 
@@ -127,7 +137,7 @@ void Image::extractAllConnectedComponents()
         ListTmp.clear();
         cc.setListP(ListTmp);
         extractConnectedComponent(tmp, cv::Point(j, i), cc);
-        cc.initBase(); //modify tmp
+        cc.initBase();
         ListCC.push_back(cc);
       }
     }
@@ -135,24 +145,42 @@ void Image::extractAllConnectedComponents()
 
 }
 
+
+
 void Image::putInLine()
 {
+ int max = 0;
 
- // Line * L = new Line();
- // L->addConnectedComponent(ListCC[0]);
- // int maxEcart = 0;
+ // set Max value
+ for(int i= 0; i < ListCC.size()-1; i++)
+  {
+     if (ListCC[i].getBoundingBox().getHeight()  > max)
+     {
+       max = ListCC[i].getBoundingBox().getHeight();
+     }
 
- // for(int i= 1; i < ListCC.size()-1; i++)
-  //  {
-   //   if (ListCC[i].getBoundingBox().getHeight()  >= maxEcart)
-    //  {
-     //   maxEcart = ListCC[i].getBoundingBox().getHeight();
-     // }
-     // if(ListCC[i].getBase > ListCC[i+1].getBase)
-      //  ListLine.push_back(L);
-       // Line * L2 = new Line();
+  }
 
-   // }
+ Line * L = new Line();
+
+ for(int i= 0; i < ListCC.size()-1; i++)
+  {
+    L->addConnectedComponent(ListCC[i]);
+
+     if (ListCC[i+1].getBase() - ListCC[i].getBase() > max)
+     {
+        ListLine.push_back(*L);
+        L = new Line();
+     }
+  }
+
+  //inialization all Baseline of Image
+ for(int i= 0; i < ListLine.size()-1; i++)
+  {
+      ListLine[i].initBaseline();
+  }
+
+
 }
 
 

@@ -107,6 +107,25 @@ class MyDynamicRepository : public DynamicRepository
         //Font * Font = new Font();
         img->BinarizedImage();
         img->extractAllConnectedComponents();
+        //img->putInLine();
+
+        // Vérification mise en Line
+       //std::vector<Line> ListTmpLine = img->getListLine();
+        //for(int i= 0; i < ListTmpLine.size()-1; i++)
+        //{
+
+          //std::vector<ConnectedComponent> ListTmpCompo = ListTmpLine[i].getListCC();
+          //cout << i <<endl;
+          //for(int j= 0; j < ListTmpCompo.size()-1; j++)
+           // {
+            //    int h = ListTmpCompo[j].getBase();
+              //  cout << h << endl;
+            //}
+
+        //}
+
+
+
         std::vector<ConnectedComponent> ListTmpCC = img->getListCC();
         string json = "{";
         for(int i= 0; i < ListTmpCC.size()-1; i++)
