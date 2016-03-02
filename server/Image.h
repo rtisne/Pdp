@@ -8,6 +8,7 @@
 #include <opencv2/imgproc/imgproc.hpp>
 
 #include "ConnectedComponent.h"
+#include "Line.h"
 
 static const uchar BACKGROUND = 255;
 
@@ -22,9 +23,11 @@ public:
     void BinarizedImage();
     void extractConnectedComponent(cv::Mat &input,const cv::Point &seed,ConnectedComponent &cc);
     void extractAllConnectedComponents();
+    void putInLine();
 private:
    cv::Mat Img;
    std::vector<ConnectedComponent> ListCC;
+   std::vector<Line> ListLine;
 };
 
 #endif // IMAGE_H

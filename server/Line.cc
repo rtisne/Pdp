@@ -10,12 +10,12 @@ Line::Line()
 void Line::initBaseline()
 {
   int i;
-  int SommeBaseline = 0;
-  for(i= 0; (unsigned)i < ListCharacter.size()-1; i++)
+  int sommeBaseline = 0;
+  for(i= 0; (unsigned)i < ListCC.size()-1; i++)
     {
-      SommeBaseline += ListCharacter[i].getBase();
+      sommeBaseline += ListCC[i].getBase();
     }
-    Baseline = (SommeBaseline / i);
+    Baseline = (sommeBaseline / i);
 }
 
 void Line::setBaseline(int y)
@@ -28,3 +28,7 @@ int Line::getBaseline()
 	return Baseline;
 }
 
+void Line::addConnectedComponent(ConnectedComponent cc)
+{
+	 ListCC.push_back(cc);
+}

@@ -26,7 +26,7 @@ else
 endif
 
 LIB_DIR      = lib
-CXX 	=  g++
+CXX 	=  g++ -std=c++11
 
 ifeq ($(OS),MACOSX)
 LIBSSL_DIR = /usr/local/Cellar/openssl/1.0.1j
@@ -49,7 +49,7 @@ CPPFLAGS	= -I. \
 			-I/usr/include/opencv -I/usr/include/opencv2
 LD		=  g++
 
-LDFLAGS        =  -Wall -Wno-unused -O3   
+LDFLAGS        = -Wall -Wno-unused -O3   
 
 MAIN_NAME     = main
 

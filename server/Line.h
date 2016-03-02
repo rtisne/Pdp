@@ -8,6 +8,7 @@
 #include <opencv2/imgproc/imgproc.hpp>
 
 #include "Character.h"
+#include "ConnectedComponent.h"
 
 
 class Line
@@ -17,9 +18,10 @@ public:
     void initBaseline();
     void setBaseline(int y);
     int getBaseline();
+    void addConnectedComponent(ConnectedComponent cc);
 private:
    	int Baseline;
-   	std::vector<Character> ListCharacter;
+   	std::vector<ConnectedComponent> ListCC;
 };
 
 #endif // LINE__H

@@ -14,11 +14,14 @@ public:
     BoundingBox();
     void setX(cv::Point P);
     cv::Point getX();
-    void setY(cv::Point P);
-    cv::Point getY();
+    void setHeight(int i);
+    const int getHeight();
+    void setWidth(int i);
+    const int getWidth();
 private:
    cv::Point X;
-   cv::Point Y;
+   int height;
+   int width;
    
 };
 

@@ -18,13 +18,22 @@ cv::Point BoundingBox::getX()
   return X;
 }
 
-void BoundingBox::setY(cv::Point P)
+void BoundingBox::setHeight(int i)
 {
-  Y = P;
+  height = i;
 }
 
-cv::Point BoundingBox::getY()
+const int BoundingBox::getHeight()
 {
-  return Y;
+  return height;
 }
 
+void BoundingBox::setWidth(int i)
+{
+  width = i;
+}
+
+const int BoundingBox::getWidth()
+{
+  return width;
+}

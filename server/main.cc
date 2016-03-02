@@ -104,6 +104,7 @@ class MyDynamicRepository : public DynamicRepository
       {
 
         Image * img = new Image(imagePath);
+        //Font * Font = new Font();
         img->BinarizedImage();
         img->extractAllConnectedComponents();
         std::vector<ConnectedComponent> ListTmpCC = img->getListCC();
