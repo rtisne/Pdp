@@ -1,20 +1,21 @@
 #include "Image.h"
+#include "Binarization.hpp"
 
 #include <deque>
 
 Image::Image(std::string path)
 {
-   Img = cv::imread(path, CV_LOAD_IMAGE_COLOR);
+   img = cv::imread(path, CV_LOAD_IMAGE_COLOR);
 }
 
 void Image::setImg(cv::Mat P)
 {
-   Img = P;
+   img = P;
 }
 
 cv::Mat Image::getImg()
 {
-	return Img;
+	return img;
 }
 
 void Image::setListCC(std::vector<ConnectedComponent> L)
@@ -29,25 +30,31 @@ std::vector<ConnectedComponent> Image::getListCC()
 
 void Image::BinarizedImage()
 {
-  cv::Mat Image_Bin;
+  NiblackSauvolaWolfJolion (img, img, WOLFJOLION);
+  // Create a window
 
-  //Passage en niveau de gris
-  cv::Mat mat_gray;
-  if (Img.channels() == 3) 
-    cv::cvtColor(Img, mat_gray, cv::COLOR_BGR2GRAY);
-  else 
-    mat_gray = Img;
+}
 
-  //we get 0 where there is black, 255 where there is white.
+void Image::ImgMask()
+{
+ cv::blur(img,mask,cv::Size(105,5));
 
-  cv::threshold(mat_gray, Image_Bin, 0, 255, cv::THRESH_OTSU);
-  
-  Img = Image_Bin;
+ cv::threshold(mask, mask,170,255,1);
+
+ cv::medianBlur(mask, mask,9);
+
+ cv::namedWindow("foobar");
+ 
+// Display image in window
+cv::imshow("foobar", mask);
+ 
+// Wait for user to press a key in window
+cv::waitKey(0);
 }
 
 void Image::extractConnectedComponent(cv::Mat &input,const cv::Point &seed,ConnectedComponent &cc)
 {
-  assert(input.type() == CV_8U);
+  //assert(input.type() == CV_8U);
   assert(seed.x < input.cols && seed.y < input.rows && seed.x >= 0 && seed.y >= 0);
   std::vector<cv::Point> ListTmp;
   ListTmp = cc.getListP();
@@ -109,18 +116,18 @@ void Image::extractConnectedComponent(cv::Mat &input,const cv::Point &seed,Conne
 
 void Image::extractAllConnectedComponents()
 {
-  assert(Img.type() == CV_8U);
+  //assert(Img.type() == CV_8U);
 
   ListCC.clear();
-  ListCC.reserve(Img.rows); //arbitrary
+  ListCC.reserve(img.rows); //arbitrary
 
-  cv::Mat tmp = Img.clone();
+  cv::Mat tmp = img.clone();
 
   ConnectedComponent cc;
 
-  for (int i = 0; i < Img.rows; ++i) {
+  for (int i = 0; i < img.rows; ++i) {
     const uchar *r = tmp.ptr<uchar>(i);
-    for (int j = 0; j < Img.cols; ++j) {
+    for (int j = 0; j < img.cols; ++j) {
       if (r[j] != BACKGROUND) {
         std::vector<cv::Point> ListTmp;
         ListTmp = cc.getListP();

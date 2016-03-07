@@ -2,6 +2,11 @@ var files;
 
 $('input[type=file]').on('change', prepareUpload);
 
+function errorMessage(message)
+{
+  $("#statusMsg").show(message);
+}
+
 function prepareUpload(event)
 {
   files = event.target.files;
@@ -37,8 +42,6 @@ function prepareUpload(event)
                 $('.loader').hide();
                 var url = "data/" + data;
                 //init("data/" + data);
-
-
                  $.ajax({
                     url: 'getBoundingBox.txt',
                     type: 'POST',
@@ -46,11 +49,16 @@ function prepareUpload(event)
                     {
                       console.log(JSON.parse(data));
                       init(url, JSON.parse(data));
-                    
+                    },
+                    error: function(error)
+                    {
+                      errorMessage("bad format of image upload, only jpg, jpeg, img and tif format");
+                      $('#canvas').hide();
+                      $('.zoom-icon').hide();
+                      $('.navbar-nav').hide();  
                     }
                   });
             }    
-
             else
             {
                 console.log('ERRORS: ' + data.error);

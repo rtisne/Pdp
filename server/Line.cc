@@ -15,7 +15,7 @@ void Line::initBaseline()
     {
       SommeBaseline += ListCharacter[i].getBase();
     }
-    Baseline = (SommeBaseline / i);
+    Line::setBaseline(SommeBaseline / i);
 }
 
 void Line::setBaseline(int y)

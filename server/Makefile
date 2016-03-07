@@ -26,7 +26,7 @@ else
 endif
 
 LIB_DIR      = lib
-CXX 	=  g++
+CXX 	=  g++ -std=c++11
 
 ifeq ($(OS),MACOSX)
 LIBSSL_DIR = /usr/local/Cellar/openssl/1.0.1j
@@ -47,9 +47,9 @@ CPPFLAGS	= -I. \
             -I$(LIBSSL_DIR)/include \
 		  	-I../../include \
 			-I/usr/include/opencv -I/usr/include/opencv2
-LD		=  g++
+LD		=  g++ 
 
-LDFLAGS        =  -Wall -Wno-unused -O3   
+LDFLAGS        = -Wall -Wno-unused -O3   
 
 MAIN_NAME     = main
 
@@ -61,6 +61,8 @@ MAIN_OBJS = \
 		  Line.o \
 		  Paragraph.o \
 		  Image.o \
+		  Session.o \
+		  Binarization.o \
 		  main.o
 
 BOUNDINGBOX = BoundingBox
@@ -76,6 +78,10 @@ LINE = Line
 PARAGRAPH= Paragraph
 
 IMAGE= Image
+
+SESSION= Session
+
+BINARIZATION= Binarization
 
 
 
@@ -121,6 +127,15 @@ $(LINE): $(MAIN_OBJS) $(LIB_STATIC_NAME)
 $(PARAGRAPH): $(MAIN_OBJS) $(LIB_STATIC_NAME)
 	rm -f $@
 	$(LD) $(LDFLAGS) -o $@ $(MAIN_OBJS) $(LIB_STATIC_NAME) $(LIBS)
+
+$(SESSION): $(MAIN_OBJS) $(LIB_STATIC_NAME)
+	rm -f $@
+	$(LD) $(LDFLAGS) -o $@ $(MAIN_OBJS) $(LIB_STATIC_NAME) $(LIBS)
+
+$(BINARIZATION): $(MAIN_OBJS) $(LIB_STATIC_NAME)
+	rm -f $@
+	$(LD) $(LDFLAGS) -o $@ $(MAIN_OBJS) $(LIB_STATIC_NAME) $(LIBS)
+
 clean:
 	@rm -f $(OUTPUTFILENAME) 
 	@for i in $(MAIN_OBJS); do  rm -f $$i ; done

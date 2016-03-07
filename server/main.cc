@@ -20,13 +20,16 @@
 #include <opencv2/core/core.hpp>
 #include <opencv2/highgui/highgui.hpp>
 #include <iostream>
+#include <stdlib.h>
+#include <time.h>
 #include <stdio.h>
 #include <opencv2/imgproc/imgproc.hpp>
 #include <deque>
 
+
 #include "Image.h"
 #include "Font.h"
-
+#include "Session.hpp"
 using namespace cv;
 using namespace std;
 
@@ -47,6 +50,62 @@ void exitFunction( int dummy )
    if (webServer != NULL) webServer->stopService();
 }
 
+bool test_format(std::string fileName)
+{
+  string extension = fileName.substr(fileName.find(".") + 1);
+  if(extension.compare("jpg") == 0)
+  {
+    return true;
+  }
+  else if (extension.compare("jpeg") == 0)
+  {
+    return true;
+  }
+  else if (extension.compare("img") == 0)
+  {
+    return true;
+  }
+  else if (extension.compare("tif") == 0)
+  {
+    return true;
+  }
+  else {    
+    return false;
+
+  }
+}
+
+std::string gen_random(std::string extension) {
+    static const char letter[] =
+        "0123456789"
+        "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
+        "abcdefghijklmnopqrstuvwxyz";
+          srand(time(NULL));    
+    string random;
+    for (int i = 0; i < 10; ++i) {
+        random += letter[rand() % (sizeof(letter) - 1)];
+    }
+
+    return random + extension;
+}
+
+std::string InitiateSession(std::string fileName,HttpRequest *request)
+{
+  int cptExample=0;
+  Session * mySession = new Session();
+  void *sessionTmp = request->getSessionAttribute("mySession");
+    if(sessionTmp == NULL)
+    {
+      srand(time(NULL));
+      cptExample= rand();
+      NVJ_LOG->append(NVJ_INFO,fileName + to_string(cptExample));
+      mySession->setToken(cptExample);
+      mySession->setFileName(fileName);
+      request->setSessionAttribute ("mySession", mySession );
+    }
+
+  return "{\"fileName\":"+mySession->getFileName()+",\"token\":"+to_string(mySession->getToken())+"}";
+}
 
 class MyDynamicRepository : public DynamicRepository
 {
@@ -60,7 +119,7 @@ class MyDynamicRepository : public DynamicRepository
         }
     };
 
-    class Uploader: public DynamicPage
+     class Uploader: public DynamicPage
     {
       bool getPage(HttpRequest* request, HttpResponse *response)
       {
@@ -73,14 +132,19 @@ class MyDynamicRepository : public DynamicRepository
         std::map<std::string,MPFD::Field *>::iterator it;
         for (it=fields.begin();it!=fields.end();it++) 
         {
-          if (fields[it->first]->GetType()==MPFD::Field::TextType)
-           return false;
-          else
+           if(test_format(fields[it->first]->GetFileName()))
+            {
+            if (fields[it->first]->GetType()==MPFD::Field::TextType)
+              return false;
+            else
           {
-            NVJ_LOG->append(NVJ_INFO, "Got file field: [" + it->first + "] Filename:[" + fields[it->first]->GetFileName() + "] TempFilename:["  + fields[it->first]->GetTempFileName() + "]\n");
+            std::string newFileName = gen_random(fields[it->first]->GetFileName().substr(fields[it->first]->GetFileName().find(".")));
+            std::string json_Session = InitiateSession(newFileName,request);
+            NVJ_LOG->append(NVJ_INFO, "Got file field: [" + it->first + "] Filename:[" + newFileName + "] TempFilename:["  + fields[it->first]->GetTempFileName() + "]\n");
+
 
             std::ifstream  src( fields[it->first]->GetTempFileName().c_str(), std::ios::binary);
-            string dstFilename= string(UPLOAD_DIR)+'/'+fields[it->first]->GetFileName();
+            string dstFilename= string(UPLOAD_DIR)+'/'+newFileName;
             std::ofstream  dst( dstFilename.c_str(), std::ios::binary);
             if (!src || !dst)
               NVJ_LOG->append(NVJ_ERROR, "Copy error: check read/write permissions");
@@ -90,12 +154,15 @@ class MyDynamicRepository : public DynamicRepository
             dst.close();
             myUploadRepo->reload();
             imagePath = dstFilename;
-            return fromString(fields[it->first]->GetFileName(), response); 
+            return fromString(newFileName, response); 
           }
+          } else {
+            return ("{\"error\":\"This format of image isn't correct\"}",response);
+          }
+
         }
         return true;
       }
-
     } uploader;
 
     class getBoundingBox: public MyDynamicPage
@@ -104,26 +171,26 @@ class MyDynamicRepository : public DynamicRepository
       {
 
         Image * img = new Image(imagePath);
-        img->BinarizedImage();
-        img->extractAllConnectedComponents();
-        std::vector<ConnectedComponent> ListTmpCC = img->getListCC();
-        string json = "{";
-        for(int i= 0; i < ListTmpCC.size()-1; i++)
-        {
+        //Line * line = new Line();
+         img->BinarizedImage();
+         img->ImgMask();
+         img->extractAllConnectedComponents();
+         std::vector<ConnectedComponent> ListTmpCC = img->getListCC();
+         string json = "{";
+         for(int i= 0; i < ListTmpCC.size()-1; i++)
+         {
+           Rect rect = boundingRect(ListTmpCC[i].getListP());
+           json += ("\" "+ to_string(i) +"\":{");
+           json += ("\"x\":" + to_string(rect.x) + ",");
+           json += ("\"y\":" + to_string(rect.y) + ",");
+           json += ("\"width\":" + to_string(rect.width) + ",");
+           json += ("\"height\":" + to_string(rect.height));
+           json += ("}");
 
-          Rect rect = boundingRect(ListTmpCC[i].getListP());
-       
-          json += ("\" "+ to_string(i) +"\":{");
-          json += ("\"x\":" + to_string(rect.x) + ",");
-          json += ("\"y\":" + to_string(rect.y) + ",");
-          json += ("\"width\":" + to_string(rect.width) + ",");
-          json += ("\"height\":" + to_string(rect.height));
-          json += ("}");
-
-          if(i != ListTmpCC.size()-2)
-          {
-            json += (",");
-          }
+           if(i != ListTmpCC.size()-2)
+           {
+             json += (",");
+           }
         }
         json += ("}");
         //cout << json <<endl;
@@ -131,6 +198,7 @@ class MyDynamicRepository : public DynamicRepository
       }
         
     } getBoundingBox;
+
 
 
 
