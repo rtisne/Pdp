@@ -129,11 +129,7 @@ void Image::extractAllConnectedComponents()
   //assert(Img.type() == CV_8U);
 
   ListCC.clear();
-<<<<<<< HEAD
   ListCC.reserve(img.rows); //arbitrary
-=======
-  ListCC.reserve(Img.rows);
->>>>>>> ab386f899c34901c24e9dbfc479b9f1c9c97a42c
 
   cv::Mat tmp = img.clone();
 

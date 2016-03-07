@@ -15,11 +15,7 @@ void Line::initBaseline()
     {
       sommeBaseline += ListCC[i].getBase();
     }
-<<<<<<< HEAD
     Line::setBaseline(SommeBaseline / i);
-=======
-    Baseline = (sommeBaseline / i);
->>>>>>> ab386f899c34901c24e9dbfc479b9f1c9c97a42c
 }
 
 void Line::setBaseline(int y)

@@ -20,12 +20,9 @@ public:
     cv::Mat getImg();
     void setListCC(std::vector<ConnectedComponent> L);
     std::vector<ConnectedComponent> getListCC();
-<<<<<<< HEAD
     void ImgMask();
-=======
     void setListLine(std::vector<Line> L);
     std::vector<Line> getListLine();
->>>>>>> ab386f899c34901c24e9dbfc479b9f1c9c97a42c
     void BinarizedImage();
     void extractConnectedComponent(cv::Mat &input,const cv::Point &seed,ConnectedComponent &cc);
     void extractAllConnectedComponents();
