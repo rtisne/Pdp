@@ -51,7 +51,13 @@ void ConnectedComponent::initBoundingBox()
             }
 
     BB.setX(P_Max);
-    BB.setY(P_Min);
+    BB.setHeight(P_Max.y - P_Min.y);
+    BB.setWidth(P_Max.x - P_Min.x);
+}
+
+BoundingBox ConnectedComponent::getBoundingBox()
+{
+  return BB;
 }
 
 void ConnectedComponent::initCharacter(std::string name)
@@ -72,6 +78,22 @@ void ConnectedComponent::initCharacter(std::string name)
 
 }
 
+void ConnectedComponent::initBase()
+{
+   int baseTmp;
+   baseTmp = ListP[0].y;
+          for(int i= 1; (unsigned)i < ListP.size()-1; i++)
+            {
+              cv::Point P = ListP[i];
+              if(P.y > baseTmp)
+               {
+                 baseTmp = P.y;
+               }
+            }
+  Base = baseTmp;
+
+}
+
 void ConnectedComponent::setCharacter(Character c)
 {
    C = c;
@@ -80,4 +102,14 @@ void ConnectedComponent::setCharacter(Character c)
 Character ConnectedComponent::getCharacter()
 {
   return C;
+}
+
+void ConnectedComponent::setBase(int y)
+{
+  Base = y;
+}
+
+int ConnectedComponent::getBase()
+{
+  return Base;
 }

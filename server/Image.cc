@@ -28,6 +28,16 @@ std::vector<ConnectedComponent> Image::getListCC()
 	return ListCC;
 }
 
+void Image::setListLine(std::vector<Line> L)
+{
+  ListLine = L;
+}
+
+std::vector<Line> Image::getListLine()
+{
+  return ListLine;
+}
+
 void Image::BinarizedImage()
 {
   NiblackSauvolaWolfJolion (img, img, WOLFJOLION);
@@ -119,7 +129,11 @@ void Image::extractAllConnectedComponents()
   //assert(Img.type() == CV_8U);
 
   ListCC.clear();
+<<<<<<< HEAD
   ListCC.reserve(img.rows); //arbitrary
+=======
+  ListCC.reserve(Img.rows);
+>>>>>>> ab386f899c34901c24e9dbfc479b9f1c9c97a42c
 
   cv::Mat tmp = img.clone();
 
@@ -133,11 +147,52 @@ void Image::extractAllConnectedComponents()
         ListTmp = cc.getListP();
         ListTmp.clear();
         cc.setListP(ListTmp);
-        extractConnectedComponent(tmp, cv::Point(j, i), cc); //modify tmp
+        extractConnectedComponent(tmp, cv::Point(j, i), cc);
+        cc.initBase();
         ListCC.push_back(cc);
       }
     }
   }
 
 }
+
+
+
+void Image::putInLine()
+{
+ int max = 0;
+
+ // set Max value
+ for(int i= 0; i < ListCC.size()-1; i++)
+  {
+     if (ListCC[i].getBoundingBox().getHeight()  > max)
+     {
+       max = ListCC[i].getBoundingBox().getHeight();
+     }
+
+  }
+
+ Line * L = new Line();
+
+ for(int i= 0; i < ListCC.size()-1; i++)
+  {
+    L->addConnectedComponent(ListCC[i]);
+
+     if (ListCC[i+1].getBase() - ListCC[i].getBase() > max)
+     {
+        ListLine.push_back(*L);
+        L = new Line();
+     }
+  }
+
+  //inialization all Baseline of Image
+ for(int i= 0; i < ListLine.size()-1; i++)
+  {
+      ListLine[i].initBaseline();
+  }
+
+
+}
+
+
 
