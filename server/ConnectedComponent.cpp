@@ -44,7 +44,7 @@ void ConnectedComponent::initCharacter(std::string name)
 
 void ConnectedComponent::initBase()
 {
-  m_base = m_boundingBox.getX().y + m_boundingBox.getHeight()+;
+  m_base = m_boundingBox.getX().y + m_boundingBox.getHeight();
 }
 
 void ConnectedComponent::setCharacter(Character c)
