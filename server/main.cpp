@@ -1,40 +1,18 @@
-//********************************************************
-/**
- * @file  example2.cc 
- *
- * @brief libnavajo example code.
- *
- * @author T.Descombes (descombes@lpsc.in2p3.fr)
- *
- * @version 1  
- * @date 27/01/15
- */
-//********************************************************
-
-#include <signal.h> 
-#include <string.h> 
 #include "libnavajo/AuthPAM.hh"
 #include "libnavajo/libnavajo.hh"
 #include "libnavajo/LogStdOutput.hh"
 
-#include <opencv2/core/core.hpp>
-#include <opencv2/highgui/highgui.hpp>
-#include <iostream>
-#include <stdlib.h>
 #include <time.h>
-#include <stdio.h>
-#include <opencv2/imgproc/imgproc.hpp>
-#include <deque>
+#include <signal.h> 
+#include <string.h> 
 
-
-#include "Image.h"
-#include "Font.h"
+#include "Image.hpp"
+#include "Font.hpp"
 #include "Session.hpp"
+
+
 using namespace cv;
 using namespace std;
-
-//RNG rng(12345);
-
 
 
 #define UPLOAD_DIR "../client/data"

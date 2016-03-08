@@ -1,7 +1,5 @@
-#include "Image.h"
-#include "Binarization.hpp"
+#include "Image.hpp"
 
-#include <deque>
 
 Image::Image(std::string path)
 {

@@ -1,11 +1,7 @@
 #include "Session.hpp"
 
-
-
 Session::Session()
-{
-	
-}
+{}
 
 std::string Session::setFileName(std::string newFileName){
 	fileName = newFileName;

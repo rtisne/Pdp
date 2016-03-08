@@ -1,17 +1,8 @@
 #ifndef CONNECTEDCOMPONENT_H
 #define CONNECTEDCOMPONENT_H
 
-#include <opencv2/core/core.hpp>
-#include <opencv2/highgui/highgui.hpp>
-#include <iostream>
-#include <stdio.h>
-#include <opencv2/imgproc/imgproc.hpp>
-
-
-#include "BoundingBox.h"
-#include "Character.h"
-
-
+#include "BoundingBox.hpp"
+#include "Character.hpp"
 
 class ConnectedComponent
 {

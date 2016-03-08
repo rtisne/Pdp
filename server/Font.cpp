@@ -1,13 +1,8 @@
-#include "Font.h"
-
+#include "Font.hpp"
 
 
 Font::Font()
-{
-
-}
-
-
+{}
 
 void Font::setName(std::string L)
 {

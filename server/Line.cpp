@@ -1,11 +1,7 @@
-#include "Line.h"
-
-
+#include "Line.hpp"
 
 Line::Line()
-{
-
-}
+{}
 
 void Line::initBaseline()
 {
@@ -15,7 +11,7 @@ void Line::initBaseline()
     {
       sommeBaseline += ListCC[i].getBase();
     }
-    Line::setBaseline(SommeBaseline / i);
+    Line::setBaseline(sommeBaseline / i);
 }
 
 void Line::setBaseline(int y)

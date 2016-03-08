@@ -1,12 +1,7 @@
-#include "BoundingBox.h"
-
-
+#include "BoundingBox.hpp"
 
 BoundingBox::BoundingBox()
-{
-
-}
-
+{}
 
 void BoundingBox::setX(cv::Point P)
 {

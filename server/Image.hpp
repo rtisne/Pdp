@@ -1,14 +1,9 @@
 #ifndef IMAGE_H
 #define IMAGE_H
 
-#include <opencv2/core/core.hpp>
-#include <opencv2/highgui/highgui.hpp>
-#include <iostream>
-#include <stdio.h>
-#include <opencv2/imgproc/imgproc.hpp>
-
-#include "ConnectedComponent.h"
-#include "Line.h"
+#include "Line.hpp"
+#include "Binarization.hpp"
+#include <deque>
 
 static const uchar BACKGROUND = 255;
 

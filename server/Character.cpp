@@ -1,12 +1,7 @@
-#include "Character.h"
-
-
+#include "Character.hpp"
 
 Character::Character()
-{
-
-}
-
+{}
 
 
 void Character::setLabel(std::string L)

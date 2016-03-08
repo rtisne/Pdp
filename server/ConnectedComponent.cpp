@@ -1,11 +1,7 @@
-#include "ConnectedComponent.h"
-
-
+#include "ConnectedComponent.hpp"
 
 ConnectedComponent::ConnectedComponent()
-{
-
-}
+{}
 
 void ConnectedComponent::setListP(std::vector<cv::Point> L)
 {
@@ -16,8 +12,6 @@ std::vector<cv::Point> ConnectedComponent::getListP()
 {
   return ListP;
 }
-
-
 
 int ConnectedComponent::sizeListP()
 {
