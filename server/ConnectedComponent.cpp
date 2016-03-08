@@ -20,33 +20,14 @@ int ConnectedComponent::sizeListP()
 
 void ConnectedComponent::initBoundingBox()
 {
-	cv::Point P_Max;
-	 P_Max.x = m_listPoint[0].x;
-	 P_Max.y = m_listPoint[0].y;
-	cv::Point P_Min;
-	 P_Min.x = m_listPoint[0].x;
-	 P_Min.y = m_listPoint[0].y;
-          for(int i= 1; (unsigned)i < m_listPoint.size()-1; i++)
-            {
-                  cv::Point P = m_listPoint[i];
-                  if(P.y < P_Min.y && P.x < P_Min.x)
-                  {
-                  	P_Min.y = P.y;
-                  	P_Min.x = P.x;
-                  }
-
-                 if(P.y > P_Max.y && P.x > P_Max.x)
-                  {
-                  	P_Min.y = P.y;
-                  	P_Min.x = P.x;
-                  }
-
-
-            }
-
-    m_boundingBox.setX(P_Max);
-    m_boundingBox.setHeight(P_Max.y - P_Min.y);
-    m_boundingBox.setWidth(P_Max.x - P_Min.x);
+  cv::Rect rect = boundingRect(m_listPoint);
+  cv::Point P;
+  P.x = rect.x;
+  P.y = rect.y;
+  
+  m_boundingBox.setX(P);
+  m_boundingBox.setHeight(rect.height);
+  m_boundingBox.setWidth(rect.width);
 }
 
 BoundingBox ConnectedComponent::getBoundingBox()
@@ -57,35 +38,13 @@ BoundingBox ConnectedComponent::getBoundingBox()
 void ConnectedComponent::initCharacter(std::string name)
 {
   m_char.setLabel(name);
-
-   int base;
-   base = m_listPoint[0].y;
-          for(int i= 1; (unsigned)i < m_listPoint.size()-1; i++)
-            {
-              cv::Point P = m_listPoint[i];
-              if(P.y > base)
-               {
-                 base = P.y;
-               }
-            }
-  m_char.setBase(base);
+  m_char.setBase(m_base);
 
 }
 
 void ConnectedComponent::initBase()
 {
-   int baseTmp;
-   baseTmp = m_listPoint[0].y;
-          for(int i= 1; (unsigned)i < m_listPoint.size()-1; i++)
-            {
-              cv::Point P = m_listPoint[i];
-              if(P.y > baseTmp)
-               {
-                 baseTmp = P.y;
-               }
-            }
-  m_base = baseTmp;
-
+  m_base = m_boundingBox.getX().y + m_boundingBox.getHeight()+;
 }
 
 void ConnectedComponent::setCharacter(Character c)

@@ -147,7 +147,13 @@ void Image::extractAllConnectedComponents()
       }
     }
   }
+//Initialization Bounding Box
+for(int i=0; i < m_listConnectedComponent.size()-1; i++)
+{
+  m_listConnectedComponent[i].initBoundingBox();
+m_listConnectedComponent[i].initBase();
 
+}
 }
 
 
