@@ -21,7 +21,7 @@ WebServer *webServer = NULL;
 
 LocalRepository *myUploadRepo = NULL;
 
-std::vector<Session> activeSessions;
+std::vector<Session*> activeSessions;
 
 void exitFunction( int dummy )
 {
@@ -71,17 +71,16 @@ std::string InitiateSession(std::string fileName,HttpRequest *request)
 {
   int cptExample=0;
   Session * mySession = new Session();
-  void *sessionTmp = request->getSessionAttribute("mySession");
-    if(sessionTmp == NULL)
-    {
-      srand(time(NULL));
-      cptExample= rand();
-      NVJ_LOG->append(NVJ_INFO,fileName + to_string(cptExample));
-      mySession->setToken(cptExample);
-      mySession->setFileName(fileName);
-      request->setSessionAttribute ("mySession", mySession );
-    }
-  activeSessions.push_back(*mySession);
+  
+    srand(time(NULL));
+    cptExample= rand();
+    NVJ_LOG->append(NVJ_INFO, fileName);
+    mySession->setToken(cptExample);
+    mySession->setFileName(fileName);
+    request->setSessionAttribute ("mySession", mySession );
+    NVJ_LOG->append(NVJ_INFO, mySession->getFileName());
+  
+  activeSessions.push_back(mySession);
   return "{\"fileName\":\""+mySession->getFileName()+"\",\"token\":"+to_string(mySession->getToken())+"}";
 }
 
@@ -89,8 +88,8 @@ int getActiveSessionFromToken(int token)
 {
   for (unsigned i=0; i<activeSessions.size(); i++)
   {
-    Session s = activeSessions.at(i);
-    if(s.getToken() == token)
+    Session* s = activeSessions.at(i);
+    if(s->getToken() == token)
       return i;
   }
   return -1;
@@ -164,7 +163,7 @@ class MyDynamicRepository : public DynamicRepository
         string token;
         request->getParameter("token", token);
         int sessionIndex = getActiveSessionFromToken(stoi(token));
-        Image * img = new Image(UPLOAD_DIR + activeSessions.at(sessionIndex).getFileName());
+        Image * img = new Image(UPLOAD_DIR + activeSessions.at(sessionIndex)->getFileName());
         //Line * line = new Line();
         img->BinarizedImage();
          //img->ImgMask();
@@ -200,7 +199,7 @@ class MyDynamicRepository : public DynamicRepository
         string token;
         request->getParameter("token", token);
         int sessionIndex = getActiveSessionFromToken(stoi(token));
-        string filePath = UPLOAD_DIR + activeSessions.at(sessionIndex).getFileName();
+        string filePath = UPLOAD_DIR + activeSessions.at(sessionIndex)->getFileName();
         if( remove( filePath.c_str() ) != 0 )
         {
           NVJ_LOG->append(NVJ_ERROR, "Error Deleted");

@@ -87,7 +87,7 @@ BINARIZATION= Binarization
 # DEPENDENCE'S RULES  #
 #######################
 
-%.o: %.cc
+%.o: %.cpp
 	$(CXX) -c $< -o $@ $(CXXFLAGS) $(CPPFLAGS) $(DEFS) 
 	
 all: $(MAIN_NAME)
