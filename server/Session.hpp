@@ -7,14 +7,14 @@ class Session
 {
 public:
     Session();
-    std::string setFileName(std::string newFileName);
-    std::string getFileName();
-    int setToken(int newToken);
-    int getToken();
+    std::string setFileName(std::string f);
+    const std::string getFileName();
+    int setToken(int t);
+    const int getToken();
 private:
-    std::string fileName;
-    int token;
-    Font myFont;
+    std::string m_fileName;
+    int m_token;
+    Font m_font;
 };
 
 #endif // SESSION__HPP

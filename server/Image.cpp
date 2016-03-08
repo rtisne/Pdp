@@ -3,58 +3,58 @@
 
 Image::Image(std::string path)
 {
-   img = cv::imread(path, CV_LOAD_IMAGE_COLOR);
+   m_img = cv::imread(path, CV_LOAD_IMAGE_COLOR);
 }
 
 void Image::setImg(cv::Mat P)
 {
-   img = P;
+   m_img = P;
 }
 
-cv::Mat Image::getImg()
+const cv::Mat Image::getImg()
 {
-	return img;
+	return m_img;
 }
 
-void Image::setListCC(std::vector<ConnectedComponent> L)
+void Image::setListConnectedComponent(std::vector<ConnectedComponent> L)
 {
-  ListCC = L;
+  m_listConnectedComponent = L;
 }
 
-std::vector<ConnectedComponent> Image::getListCC()
+const std::vector<ConnectedComponent> Image::getListConnectedComponent()
 {
-	return ListCC;
+	return m_listConnectedComponent;
 }
 
 void Image::setListLine(std::vector<Line> L)
 {
-  ListLine = L;
+  m_listLine = L;
 }
 
-std::vector<Line> Image::getListLine()
+const std::vector<Line> Image::getListLine()
 {
-  return ListLine;
+  return m_listLine;
 }
 
 void Image::BinarizedImage()
 {
-  NiblackSauvolaWolfJolion (img, img, WOLFJOLION);
+  NiblackSauvolaWolfJolion (m_img, m_img, WOLFJOLION);
   // Create a window
 
 }
 
 void Image::ImgMask()
 {
- cv::blur(img,mask,cv::Size(105,5));
+ cv::blur(m_img,m_mask,cv::Size(105,5));
 
- cv::threshold(mask, mask,170,255,1);
+ cv::threshold(m_mask, m_mask,170,255,1);
 
- cv::medianBlur(mask, mask,9);
+ cv::medianBlur(m_mask, m_mask,9);
 
  cv::namedWindow("foobar");
  
 // Display image in window
-cv::imshow("foobar", mask);
+cv::imshow("foobar", m_mask);
  
 // Wait for user to press a key in window
 cv::waitKey(0);
@@ -65,9 +65,9 @@ void Image::extractConnectedComponent(cv::Mat &input,const cv::Point &seed,Conne
   //assert(input.type() == CV_8U);
   assert(seed.x < input.cols && seed.y < input.rows && seed.x >= 0 && seed.y >= 0);
   std::vector<cv::Point> ListTmp;
-  ListTmp = cc.getListP();
+  ListTmp = cc.getListPoint();
   ListTmp.clear();
-  cc.setListP(ListTmp);
+  cc.setListPoint(ListTmp);
 
   std::deque<cv::Point> ptsQueue;
   uchar &pixS = input.at<unsigned char>(seed.y, seed.x);
@@ -81,9 +81,9 @@ void Image::extractConnectedComponent(cv::Mat &input,const cv::Point &seed,Conne
     cv::Point current = ptsQueue.front();
     ptsQueue.pop_front();
 
-    ListTmp = cc.getListP();
+    ListTmp = cc.getListPoint();
     ListTmp.push_back(current);
-    cc.setListP(ListTmp);
+    cc.setListPoint(ListTmp);
 
     // enque neighboors
     const cv::Point e(current.x + 1, current.y);
@@ -126,24 +126,24 @@ void Image::extractAllConnectedComponents()
 {
   //assert(Img.type() == CV_8U);
 
-  ListCC.clear();
-  ListCC.reserve(img.rows); //arbitrary
+  m_listConnectedComponent.clear();
+  m_listConnectedComponent.reserve(m_img.rows); //arbitrary
 
-  cv::Mat tmp = img.clone();
+  cv::Mat tmp = m_img.clone();
 
   ConnectedComponent cc;
 
-  for (int i = 0; i < img.rows; ++i) {
+  for (int i = 0; i < m_img.rows; ++i) {
     const uchar *r = tmp.ptr<uchar>(i);
-    for (int j = 0; j < img.cols; ++j) {
+    for (int j = 0; j < m_img.cols; ++j) {
       if (r[j] != BACKGROUND) {
         std::vector<cv::Point> ListTmp;
-        ListTmp = cc.getListP();
+        ListTmp = cc.getListPoint();
         ListTmp.clear();
-        cc.setListP(ListTmp);
+        cc.setListPoint(ListTmp);
         extractConnectedComponent(tmp, cv::Point(j, i), cc);
         cc.initBase();
-        ListCC.push_back(cc);
+        m_listConnectedComponent.push_back(cc);
       }
     }
   }
@@ -157,32 +157,32 @@ void Image::putInLine()
  int max = 0;
 
  // set Max value
- for(int i= 0; i < ListCC.size()-1; i++)
+ for(int i= 0; i < m_listConnectedComponent.size()-1; i++)
   {
-     if (ListCC[i].getBoundingBox().getHeight()  > max)
+     if (m_listConnectedComponent[i].getBoundingBox().getHeight()  > max)
      {
-       max = ListCC[i].getBoundingBox().getHeight();
+       max = m_listConnectedComponent[i].getBoundingBox().getHeight();
      }
 
   }
 
  Line * L = new Line();
 
- for(int i= 0; i < ListCC.size()-1; i++)
+ for(int i= 0; i < m_listConnectedComponent.size()-1; i++)
   {
-    L->addConnectedComponent(ListCC[i]);
+    L->addConnectedComponent(m_listConnectedComponent[i]);
 
-     if (ListCC[i+1].getBase() - ListCC[i].getBase() > max)
+     if (m_listConnectedComponent[i+1].getBase() - m_listConnectedComponent[i].getBase() > max)
      {
-        ListLine.push_back(*L);
+        m_listLine.push_back(*L);
         L = new Line();
      }
   }
 
   //inialization all Baseline of Image
- for(int i= 0; i < ListLine.size()-1; i++)
+ for(int i= 0; i < m_listLine.size()-1; i++)
   {
-      ListLine[i].initBaseline();
+      m_listLine[i].computeBaseline();
   }
 
 

@@ -3,32 +3,32 @@
 ConnectedComponent::ConnectedComponent()
 {}
 
-void ConnectedComponent::setListP(std::vector<cv::Point> L)
+void ConnectedComponent::setListPoint(std::vector<cv::Point> L)
 {
-  ListP = L;
+  m_listPoint = L;
 }
 
-std::vector<cv::Point> ConnectedComponent::getListP()
+const std::vector<cv::Point> ConnectedComponent::getListPoint()
 {
-  return ListP;
+  return m_listPoint;
 }
 
 int ConnectedComponent::sizeListP()
 {
-	return ListP.size();
+	return m_listPoint.size();
 }
 
 void ConnectedComponent::initBoundingBox()
 {
 	cv::Point P_Max;
-	 P_Max.x = ListP[0].x;
-	 P_Max.y = ListP[0].y;
+	 P_Max.x = m_listPoint[0].x;
+	 P_Max.y = m_listPoint[0].y;
 	cv::Point P_Min;
-	 P_Min.x = ListP[0].x;
-	 P_Min.y = ListP[0].y;
-          for(int i= 1; (unsigned)i < ListP.size()-1; i++)
+	 P_Min.x = m_listPoint[0].x;
+	 P_Min.y = m_listPoint[0].y;
+          for(int i= 1; (unsigned)i < m_listPoint.size()-1; i++)
             {
-                  cv::Point P = ListP[i];
+                  cv::Point P = m_listPoint[i];
                   if(P.y < P_Min.y && P.x < P_Min.x)
                   {
                   	P_Min.y = P.y;
@@ -44,66 +44,66 @@ void ConnectedComponent::initBoundingBox()
 
             }
 
-    BB.setX(P_Max);
-    BB.setHeight(P_Max.y - P_Min.y);
-    BB.setWidth(P_Max.x - P_Min.x);
+    m_boundingBox.setX(P_Max);
+    m_boundingBox.setHeight(P_Max.y - P_Min.y);
+    m_boundingBox.setWidth(P_Max.x - P_Min.x);
 }
 
 BoundingBox ConnectedComponent::getBoundingBox()
 {
-  return BB;
+  return m_boundingBox;
 }
 
 void ConnectedComponent::initCharacter(std::string name)
 {
-  C.setLabel(name);
+  m_char.setLabel(name);
 
-   int Base;
-   Base = ListP[0].y;
-          for(int i= 1; (unsigned)i < ListP.size()-1; i++)
+   int base;
+   base = m_listPoint[0].y;
+          for(int i= 1; (unsigned)i < m_listPoint.size()-1; i++)
             {
-              cv::Point P = ListP[i];
-              if(P.y > Base)
+              cv::Point P = m_listPoint[i];
+              if(P.y > base)
                {
-                 Base = P.y;
+                 base = P.y;
                }
             }
-  C.setBase(Base);
+  m_char.setBase(base);
 
 }
 
 void ConnectedComponent::initBase()
 {
    int baseTmp;
-   baseTmp = ListP[0].y;
-          for(int i= 1; (unsigned)i < ListP.size()-1; i++)
+   baseTmp = m_listPoint[0].y;
+          for(int i= 1; (unsigned)i < m_listPoint.size()-1; i++)
             {
-              cv::Point P = ListP[i];
+              cv::Point P = m_listPoint[i];
               if(P.y > baseTmp)
                {
                  baseTmp = P.y;
                }
             }
-  Base = baseTmp;
+  m_base = baseTmp;
 
 }
 
 void ConnectedComponent::setCharacter(Character c)
 {
-   C = c;
+   m_char = c;
 }
 
 Character ConnectedComponent::getCharacter()
 {
-  return C;
+  return m_char;
 }
 
-void ConnectedComponent::setBase(int y)
+void ConnectedComponent::setBase(int x)
 {
-  Base = y;
+  m_base = x;
 }
 
-int ConnectedComponent::getBase()
+const int ConnectedComponent::getBase()
 {
-  return Base;
+  return m_base;
 }

@@ -8,23 +8,23 @@ class ConnectedComponent
 {
 public:
     ConnectedComponent();
-    void setListP(std::vector<cv::Point> L);
-    std::vector<cv::Point> getListP();
+    void setListPoint(std::vector<cv::Point> L);
+    const std::vector<cv::Point> getListPoint();
+    int sizeListP();
     void initBoundingBox();
     BoundingBox getBoundingBox();
-    int sizeListP();
     void initCharacter(std::string name);
     void setCharacter(Character c);
     Character getCharacter();
     void initBase();
-    void setBase(int y);
-    int getBase();
+    void setBase(int x);
+    const int getBase();
 
 private:
-   std::vector<cv::Point> ListP;
-   BoundingBox BB;
-   Character C;
-   int Base;
+   std::vector<cv::Point> m_listPoint;
+   BoundingBox m_boundingBox;
+   Character m_char;
+   int m_base;
 };
 
 #endif // CONNECTEDCOMPONENT_H

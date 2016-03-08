@@ -3,19 +3,19 @@
 Session::Session()
 {}
 
-std::string Session::setFileName(std::string newFileName){
-	fileName = newFileName;
+std::string Session::setFileName(std::string f){
+	m_fileName = f;
 }
 
-std::string Session::getFileName(){
-	return fileName;
+const std::string Session::getFileName(){
+	return m_fileName;
 }
 
-int Session::setToken(int newToken){
-	token = newToken;
+int Session::setToken(int t){
+	m_token = t;
 }
 
-int Session::getToken(){
-	return token;
+const int Session::getToken(){
+	return m_token;
 }
 

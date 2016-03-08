@@ -5,30 +5,30 @@ BoundingBox::BoundingBox()
 
 void BoundingBox::setX(cv::Point P)
 {
-  X = P;
+  m_x = P;
 }
 
-cv::Point BoundingBox::getX()
+const cv::Point BoundingBox::getX()
 {
-  return X;
+  return m_x;
 }
 
-void BoundingBox::setHeight(int i)
+void BoundingBox::setHeight(int x)
 {
-  height = i;
+  m_height = x;
 }
 
 const int BoundingBox::getHeight()
 {
-  return height;
+  return m_height;
 }
 
-void BoundingBox::setWidth(int i)
+void BoundingBox::setWidth(int x)
 {
-  width = i;
+  m_width = x;
 }
 
 const int BoundingBox::getWidth()
 {
-  return width;
+  return m_width;
 }

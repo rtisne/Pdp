@@ -7,18 +7,18 @@ class Font
 {
 public:
     Font();
-    void setName(std::string L);
-    std::string getName();
+    void setName(std::string n);
+    const std::string getName();
     void ExportToBox();
     void ExportToOd();
-    void initBaseline();
-    void setBaseline(int y);
-    int getBaseline();
+    void computeBaseline();
+    void setBaseline(int x);
+    const int getBaseline();
     void addCharacter(Character c);
 private:
-   	std::string Name;
-   	std::vector<Character> ListCharacter;
-   	int Baseline;
+   	std::string m_name;
+   	std::vector<Character> m_listCharacter;
+   	int m_baseline;
 };
 
 #endif // FONT__H

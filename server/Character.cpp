@@ -4,32 +4,32 @@ Character::Character()
 {}
 
 
-void Character::setLabel(std::string L)
+void Character::setLabel(std::string l)
 {
-	Label = L;
+	m_label = l;
 }
 
-std::string Character::getLabel()
+const std::string Character::getLabel()
 {
-	return Label;
+	return m_label;
 }
 
-void Character::setBase(int y)
+void Character::setBase(int x)
 {
-	Base = y;
+	m_base = x;
 }
 
-int Character::getBase()
+const int Character::getBase()
 {
-	return Base;
+	return m_base;
 }
 
-void Character::setImg(cv::Mat P)
+void Character::setImg(cv::Mat i)
 {
-   Img = P;
+   m_img = i;
 }
 
-cv::Mat Character::getImg()
+const cv::Mat Character::getImg()
 {
-	return Img;
+	return m_img;
 }

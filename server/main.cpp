@@ -153,11 +153,11 @@ class MyDynamicRepository : public DynamicRepository
          img->BinarizedImage();
          img->ImgMask();
          img->extractAllConnectedComponents();
-         std::vector<ConnectedComponent> ListTmpCC = img->getListCC();
+         std::vector<ConnectedComponent> ListTmpCC = img->getListConnectedComponent();
          string json = "{";
          for(int i= 0; i < ListTmpCC.size()-1; i++)
          {
-           Rect rect = boundingRect(ListTmpCC[i].getListP());
+           Rect rect = boundingRect(ListTmpCC[i].getListPoint());
            json += ("\" "+ to_string(i) +"\":{");
            json += ("\"x\":" + to_string(rect.x) + ",");
            json += ("\"y\":" + to_string(rect.y) + ",");

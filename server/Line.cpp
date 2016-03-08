@@ -3,38 +3,38 @@
 Line::Line()
 {}
 
-void Line::initBaseline()
+void Line::computeBaseline()
 {
   int i;
-  int sommeBaseline = 0;
-  for(i= 0; (unsigned)i < ListCC.size()-1; i++)
+  int sumBaseline = 0;
+  for(i= 0; (unsigned)i < m_listConnectedComponent.size()-1; i++)
     {
-      sommeBaseline += ListCC[i].getBase();
+      sumBaseline += m_listConnectedComponent[i].getBase();
     }
-    Line::setBaseline(sommeBaseline / i);
+    Line::setBaseline(sumBaseline / i);
 }
 
-void Line::setBaseline(int y)
+void Line::setBaseline(int x)
 {
-	Baseline = y;
+	m_baseline = x;
 }
 
-int Line::getBaseline()
+const int Line::getBaseline()
 {
-	return Baseline;
+	return m_baseline;
 }
 
 void Line::addConnectedComponent(ConnectedComponent cc)
 {
-	 ListCC.push_back(cc);
+	 m_listConnectedComponent.push_back(cc);
 }
 
-void Line::setListCC(std::vector<ConnectedComponent> L)
+void Line::setListConnectedComponent(std::vector<ConnectedComponent> cc)
 {
-  ListCC = L;
+  m_listConnectedComponent = cc;
 }
 
-std::vector<ConnectedComponent> Line::getListCC()
+const std::vector<ConnectedComponent> Line::getListConnectedComponent()
 {
-  return ListCC;
+  return m_listConnectedComponent;
 }

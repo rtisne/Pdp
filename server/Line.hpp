@@ -7,15 +7,15 @@ class Line
 {
 public:
     Line();
-    void initBaseline();
-    void setBaseline(int y);
-    int getBaseline();
-    void setListCC(std::vector<ConnectedComponent> L);
-    std::vector<ConnectedComponent> getListCC();
+    void computeBaseline();
+    void setBaseline(int x);
+    const int getBaseline();
+    void setListConnectedComponent(std::vector<ConnectedComponent> cc);
+    const std::vector<ConnectedComponent> getListConnectedComponent();
     void addConnectedComponent(ConnectedComponent cc);
 private:
-   	int Baseline;
-   	std::vector<ConnectedComponent> ListCC;
+   	int m_baseline;
+   	std::vector<ConnectedComponent> m_listConnectedComponent;
 };
 
 #endif // LINE__H
