@@ -1,22 +1,17 @@
-#include "Font.h"
-
+#include "Font.hpp"
 
 
 Font::Font()
-{
+{}
 
+void Font::setName(std::string n)
+{
+	m_name = n;
 }
 
-
-
-void Font::setName(std::string L)
+const std::string Font::getName()
 {
-	Name = L;
-}
-
-std::string Font::getName()
-{
-	return Name;
+	return m_name;
 }
 
 void Font::ExportToBox()
@@ -29,28 +24,28 @@ void Font::ExportToOd()
 
 }
 
-void Font::initBaseline()
+void Font::computeBaseline()
 {
   int i;
-  int SommeBaseline = 0;
-  for(i= 0; (unsigned)i < ListCharacter.size()-1; i++)
+  int sumBaseline = 0;
+  for(i= 0; (unsigned)i < m_listCharacter.size()-1; i++)
     {
-      SommeBaseline += ListCharacter[i].getBase();
+      sumBaseline += m_listCharacter[i].getBase();
     }
-    Baseline = (SommeBaseline / i);
+    m_baseline = (sumBaseline / i);
 }
 
-void Font::setBaseline(int y)
+void Font::setBaseline(int x)
 {
-	Baseline = y;
+	m_baseline = x;
 }
 
-int Font::getBaseline()
+const int Font::getBaseline()
 {
-	return Baseline;
+	return m_baseline;
 }
 
 void Font::addCharacter(Character c)
 {
-  ListCharacter.push_back(c);
+  m_listCharacter.push_back(c);
 }

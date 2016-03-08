@@ -1,28 +1,21 @@
 #ifndef SESSION_HPP
 #define SESSION_HPP
 
-#include <opencv2/core/core.hpp>
-#include <opencv2/highgui/highgui.hpp>
-#include <iostream>
-#include <stdio.h>
-#include <opencv2/imgproc/imgproc.hpp>
-
-#include "Font.h"
-
-
+#include "Font.hpp"
 
 class Session
 {
 public:
     Session();
-    void setFileName(std::string newFileName);
-    std::string getFileName();
-    void setToken(int newToken);
-    int getToken();
+
+    void setFileName(std::string f);
+    const std::string getFileName();
+    void setToken(int t);
+    const int getToken();
 private:
-    std::string fileName;
-    int token;
-    Font myFont;
+    std::string m_fileName;
+    int m_token;
+    Font m_font;
 };
 
 #endif // SESSION__HPP

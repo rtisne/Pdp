@@ -1,22 +1,23 @@
 #include "Session.hpp"
+
 Session::Session()
-{
-	
+{}
+
+
+void Session::setFileName(std::string f){
+	m_fileName = f;
 }
 
-void Session::setFileName(std::string newFileName){
-	fileName = newFileName;
+const std::string Session::getFileName(){
+	return m_fileName;
 }
 
-std::string Session::getFileName(){
-	return fileName;
+
+void Session::setToken(int t){
+	m_token = t;
 }
 
-void Session::setToken(int newToken){
-	token = newToken;
-}
-
-int Session::getToken(){
-	return token;
+const int Session::getToken(){
+	return m_token;
 }
 

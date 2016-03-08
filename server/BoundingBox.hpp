@@ -2,10 +2,7 @@
 #define BOUNDINGBOX_H
 
 #include <opencv2/core/core.hpp>
-#include <opencv2/highgui/highgui.hpp>
-#include <iostream>
-#include <stdio.h>
-#include <opencv2/imgproc/imgproc.hpp>
+
 
 
 class BoundingBox
@@ -13,15 +10,15 @@ class BoundingBox
 public:
     BoundingBox();
     void setX(cv::Point P);
-    cv::Point getX();
-    void setHeight(int i);
+    const cv::Point getX();
+    void setHeight(int x);
     const int getHeight();
-    void setWidth(int i);
+    void setWidth(int x);
     const int getWidth();
 private:
-   cv::Point X;
-   int height;
-   int width;
+   cv::Point m_x;
+   int m_height;
+   int m_width;
    
 };
 

@@ -59,7 +59,6 @@ MAIN_OBJS = \
 		  Font.o \
 		  Character.o \
 		  Line.o \
-		  Paragraph.o \
 		  Image.o \
 		  Session.o \
 		  Binarization.o \
@@ -74,8 +73,6 @@ FONT= Font
 CHARACTER= Character
 
 LINE = Line
-
-PARAGRAPH= Paragraph
 
 IMAGE= Image
 
@@ -123,10 +120,6 @@ $(CHARACTER): $(MAIN_OBJS) $(LIB_STATIC_NAME)
 $(LINE): $(MAIN_OBJS) $(LIB_STATIC_NAME)
 	rm -f $@
 	$(LD) $(LDFLAGS) -o $@ $(MAIN_OBJS) $(LIB_STATIC_NAME) $(LIBS) 
-
-$(PARAGRAPH): $(MAIN_OBJS) $(LIB_STATIC_NAME)
-	rm -f $@
-	$(LD) $(LDFLAGS) -o $@ $(MAIN_OBJS) $(LIB_STATIC_NAME) $(LIBS)
 
 $(SESSION): $(MAIN_OBJS) $(LIB_STATIC_NAME)
 	rm -f $@
