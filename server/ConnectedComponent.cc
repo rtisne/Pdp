@@ -113,3 +113,4 @@ int ConnectedComponent::getBase()
 {
   return Base;
 }
+

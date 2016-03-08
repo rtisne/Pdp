@@ -1,3 +1,6 @@
+var session = new Session();
+
+
 $('#mydropdownmenu > li').click(function(e){
   e.preventDefault();
   var selected = $(this).text();

@@ -6,21 +6,26 @@ function Controller(canvas, previewCanvas) {
 
     // Initialisation
     $(".container_right").show();
+    $('#baseline_options').hide();
     this.canvas.boundingBox.select(0);
     this.previewCanvas.zoomTo(this.canvas.boundingBox.rects[0]);
     this.previewCanvas.visible = true;
 
 
-    // Détection des clics 
+    
     canvas.canvas.addEventListener('selectstart', function(e) { e.preventDefault(); return false; }, false);
     canvas.canvas.addEventListener('click',function(e) { 
         var mouse = controller.canvas.getMouse(e);
         var mx = mouse.x;
         var my = mouse.y;
 
+        // Check if we clic on a BoundingBox
         var id = controller.canvas.boundingBox.contains(mx, my, controller.canvas.image);
         if(id != 'false')
         {   
+            $("#letter_options").show();
+             $('#baseline_options').hide();
+            controller.canvas.baseline.select("false");
             var mergeButton = document.getElementById("mergeButton");
             if(e.metaKey)
             {
@@ -35,6 +40,19 @@ function Controller(canvas, previewCanvas) {
                 mergeButton.disabled="disabled";
             }    
         }
+        // Check if we clic on a Baseline
+        var id = controller.canvas.baseline.contains(mx, my, controller.canvas.image);
+        if(id != 'false')
+        {
+            controller.canvas.boundingBox.select("false");
+            controller.canvas.baseline.select(id);
+            $('#letter_options').hide();
+            $('#baseline_options').show();
+            controller.previewCanvas.zoomTo(controller.canvas.baseline.lines[id]);
+            controller.previewCanvas.visible = true;
+
+        }  
+
     }, true);
 
     // Détection Déplacement de l'image
@@ -78,37 +96,14 @@ function Controller(canvas, previewCanvas) {
     }, true);
 
     // Détection boutton reset
-     document.getElementById('valid-reset').addEventListener('click', function(e){
-              
-        var data = new FormData();
-        data.append('file', controller.canvas.image.img.src);
-
-        $.ajax({
-            url: 'remove.php?restart',
-            type: 'POST',
-            data: data,
-            cache: false,
-            processData: false, 
-            contentType: false,
-            success: function(data, textStatus, jqXHR)
-            {
-                var parsedData = JSON.parse(data);
-                if (parsedData == true) {
-                    location.reload();
-                    console.log("Page réinitialisée.");    
-                }
-                else
-                {
-                    console.log('ERRORS: ' + data.error);
-                }
-            },
-            error: function(jqXHR, textStatus, errorThrown)
-            {
-                console.log('ERRORS: ' + textStatus);
-            }
-          });   
+    document.getElementById('button_trash').addEventListener('click', function(e){
+        session.removeSession();
+        
 
     }, true);
+    window.onunload = function() { 
+       session.removeSession();
+    };
 
     // Affichage
     this.interval = 30;
@@ -144,11 +139,29 @@ ProcessingImage.prototype.contains = function(mx, my) {
           (this.y <= my) && (this.y + (this.h) >= my);
 }
 
+function Line(startx, y, finishx){
+    this.startx = startx;
+    this.y = y;
+    this.finishx = finishx;
+    this.selected = false;
+}
+
+Line.prototype.draw = function(ctx, image){
+    ctx.beginPath();
+    ctx.moveTo(image.x+ this.startx, image.y + this.y);
+    ctx.lineTo(image.x + this.finishx, image.y + this.y);
+    if(this.selected)
+        ctx.strokeStyle = '#e74c3c';
+    else
+        ctx.strokeStyle = '#2ecc71';
+    ctx.stroke();
+}
 
 //Constructeur de la baseline
 function Baseline(lines) {
     this.lines = lines;
     this.visible = false;
+    this.clickMargin = 0.4; //in percent of the image height
 
 }
 
@@ -156,15 +169,32 @@ Baseline.prototype.draw = function(ctx, image){
     if(this.visible)
     {
         for (index = 0; index < this.lines.length; index++) {
-            ctx.beginPath();
-            ctx.moveTo(image.x+ this.lines[index].xstart,image.y + this.lines[index].y);
-            ctx.lineTo(image.x + this.lines[index].xfinish,image.y + this.lines[index].y);
-            ctx.strokeStyle = '#2ecc71';
-            ctx.stroke();
+            this.lines[index].draw(ctx, image);
         }   
     }
     
 }
+Baseline.prototype.contains = function(mx, my, image){
+    if(this.visible == false)
+        return "false";
+    for (index = 0; index < this.lines.length; index++) {
+        if((this.lines[index].startx + image.x <= mx)
+            && (this.lines[index].finishx + image.x >= mx)
+            && (this.lines[index].y + image.y - (this.clickMargin * image.h / 100) <= my)
+            && (this.lines[index].y + image.y + (this.clickMargin * image.h / 100) >= my))
+            return index;
+    }
+    return 'false';
+}
+
+Baseline.prototype.select = function (id){
+    for (index = 0; index < this.lines.length; index++) {
+        this.lines[index].selected = false;
+    }
+    if(id != 'false')
+        this.lines[id].selected = true;
+}
+
 
 function Rectangle(rect){
     this.rect = rect;
@@ -370,15 +400,16 @@ function PreviewCanvas(canvas, image)
     this.image = image;
 
     this.visible = false;
-    this.scale = 1;
+    this.scaleX = 1;
+    this.scaleY = 1;
 
-
-    this.actualRect = null;
+    this.isBaseline = false;
 
     this.position_up_line = 0;
     this.position_down_line = 0;
     this.position_left_line = 0;
     this.position_right_line = 0;
+    this.position_baseline = 0;
 
     
 
@@ -399,88 +430,118 @@ PreviewCanvas.prototype.draw = function() {
         this.clear();
         ctx.save();
 
-        var newWidth = this.width * this.scale;
-        var newHeight = this.height * this.scale;
+        var newWidth = this.width * this.scaleX;
+        var newHeight = this.height * this.scaleY;
         var panX = -((newWidth-this.width)/2);
         var panY = -((newHeight-this.height)/2);
 
         ctx.translate(panX, panY);
 
-        ctx.scale(this.scale,this.scale);
+        ctx.scale(this.scaleX,this.scaleY);
 
         this.image.draw(ctx);
         
-         //UpLine
-        ctx.beginPath();
-        ctx.moveTo(0, this.position_up_line);
-        ctx.lineTo(this.width, this.position_up_line);
-        ctx.lineWidth = 1 / this.scale;
-        ctx.strokeStyle = '#ff0000';
-        ctx.stroke();
+        if(this.isBaseline)
+        {
+            //Baseline
+            ctx.beginPath();
+            ctx.moveTo(0, this.position_baseline);
+            ctx.lineTo(this.width, this.position_baseline);
+            ctx.lineWidth = 1;
+            ctx.strokeStyle = '#ff0000';
+            ctx.stroke();
+        }
+        else
+        {
+            //UpLine
+            ctx.beginPath();
+            ctx.moveTo(0, this.position_up_line);
+            ctx.lineTo(this.width, this.position_up_line);
+            ctx.lineWidth = 1 / this.scaleY;
+            ctx.strokeStyle = '#ff0000';
+            ctx.stroke();
 
-        //DownLine
-        ctx.beginPath();
-        ctx.moveTo(0, this.position_down_line);
-        ctx.lineTo(this.width, this.position_down_line);
-        ctx.lineWidth = 1 / this.scale;
-        ctx.strokeStyle = '#ff0000';
-        ctx.stroke();
+            //DownLine
+            ctx.beginPath();
+            ctx.moveTo(0, this.position_down_line);
+            ctx.lineTo(this.width, this.position_down_line);
+            ctx.lineWidth = 1 / this.scaleY;
+            ctx.strokeStyle = '#ff0000';
+            ctx.stroke();
 
-        //LeftLine
-        ctx.beginPath();
-        ctx.moveTo(this.position_left_line, 0);
-        ctx.lineTo(this.position_left_line, this.height);
-        ctx.lineWidth = 1 / this.scale;
-        ctx.strokeStyle = '#ff0000';
-        ctx.stroke();
+            //LeftLine
+            ctx.beginPath();
+            ctx.moveTo(this.position_left_line, 0);
+            ctx.lineTo(this.position_left_line, this.height);
+            ctx.lineWidth = 1 / this.scaleX;
+            ctx.strokeStyle = '#ff0000';
+            ctx.stroke();
 
-        //RightLine
-        ctx.beginPath();
-        ctx.moveTo(this.position_right_line, 0);
-        ctx.lineTo(this.position_right_line, this.height);
-        ctx.lineWidth = 1 / this.scale;
-        ctx.strokeStyle = '#ff0000';
-        ctx.stroke();
-    
+            //RightLine
+            ctx.beginPath();
+            ctx.moveTo(this.position_right_line, 0);
+            ctx.lineTo(this.position_right_line, this.height);
+            ctx.lineWidth = 1 / this.scaleX;
+            ctx.strokeStyle = '#ff0000';
+            ctx.stroke();
+        }
         ctx.restore();
 
        
     }
    
 }
-PreviewCanvas.prototype.zoomTo = function(rect){
+PreviewCanvas.prototype.zoomTo = function(obj){
 
-    this.image.x = (this.width/2) - rect.rect.x - rect.rect.w/2;
-    this.image.y = (this.height/2) - rect.rect.y - rect.rect.h/2;
-    if(rect.rect.w > rect.rect.h)
-        this.scale = this.width /rect.rect.w - rect.rect.w / 37;
-    else
-        this.scale = this.height /rect.rect.h - rect.rect.h / 37;
-    this.actualRect = rect.rect;
+    if(obj instanceof Rectangle)
+    {
+        var rect = obj;
+        this.image.x = (this.width/2) - rect.rect.x - rect.rect.w/2;
+        this.image.y = (this.height/2) - rect.rect.y - rect.rect.h/2;
+        if(rect.rect.w > rect.rect.h)
+            this.scaleX = this.width /rect.rect.w - rect.rect.w / 37;
+        else
+            this.scaleX = this.height /rect.rect.h - rect.rect.h / 37;
 
-    this.position_up_line = this.image.y + this.actualRect.y;
-    this.position_down_line = this.image.y + this.actualRect.y + this.actualRect.h;
-    this.position_left_line = this.image.x + this.actualRect.x;
-    this.position_right_line = this.image.x + this.actualRect.x + this.actualRect.w;
+        this.scaleY = this.scaleX;
+        var actualRect = rect.rect;
 
-    $("#up").val(this.position_up_line);
-    $("#down").val(this.position_down_line);
-    $("#left").val(this.position_left_line);
-    $("#right").val(this.position_right_line);
+        this.position_up_line = this.image.y + actualRect.y;
+        this.position_down_line = this.image.y + actualRect.y + actualRect.h;
+        this.position_left_line = this.image.x + actualRect.x;
+        this.position_right_line = this.image.x + actualRect.x + actualRect.w;
+
+        $("#up").val(this.position_up_line);
+        $("#down").val(this.position_down_line);
+        $("#left").val(this.position_left_line);
+        $("#right").val(this.position_right_line);
+        this.isBaseline = false; 
+    }
+    else if (obj instanceof Line)
+    {
+        var line = obj;
+        this.image.x = (this.width/2) - ((line.finishx - line.startx)/2 + line.startx);
+        this.image.y = (this.height/2) - line.y;
+
+        this.scaleX = this.width /(line.finishx - line.startx);
+        this.scaleY = this.height / (this.image.img.height / 20);
+
+        this.isBaseline = true;
+        this.position_baseline = this.image.y + line.y;
+    }
+    
 }
 
 function init(src, boundingBox) {
     var image = new ProcessingImage(src);
     var imagePreview = new ProcessingImage(src);
-    var baseline = new Baseline([{xstart:50, y:90, xfinish:560}, {xstart:50, y:130, xfinish:570}]);
+    var baseline = new Baseline([new Line(50, 90, 560), new Line(50, 130, 570)]);
 
     var listRect = new Array();
-    console.log(boundingBox);
     for (var rect in boundingBox) {
-        console.log(boundingBox[rect]);
         listRect.push(new Rectangle({x:boundingBox[rect].x, y:boundingBox[rect].y, w:boundingBox[rect].width, h: boundingBox[rect].height}));
     }
-    console.log(listRect);
+
     var boundingBox = new BoundingBox(listRect);
 
 
@@ -489,10 +550,6 @@ function init(src, boundingBox) {
     var normalCanvas = new CanvasState(document.getElementById('canvas'), image, baseline, boundingBox);
 
     var controller = new Controller(normalCanvas, previewCanvas);
-
-   
-    
-
 }
 
 

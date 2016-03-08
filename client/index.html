@@ -83,7 +83,7 @@
 								<canvas id="small_canvas" data-girar="500"></canvas>
 							</div> 
 						</div>
-						<div class="container_option_base">
+						<div class="container_option_base" id="letter_options">
 							<div class="field_modification_base">
 								<div class="row">
 								  <div class="form-group col-sm-5 col-sm-offset-1 modif-line-value">
@@ -122,30 +122,45 @@
 								</div>		
 							</div>
 							<div class="row controls">
-					      <div class="input-group col-md-5 col-sm-6">
-					        <input class="form-control" type="text" value="" placeholder="" name="q">
-					        <div class="input-group-btn">
-					          <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><span id="mydropdowndisplay">Letter</span> <span class="caret"></span></button>
-					          <ul class="dropdown-menu" id="mydropdownmenu">
-					            <li><a href="#">Letter</a></li>
-					            <li><a href="#">Unicode</a></li>
-					          </ul>
-					          <input type="hidden" id="mydropwodninput" name="category">
-					        </div>
-					      </div>
-								<div class="col-md-2 col-sm-6 add-button">
-									<button type="button" class="btn btn-primary">Add</button>
+								<div class="row @">
+									<div class="input-group col-md-6 col-sm-6 col-md-offset-2">
+						        <input class="form-control" type="text" value="" placeholder="" name="q">
+						        <div class="input-group-btn">
+						          <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><span id="mydropdowndisplay">Letter</span> <span class="caret"></span></button>
+						          <ul class="dropdown-menu" id="mydropdownmenu">
+						            <li><a href="#">Letter</a></li>
+						            <li><a href="#">Unicode</a></li>
+						          </ul>
+						          <input type="hidden" id="mydropwodninput" name="category">
+						        </div>
+						      </div>
+									<div class="col-md-2 col-sm-6 add-button">
+										<button type="button" class="btn btn-primary">Save</button>
+									</div>
 								</div>
-								<div class="col-md-2 col-sm-6 add-button">
-									<button type="button" class="btn btn-danger">Delete</button>
-								</div>
-								<div class="col-md-2 col-sm-6 add-button">
-									<button type="button" class="btn btn-default" id="mergeButton" disabled="disabled">Merge</button>
+								<div class="row">
+									<div class="col-md-2 col-sm-6 add-button col-md-offset-4">
+										<button type="button" class="btn btn-default" id="mergeButton" disabled="disabled">Merge</button>
+									</div>
+									<div class="col-md-2 col-sm-6 add-button">
+										<button type="button" class="btn btn-default" id="mergeButton" disabled="disabled">Split</button>
+									</div>
 								</div>
 							</div>
 
 						</div>
-						
+						<div class="container_option_base" id="baseline_options">
+							<div class="form-group col-sm-6 modif-line-value col-sm-offset-2">
+							    <label class="sr-only" for="baseline"></label>
+							    <div class="input-group">
+							      <div class="input-group-addon">Baseline</div>
+							      <input type="number" class="form-control" step="0.1" id="right">
+							    </div>
+							  </div>
+							  <div class="col-md-2 col-sm-6 add-button">
+									<button type="button" class="btn btn-primary">Save</button>
+								</div>
+						</div>
 					</div>
 					<div class="right_down">
 						<ul class="row letter-list">
@@ -242,45 +257,13 @@
 				</div>
 
 			</div>
-			<div class="modal fade bs-example-modal-sm" tabindex="-1" role="dialog">
-				<div class="modal-dialog">
-					<div class="modal-content">
-						<div class="modal-header">
-							<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-							<h4 class="modal-title">New</h4>
-						</div>
-						<div class="modal-body">
-							<p>Have you save your previous work ?</p>
-						</div>
-						<div class="modal-footer">
-							<button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-							<button id="valid-reset" type="button" class="btn btn-primary">Yes</button>
-						</div>
-					</div>
-				</div>
-
-			</div>
-			<div class="modal fade" tabindex="-1" role="dialog" id="baseline_modal">
-			  <div class="modal-dialog">
-			    <div class="modal-content">
-			      <div class="modal-header">
-			        <h4 class="modal-title">Baseline validation</h4>
-			      </div>
-			      <div class="modal-body">
-			        
-			      </div>
-			      <div class="modal-footer">
-			        <button type="button" class="btn btn-primary">Save changes</button>
-			      </div>
-			    </div>
-			  </div>
-			</div>
 		</div>
 	</div>
 
 	<div class="made_with">
 		Made with <a href="https://github.com/titi38/libnavajo">libnavajo</a>
 	</div>
+	<script type="text/javascript" src="js/session.js"></script>
 	<script type="text/javascript" src="js/init.js" ></script>
 	<script type="text/javascript" src="js/manipulate_canvas.js" ></script>
 	<script type="text/javascript" src="js/upload_file.js" ></script>

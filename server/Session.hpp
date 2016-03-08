@@ -15,9 +15,9 @@ class Session
 {
 public:
     Session();
-    std::string setFileName(std::string newFileName);
+    void setFileName(std::string newFileName);
     std::string getFileName();
-    int setToken(int newToken);
+    void setToken(int newToken);
     int getToken();
 private:
     std::string fileName;
