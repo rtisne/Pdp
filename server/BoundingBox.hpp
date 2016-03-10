@@ -9,17 +9,17 @@ class BoundingBox
 {
 public:
     BoundingBox();
-    BoundingBox(cv::Point P, int w, int h);
-    void setX(cv::Point P);
-    const cv::Point getX();
-    void setHeight(int x);
-    const int getHeight();
-    void setWidth(int x);
-    const int getWidth();
+    BoundingBox(cv::Point2f P, float w, float h);
+    void setX(cv::Point2f P);
+    const cv::Point2f getX();
+    void setHeight(float x);
+    const float getHeight();
+    void setWidth(float x);
+    const float getWidth();
 private:
-   cv::Point m_x;
-   int m_height;
-   int m_width;
+   cv::Point2f m_x;
+   float m_height;
+   float m_width;
    
 };
 

@@ -2,38 +2,38 @@
 
 BoundingBox::BoundingBox()
 {}
-BoundingBox::BoundingBox(cv::Point P, int w, int h)
+BoundingBox::BoundingBox(cv::Point2f P, float w, float h)
 {
 	m_x = P;
 	m_width = w;
 	m_height = h;
 }
-void BoundingBox::setX(cv::Point P)
+void BoundingBox::setX(cv::Point2f P)
 {
   m_x = P;
 }
 
-const cv::Point BoundingBox::getX()
+const cv::Point2f BoundingBox::getX()
 {
   return m_x;
 }
 
-void BoundingBox::setHeight(int x)
+void BoundingBox::setHeight(float x)
 {
   m_height = x;
 }
 
-const int BoundingBox::getHeight()
+const float BoundingBox::getHeight()
 {
   return m_height;
 }
 
-void BoundingBox::setWidth(int x)
+void BoundingBox::setWidth(float x)
 {
   m_width = x;
 }
 
-const int BoundingBox::getWidth()
+const float BoundingBox::getWidth()
 {
   return m_width;
 }

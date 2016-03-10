@@ -209,7 +209,6 @@ class MyDynamicRepository : public DynamicRepository
         json += ("\"down\":" + to_string(bb.getX().y + bb.getHeight()) + ",");
         json += ("\"letter\":\"" + letter + "\"");
         json += "}";
-
         return fromString(json, response);
       
       }
@@ -235,8 +234,14 @@ class MyDynamicRepository : public DynamicRepository
         request->getParameter("down", down);
         request->getParameter("letter", letter);
         int sessionIndex = getActiveSessionFromToken(stoi(token));
-        //activeSessions.at(sessionIndex)->getImage()->getListConnectedComponent().at(stoi(ccId)).setBoundingBox( BoundingBox(cv::Point(stoi(up), stoi(left)), stoi(right) - stoi(left), stoi(down) - stoi(up)))
+        activeSessions.at(sessionIndex)->getImage()->getConnectedComponentAtIndex(stoi(ccId))->setBoundingBox( BoundingBox(cv::Point2f(stof(left), stof(up)), stof(right) - stof(left), stof(down) - stof(up)));
         
+        if(activeSessions.at(sessionIndex)->getImage()->getConnectedComponentAtIndex(stoi(ccId))->getCharacter().getLabel() == "\0")
+        {
+          activeSessions.at(sessionIndex)->getImage()->getConnectedComponentAtIndex(stoi(ccId))->setCharacter(Character(letter));
+        }
+
+
         return fromString("ok", response);
       
       }

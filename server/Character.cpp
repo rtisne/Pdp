@@ -2,6 +2,10 @@
 
 Character::Character()
 {}
+Character::Character(std::string l)
+{
+	m_label = l;
+}
 
 
 void Character::setLabel(std::string l)

@@ -8,6 +8,7 @@ class Character
 {
 public:
     Character();
+    Character(std::string l);
     void setLabel(std::string l);
     const std::string getLabel();
     void setBase(int x);

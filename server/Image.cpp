@@ -29,6 +29,10 @@ const std::vector<ConnectedComponent> Image::getListConnectedComponent() const
 {
 	return m_listConnectedComponent;
 }
+ConnectedComponent* Image::getConnectedComponentAtIndex(int index)
+{
+  return &m_listConnectedComponent.at(index);
+}
 
 void Image::setListLine(std::vector<Line> L)
 {
