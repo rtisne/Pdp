@@ -8,7 +8,7 @@ function Controller(canvas, previewCanvas) {
     $(".container_right").show();
     $('#baseline_options').hide();
     this.canvas.boundingBox.select(0);
-    this.previewCanvas.zoomTo(this.canvas.boundingBox.rects[0]);
+    this.previewCanvas.zoomTo(this.canvas.boundingBox.rects[0], 0);
     this.previewCanvas.visible = true;
 
 
@@ -24,7 +24,7 @@ function Controller(canvas, previewCanvas) {
         if(id != 'false')
         {   
             $("#letter_options").show();
-             $('#baseline_options').hide();
+            $('#baseline_options').hide();
             controller.canvas.baseline.select("false");
             var mergeButton = document.getElementById("mergeButton");
             if(e.metaKey)
@@ -35,9 +35,7 @@ function Controller(canvas, previewCanvas) {
             else
             {
                 controller.canvas.boundingBox.select(id);
-                controller.previewCanvas.zoomTo(controller.canvas.boundingBox.rects[id]);
-                controller.previewCanvas.visible = true;
-                mergeButton.disabled="disabled";
+                session.getInfoOnCC(id, controller);
             }    
         }
         // Check if we clic on a Baseline
@@ -48,7 +46,7 @@ function Controller(canvas, previewCanvas) {
             controller.canvas.baseline.select(id);
             $('#letter_options').hide();
             $('#baseline_options').show();
-            controller.previewCanvas.zoomTo(controller.canvas.baseline.lines[id]);
+            controller.previewCanvas.zoomTo(controller.canvas.baseline.lines[id], id);
             controller.previewCanvas.visible = true;
 
         }  
@@ -77,23 +75,30 @@ function Controller(canvas, previewCanvas) {
 
     //Déplacement de la base UP du caractère
     document.getElementById('up').addEventListener('change', function(e){
-        controller.previewCanvas.position_up_line = $("#up").val();
+        controller.previewCanvas.position_up_line = parseFloat($("#up").val());
     }, true);
 
     //Déplacement de la base DOWN du caractère
     document.getElementById('down').addEventListener('change', function(e){
-        controller.previewCanvas.position_down_line = $("#down").val();
+        controller.previewCanvas.position_down_line = parseFloat($("#down").val());
     }, true);
 
     //Déplacement de la base LEFT du caractère
     document.getElementById('left').addEventListener('change', function(e){
-        controller.previewCanvas.position_left_line = $("#left").val();
+        controller.previewCanvas.position_left_line = parseFloat($("#left").val());
     }, true);
 
     //Déplacement de la base RIGHT du caractère
     document.getElementById('right').addEventListener('change', function(e){
-        controller.previewCanvas.position_right_line = $("#right").val();
+        controller.previewCanvas.position_right_line = parseFloat($("#right").val());
     }, true);
+
+    //Appui sur le boutton save
+    document.getElementById('save').addEventListener('click', function(e){
+        session.updateInfoOnCC(controller.previewCanvas.ccSelected, parseFloat($("#left").val()), parseFloat($("#right").val()),  parseFloat($("#up").val()), parseFloat($("#down").val()), $("#letter").val());
+    }, true);
+
+
 
     // Détection boutton reset
     document.getElementById('button_trash').addEventListener('click', function(e){
@@ -115,6 +120,27 @@ Controller.prototype.draw = function(){
     this.canvas.draw();
     this.previewCanvas.draw();
 
+}
+
+
+Controller.prototype.manipulateInfos = function manipulateInfos(id, left, right, up, down, letter){
+    this.previewCanvas.zoomTo(this.canvas.boundingBox.rects[id], id);
+    this.previewCanvas.visible = true;
+    this.previewCanvas.position_up_line = up;
+    this.previewCanvas.position_down_line = down;
+    this.previewCanvas.position_left_line = left;
+    this.previewCanvas.position_right_line = right;
+    if(letter == "null")
+        $("#letter").val("");
+    else
+        $("#letter").val(letter);
+
+    $("#up").val(up);
+    $("#down").val(down);
+    $("#left").val(left);
+    $("#right").val(right);
+
+    mergeButton.disabled="disabled";
 }
 
 // Constructeur de la classe ProcessingImage
@@ -411,6 +437,8 @@ function PreviewCanvas(canvas, image)
     this.position_right_line = 0;
     this.position_baseline = 0;
 
+    this.ccSelected = 0;
+
     
 
     var myPreviewCanvas = this;
@@ -455,32 +483,32 @@ PreviewCanvas.prototype.draw = function() {
         {
             //UpLine
             ctx.beginPath();
-            ctx.moveTo(0, this.position_up_line);
-            ctx.lineTo(this.width, this.position_up_line);
+            ctx.moveTo(0, this.image.y + this.position_up_line);
+            ctx.lineTo(this.width, this.image.y + this.position_up_line);
             ctx.lineWidth = 1 / this.scaleY;
             ctx.strokeStyle = '#ff0000';
             ctx.stroke();
 
             //DownLine
             ctx.beginPath();
-            ctx.moveTo(0, this.position_down_line);
-            ctx.lineTo(this.width, this.position_down_line);
+            ctx.moveTo(0, this.image.y + this.position_down_line);
+            ctx.lineTo(this.width, this.image.y + this.position_down_line);
             ctx.lineWidth = 1 / this.scaleY;
             ctx.strokeStyle = '#ff0000';
             ctx.stroke();
 
             //LeftLine
             ctx.beginPath();
-            ctx.moveTo(this.position_left_line, 0);
-            ctx.lineTo(this.position_left_line, this.height);
+            ctx.moveTo(this.image.x + this.position_left_line, 0);
+            ctx.lineTo(this.image.x + this.position_left_line, this.height);
             ctx.lineWidth = 1 / this.scaleX;
             ctx.strokeStyle = '#ff0000';
             ctx.stroke();
 
             //RightLine
             ctx.beginPath();
-            ctx.moveTo(this.position_right_line, 0);
-            ctx.lineTo(this.position_right_line, this.height);
+            ctx.moveTo(this.image.x + this.position_right_line, 0);
+            ctx.lineTo(this.image.x + this.position_right_line, this.height);
             ctx.lineWidth = 1 / this.scaleX;
             ctx.strokeStyle = '#ff0000';
             ctx.stroke();
@@ -491,10 +519,11 @@ PreviewCanvas.prototype.draw = function() {
     }
    
 }
-PreviewCanvas.prototype.zoomTo = function(obj){
+PreviewCanvas.prototype.zoomTo = function(obj, id){
 
     if(obj instanceof Rectangle)
     {
+        this.ccSelected = id;
         var rect = obj;
         this.image.x = (this.width/2) - rect.rect.x - rect.rect.w/2;
         this.image.y = (this.height/2) - rect.rect.y - rect.rect.h/2;
@@ -505,16 +534,6 @@ PreviewCanvas.prototype.zoomTo = function(obj){
 
         this.scaleY = this.scaleX;
         var actualRect = rect.rect;
-
-        this.position_up_line = this.image.y + actualRect.y;
-        this.position_down_line = this.image.y + actualRect.y + actualRect.h;
-        this.position_left_line = this.image.x + actualRect.x;
-        this.position_right_line = this.image.x + actualRect.x + actualRect.w;
-
-        $("#up").val(this.position_up_line);
-        $("#down").val(this.position_down_line);
-        $("#left").val(this.position_left_line);
-        $("#right").val(this.position_right_line);
         this.isBaseline = false; 
     }
     else if (obj instanceof Line)

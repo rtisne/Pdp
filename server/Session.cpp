@@ -17,6 +17,7 @@ Image* Session::getImage(){
 	return m_image;
 }
 
+
 void Session::setToken(int t){
 	m_token = t;
 }

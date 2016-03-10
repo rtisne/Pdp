@@ -70,3 +70,42 @@ Session.prototype.removeSession = function()
     }
 	});
 }
+
+
+
+Session.prototype.getInfoOnCC = function(id, callback)
+{
+	console.log(id);
+	$.ajax({
+    url: 'getInfoOnCC.txt',
+    type: 'POST',
+    data: "token=" + this.token + "&id=" + id,
+    context: callback,
+    success: function(data, textStatus, jqXHR)
+    {
+    	var info = JSON.parse(data);
+    	callback.manipulateInfos(info.id, info.left, info.right, info.up, info.down, info.letter);
+    },
+    error: function(error)
+    {
+ 			console.log('ERRORS: ' + error);
+    }
+	});
+}
+
+Session.prototype.updateInfoOnCC = function(id, left, right, up, down, letter)
+{
+	$.ajax({
+    url: 'updateInfoOnCC.txt',
+    type: 'POST',
+    data: "token=" + this.token + "&id=" + id + "&left=" + left + "&right=" + right + "&up=" + up + "&down=" + down + "&letter=" + letter,
+    success: function(data, textStatus, jqXHR)
+    {
+    	console.log(data);
+    },
+    error: function(error)
+    {
+ 			console.log('ERRORS: ' + error);
+    }
+	});
+}

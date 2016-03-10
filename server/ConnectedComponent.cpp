@@ -29,7 +29,9 @@ void ConnectedComponent::initBoundingBox()
   m_boundingBox.setHeight(rect.height);
   m_boundingBox.setWidth(rect.width);
 }
-
+void ConnectedComponent::setBoundingBox(const BoundingBox b){
+  m_boundingBox = b;
+}
 BoundingBox ConnectedComponent::getBoundingBox()
 {
   return m_boundingBox;

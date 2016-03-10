@@ -2,7 +2,12 @@
 
 BoundingBox::BoundingBox()
 {}
-
+BoundingBox::BoundingBox(cv::Point P, int w, int h)
+{
+	m_x = P;
+	m_width = w;
+	m_height = h;
+}
 void BoundingBox::setX(cv::Point P)
 {
   m_x = P;

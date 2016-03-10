@@ -72,16 +72,16 @@ std::string InitiateSession(std::string fileName,HttpRequest *request)
   int cptExample=0;
   Session * mySession = new Session();
   
-    srand(time(NULL));
-    cptExample= rand();
-    NVJ_LOG->append(NVJ_INFO, fileName);
-    mySession->setToken(cptExample);
-    mySession->setFileName(fileName);
-    request->setSessionAttribute ("mySession", mySession );
-    NVJ_LOG->append(NVJ_INFO, mySession->getFileName());
-  
+  srand(time(NULL));
+  cptExample = rand();
+  mySession->setToken(cptExample);
+  mySession->setFileName((UPLOAD_DIR)+fileName);  
   activeSessions.push_back(mySession);
-  return "{\"fileName\":\""+mySession->getFileName()+"\",\"token\":"+to_string(mySession->getToken())+"}";
+  mySession->getImage()->BinarizedImage();
+  mySession->getImage()->extractAllConnectedComponents();
+
+  //mySession->getImage()->extractAllConnectedComponents();
+  return "{\"fileName\":\""+fileName+"\",\"token\":"+to_string(mySession->getToken())+"}";
 }
 
 int getActiveSessionFromToken(int token)
@@ -129,12 +129,12 @@ class MyDynamicRepository : public DynamicRepository
             else
             {
               std::string newFileName = gen_random(fields[it->first]->GetFileName().substr(fields[it->first]->GetFileName().find(".")));
-              std::string json_Session = InitiateSession(newFileName,request);
+             
               NVJ_LOG->append(NVJ_INFO, "Got file field: [" + it->first + "] Filename:[" + newFileName + "] TempFilename:["  + fields[it->first]->GetTempFileName() + "]\n");
 
 
               std::ifstream  src( fields[it->first]->GetTempFileName().c_str(), std::ios::binary);
-              string dstFilename = string(UPLOAD_DIR)+'/'+newFileName;
+              string dstFilename = string(UPLOAD_DIR)+newFileName;
               std::ofstream  dst( dstFilename.c_str(), std::ios::binary);
               if (!src || !dst)
                 NVJ_LOG->append(NVJ_ERROR, "Copy error: check read/write permissions");
@@ -143,6 +143,7 @@ class MyDynamicRepository : public DynamicRepository
               src.close();
               dst.close();
               myUploadRepo->reload();
+              std::string json_Session = InitiateSession(newFileName,request);
               NVJ_LOG->append(NVJ_ERROR, json_Session);
               return fromString(json_Session, response); 
             }
@@ -163,21 +164,18 @@ class MyDynamicRepository : public DynamicRepository
         string token;
         request->getParameter("token", token);
         int sessionIndex = getActiveSessionFromToken(stoi(token));
-        Image * img = new Image(UPLOAD_DIR + activeSessions.at(sessionIndex)->getFileName());
-        //Line * line = new Line();
-        img->BinarizedImage();
-         //img->ImgMask();
-        img->extractAllConnectedComponents();
-        std::vector<ConnectedComponent> ListTmpCC = img->getListConnectedComponent();
+
+        Image* img = activeSessions.at(sessionIndex)->getImage();
+        vector<ConnectedComponent> ListTmpCC = img->getListConnectedComponent();
         string json = "{";
         for(int i= 0; i < ListTmpCC.size()-1; i++)
         {
-          Rect rect = boundingRect(ListTmpCC[i].getListPoint());
+          BoundingBox bb = ListTmpCC[i].getBoundingBox();
           json += ("\" "+ to_string(i) +"\":{");
-          json += ("\"x\":" + to_string(rect.x) + ",");
-          json += ("\"y\":" + to_string(rect.y) + ",");
-          json += ("\"width\":" + to_string(rect.width) + ",");
-          json += ("\"height\":" + to_string(rect.height));
+          json += ("\"x\":" + to_string(bb.getX().x) + ",");
+          json += ("\"y\":" + to_string(bb.getX().y) + ",");
+          json += ("\"width\":" + to_string(bb.getWidth()) + ",");
+          json += ("\"height\":" + to_string(bb.getHeight()));
           json += ("}");
 
           if(i != ListTmpCC.size()-2)
@@ -185,12 +183,65 @@ class MyDynamicRepository : public DynamicRepository
             json += (",");
           }
         }
-        json += ("}");        
-        return fromString(json, response); 
+        json += ("}");   
+        return fromString(json, response);
       }
         
     } getBoundingBox;
 
+    class getInfoOnCC: public MyDynamicPage
+    {
+      bool getPage(HttpRequest* request, HttpResponse *response)
+      {
+        string token;
+        string ccId;
+        request->getParameter("token", token);
+        request->getParameter("id", ccId);
+        int sessionIndex = getActiveSessionFromToken(stoi(token));
+        ConnectedComponent cc = activeSessions.at(sessionIndex)->getImage()->getListConnectedComponent().at(stoi(ccId));
+        BoundingBox bb = cc.getBoundingBox();
+        string letter = (cc.getCharacter().getLabel() != "\0") ? (cc.getCharacter().getLabel()) : ("null");
+        string json = "{";
+        json += ("\"id\":" + ccId + ",");
+        json += ("\"left\":" + to_string(bb.getX().x) + ",");
+        json += ("\"right\":" + to_string(bb.getX().x + bb.getWidth()) + ",");
+        json += ("\"up\":" + to_string(bb.getX().y) + ",");
+        json += ("\"down\":" + to_string(bb.getX().y + bb.getHeight()) + ",");
+        json += ("\"letter\":\"" + letter + "\"");
+        json += "}";
+
+        return fromString(json, response);
+      
+      }
+        
+    } getInfoOnCC;    
+
+    class updateInfoOnCC: public MyDynamicPage
+    {
+      bool getPage(HttpRequest* request, HttpResponse *response)
+      {
+        string token;
+        string ccId;
+        string left;
+        string right;
+        string up;
+        string down;
+        string letter;
+        request->getParameter("token", token);
+        request->getParameter("id", ccId);
+        request->getParameter("left", left);
+        request->getParameter("right", right);
+        request->getParameter("up", up);
+        request->getParameter("down", down);
+        request->getParameter("letter", letter);
+        int sessionIndex = getActiveSessionFromToken(stoi(token));
+        //activeSessions.at(sessionIndex)->getImage()->getListConnectedComponent().at(stoi(ccId)).setBoundingBox( BoundingBox(cv::Point(stoi(up), stoi(left)), stoi(right) - stoi(left), stoi(down) - stoi(up)))
+        
+        return fromString("ok", response);
+      
+      }
+        
+    } updateInfoOnCC;
 
     class stopSession: public MyDynamicPage
     {
@@ -199,7 +250,7 @@ class MyDynamicRepository : public DynamicRepository
         string token;
         request->getParameter("token", token);
         int sessionIndex = getActiveSessionFromToken(stoi(token));
-        string filePath = UPLOAD_DIR + activeSessions.at(sessionIndex)->getFileName();
+        string filePath = activeSessions.at(sessionIndex)->getFileName();
         if( remove( filePath.c_str() ) != 0 )
         {
           NVJ_LOG->append(NVJ_ERROR, "Error Deleted");
@@ -233,6 +284,8 @@ class MyDynamicRepository : public DynamicRepository
       add("uploader.txt",&uploader);
       add("index.html",&controller);
       add("getBoundingBox.txt",&getBoundingBox);
+      add("getInfoOnCC.txt",&getInfoOnCC);
+      add("updateInfoOnCC.txt",&updateInfoOnCC);
       add("stopSession.txt",&stopSession);
     }
 };

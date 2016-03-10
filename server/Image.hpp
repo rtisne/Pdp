@@ -14,7 +14,7 @@ public:
     void setImg(cv::Mat P);
     const cv::Mat getImg();
     void setListConnectedComponent(std::vector<ConnectedComponent> L);
-    const std::vector<ConnectedComponent> getListConnectedComponent();
+    const std::vector<ConnectedComponent> getListConnectedComponent() const;
     void ImgMask();
     void setListLine(std::vector<Line> L);
     const std::vector<Line> getListLine();

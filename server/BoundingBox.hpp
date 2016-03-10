@@ -9,6 +9,7 @@ class BoundingBox
 {
 public:
     BoundingBox();
+    BoundingBox(cv::Point P, int w, int h);
     void setX(cv::Point P);
     const cv::Point getX();
     void setHeight(int x);

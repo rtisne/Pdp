@@ -16,6 +16,7 @@ public:
     const std::vector<cv::Point> getListPoint();
     int sizeListP();
     void initBoundingBox();
+    void setBoundingBox(BoundingBox b);
     BoundingBox getBoundingBox();
     void initCharacter(std::string name);
     void setCharacter(Character c);

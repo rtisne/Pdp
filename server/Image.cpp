@@ -3,7 +3,11 @@
 
 Image::Image(std::string path)
 {
-   m_img = cv::imread(path, CV_LOAD_IMAGE_COLOR);
+  m_img = cv::imread(path, CV_LOAD_IMAGE_COLOR);
+  if(! m_img.data )                              // Check for invalid input
+  {
+    std::cout <<  "Could not open or find the image" << std::endl ;
+  }
 }
 
 void Image::setImg(cv::Mat P)
@@ -21,7 +25,7 @@ void Image::setListConnectedComponent(std::vector<ConnectedComponent> L)
   m_listConnectedComponent = L;
 }
 
-const std::vector<ConnectedComponent> Image::getListConnectedComponent()
+const std::vector<ConnectedComponent> Image::getListConnectedComponent() const
 {
 	return m_listConnectedComponent;
 }
@@ -75,7 +79,6 @@ void Image::extractConnectedComponent(cv::Mat &input,const cv::Point &seed,Conne
     ptsQueue.push_back(seed);
     pixS = BACKGROUND;
   }    
-
   while (! ptsQueue.empty()) {
 
     cv::Point current = ptsQueue.front();
@@ -84,7 +87,6 @@ void Image::extractConnectedComponent(cv::Mat &input,const cv::Point &seed,Conne
     ListTmp = cc.getListPoint();
     ListTmp.push_back(current);
     cc.setListPoint(ListTmp);
-
     // enque neighboors
     const cv::Point e(current.x + 1, current.y);
     const cv::Point w(current.x - 1, current.y);
@@ -97,6 +99,7 @@ void Image::extractConnectedComponent(cv::Mat &input,const cv::Point &seed,Conne
     pix = BACKGROUND;
       }
     }
+
     if (e.x < input.cols) {
       uchar &pix = input.at<unsigned char>(e.y, e.x);
       if (pix != BACKGROUND) {
@@ -104,6 +107,7 @@ void Image::extractConnectedComponent(cv::Mat &input,const cv::Point &seed,Conne
         pix = BACKGROUND;
       }
     }
+
     if (s.y < input.rows) {
       uchar &pix = input.at<unsigned char>(s.y, s.x);
       if (pix != BACKGROUND) {
@@ -111,6 +115,7 @@ void Image::extractConnectedComponent(cv::Mat &input,const cv::Point &seed,Conne
         pix = BACKGROUND;
       }
     }
+
     if (w.x >= 0) {
       uchar &pix = input.at<unsigned char>(w.y, w.x);
       if (pix != BACKGROUND) {
@@ -119,7 +124,7 @@ void Image::extractConnectedComponent(cv::Mat &input,const cv::Point &seed,Conne
       }
     }
   }
-  
+
 }
 
 void Image::extractAllConnectedComponents()
@@ -128,11 +133,9 @@ void Image::extractAllConnectedComponents()
 
   m_listConnectedComponent.clear();
   m_listConnectedComponent.reserve(m_img.rows); //arbitrary
-
+ 
   cv::Mat tmp = m_img.clone();
-
   ConnectedComponent cc;
-
   for (int i = 0; i < m_img.rows; ++i) {
     const uchar *r = tmp.ptr<uchar>(i);
     for (int j = 0; j < m_img.cols; ++j) {
