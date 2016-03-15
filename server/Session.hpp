@@ -14,6 +14,7 @@ public:
     void setToken(int t);
     const int getToken();
     Image* getImage();
+    Font* getFont();
 private:
     std::string m_fileName;
     int m_token;

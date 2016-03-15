@@ -7,6 +7,7 @@ Session::Session()
 void Session::setFileName(std::string f){
 	m_fileName = f;
 	m_image = new Image(f);
+	m_font = new Font();
 }
 
 const std::string Session::getFileName(){
@@ -15,6 +16,9 @@ const std::string Session::getFileName(){
 
 Image* Session::getImage(){
 	return m_image;
+}
+Font* Session::getFont(){
+	return m_font;
 }
 
 

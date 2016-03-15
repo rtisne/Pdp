@@ -93,12 +93,21 @@ Session.prototype.getInfoOnCC = function(id, callback)
 	});
 }
 
-Session.prototype.updateInfoOnCC = function(id, left, right, up, down, letter)
+Session.prototype.updateInfoOnCC = function(activeId, ids, left, right, up, down, letter)
 {
+	var jsonId = "{";
+	for	(index = 0; index < ids.length; index++) {
+    jsonId += "\"" + ids[index] + "\":" + ids[index];
+    if(index < ids.length-1)
+    {
+    	jsonId += ",";
+    }
+	}
+	jsonId += "}";
 	$.ajax({
     url: 'updateInfoOnCC.txt',
     type: 'POST',
-    data: "token=" + this.token + "&id=" + id + "&left=" + left + "&right=" + right + "&up=" + up + "&down=" + down + "&letter=" + letter,
+    data: "token=" + this.token + "&activeid=" + activeId + "&id=" + jsonId + "&left=" + left + "&right=" + right + "&up=" + up + "&down=" + down + "&letter=" + letter,
     success: function(data, textStatus, jqXHR)
     {
     	console.log(data);

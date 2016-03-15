@@ -29,12 +29,14 @@ function Controller(canvas, previewCanvas) {
             var mergeButton = document.getElementById("mergeButton");
             if(e.metaKey)
             {
+                controller.canvas.selectedCC.push(id);
                 controller.canvas.boundingBox.addToSelection(id);
                 mergeButton.disabled=false;
             }
             else
             {
                 controller.canvas.boundingBox.select(id);
+                controller.canvas.selectedCC = [id];
                 session.getInfoOnCC(id, controller);
             }    
         }
@@ -95,8 +97,26 @@ function Controller(canvas, previewCanvas) {
 
     //Appui sur le boutton save
     document.getElementById('save').addEventListener('click', function(e){
-        session.updateInfoOnCC(controller.previewCanvas.ccSelected, parseFloat($("#left").val()), parseFloat($("#right").val()),  parseFloat($("#up").val()), parseFloat($("#down").val()), $("#letter").val());
+        if($("#letter").val() != "")
+        {
+            for(var i = 0; i < controller.canvas.selectedCC.length; i++)
+                controller.canvas.boundingBox.rects[controller.canvas.selectedCC[i]].labeled = true;
+        }
+        else
+        {
+            for(var i = 0; i < controller.canvas.selectedCC.length; i++)
+                controller.canvas.boundingBox.rects[controller.canvas.selectedCC[i]].labeled = false;
+        }
+        session.updateInfoOnCC(controller.previewCanvas.ccSelected,controller.canvas.selectedCC, parseFloat($("#left").val()), parseFloat($("#right").val()),  parseFloat($("#up").val()), parseFloat($("#down").val()), $("#letter").val());
     }, true);
+
+    $('.container_right').keypress(function (e) {
+        var key = e.which;
+        if(key == 13)  // the enter key code
+        {
+           $("#save").click(); 
+        }
+    });
 
 
 
@@ -226,17 +246,21 @@ function Rectangle(rect){
     this.rect = rect;
     this.color = '#3498db';
     this.selectedColor = '#e74c3c';
+    this.labeledColor = '#2ecc71';
     this.visible = true;
     this.selected = false;
+    this.labeled = false;
 }
 
 Rectangle.prototype.draw = function(ctx, image){
     if(this.visible)
     {
+        ctx.fillStyle = this.color;
+        if(this.labeled)
+            ctx.fillStyle = this.labeledColor;
         if(this.selected)
             ctx.fillStyle = this.selectedColor;
-        else
-            ctx.fillStyle = this.color;
+        
 
         ctx.globalAlpha=0.4;
         ctx.fillRect(image.x + this.rect.x,image.y + this.rect.y, this.rect.w, this.rect.h);
@@ -298,6 +322,8 @@ function CanvasState(canvas, image, baseline, boundingBox) {
     this.panX = 0;
     this.panY = 0;
 
+    this.selectedCC = [];
+
     //Coordonnées de la selection sur l'image
     this.dragoffx = 0;
     this.dragoffy = 0;
@@ -330,7 +356,6 @@ CanvasState.prototype.onMouseDown= function(e){
 
     var image = this.image;
 
-    
     if (image.contains(mx, my)) {
     
         this.dragoffx = mx - image.x;

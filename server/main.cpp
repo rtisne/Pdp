@@ -9,10 +9,12 @@
 #include "Image.hpp"
 #include "Font.hpp"
 #include "Session.hpp"
+#include "json.hpp"
 
 
 using namespace cv;
 using namespace std;
+using json = nlohmann::json;
 
 
 #define UPLOAD_DIR "../client/data/"
@@ -200,7 +202,11 @@ class MyDynamicRepository : public DynamicRepository
         int sessionIndex = getActiveSessionFromToken(stoi(token));
         ConnectedComponent cc = activeSessions.at(sessionIndex)->getImage()->getListConnectedComponent().at(stoi(ccId));
         BoundingBox bb = cc.getBoundingBox();
-        string letter = (cc.getCharacter().getLabel() != "\0") ? (cc.getCharacter().getLabel()) : ("null");
+        int charactereId = activeSessions.at(sessionIndex)->getFont()->indexOfCharacterForCC(stoi(ccId));
+        string letter = "";
+        if(charactereId != -1)
+          letter = activeSessions.at(sessionIndex)->getFont()->characterAtIndex(charactereId)->getLabel();
+        
         string json = "{";
         json += ("\"id\":" + ccId + ",");
         json += ("\"left\":" + to_string(bb.getX().x) + ",");
@@ -219,27 +225,57 @@ class MyDynamicRepository : public DynamicRepository
     {
       bool getPage(HttpRequest* request, HttpResponse *response)
       {
+
+        string listCCId;
         string token;
-        string ccId;
         string left;
         string right;
         string up;
         string down;
         string letter;
+        string activeId;
         request->getParameter("token", token);
-        request->getParameter("id", ccId);
         request->getParameter("left", left);
         request->getParameter("right", right);
         request->getParameter("up", up);
         request->getParameter("down", down);
         request->getParameter("letter", letter);
+        request->getParameter("id", listCCId);
+        request->getParameter("activeid", activeId);
+
         int sessionIndex = getActiveSessionFromToken(stoi(token));
-        activeSessions.at(sessionIndex)->getImage()->getConnectedComponentAtIndex(stoi(ccId))->setBoundingBox( BoundingBox(cv::Point2f(stof(left), stof(up)), stof(right) - stof(left), stof(down) - stof(up)));
-        
-        if(activeSessions.at(sessionIndex)->getImage()->getConnectedComponentAtIndex(stoi(ccId))->getCharacter().getLabel() == "\0")
-        {
-          activeSessions.at(sessionIndex)->getImage()->getConnectedComponentAtIndex(stoi(ccId))->setCharacter(Character(letter));
+
+        auto j = json::parse(listCCId);
+        for (json::iterator it = j.begin(); it != j.end(); ++it) {
+          std::cout << *it << '\n';
+          int idCC = *it;
+
+          if(idCC == stoi(activeId))
+            activeSessions.at(sessionIndex)->getImage()->getConnectedComponentAtIndex(idCC)->setBoundingBox( BoundingBox(cv::Point2f(stof(left), stof(up)), stof(right) - stof(left), stof(down) - stof(up)));
+
+          int indexCharacterForCC = activeSessions.at(sessionIndex)->getFont()->indexOfCharacterForCC(idCC);
+          if(indexCharacterForCC != -1)
+          {
+            activeSessions.at(sessionIndex)->getFont()->characterAtIndex(indexCharacterForCC)->removeComposant(
+              idCC);
+            if(activeSessions.at(sessionIndex)->getFont()->characterAtIndex(indexCharacterForCC)->countComposant() <= 0)
+              activeSessions.at(sessionIndex)->getFont()->removeCharacter(indexCharacterForCC);
+          }
+          int indexCharacter = activeSessions.at(sessionIndex)->getFont()->indexOfCharacter(letter);
+          
+          if(indexCharacter == -1)
+            activeSessions.at(sessionIndex)->getFont()->addCharacter(Character(letter));
+
+          indexCharacter = activeSessions.at(sessionIndex)->getFont()->indexOfCharacter(letter);
+
+          activeSessions.at(sessionIndex)->getFont()->characterAtIndex(indexCharacter)->addComposant(idCC);
         }
+        
+        // activeSessions.at(sessionIndex)->getImage()->getConnectedComponentAtIndex(stoi(ccId))->setBoundingBox( BoundingBox(cv::Point2f(stof(left), stof(up)), stof(right) - stof(left), stof(down) - stof(up)));
+
+        
+        
+        
 
 
         return fromString("ok", response);

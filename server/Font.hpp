@@ -1,6 +1,8 @@
 #ifndef FONT_H
 #define FONT_H
 
+#include <string.h> 
+#include <iostream>
 #include "Character.hpp"
 
 class Font
@@ -15,6 +17,12 @@ public:
     void setBaseline(int x);
     const int getBaseline();
     void addCharacter(Character c);
+    bool hasCharacter(Character c);
+    int indexOfCharacter(std::string c);
+    int indexOfCharacterForCC(int idCC);
+    Character* characterAtIndex(int id);
+    void removeCharacter(int id);
+    int countCharacter();
 private:
    	std::string m_name;
    	std::vector<Character> m_listCharacter;

@@ -62,7 +62,7 @@ MAIN_OBJS = \
 		  Image.o \
 		  Session.o \
 		  Binarization.o \
-		  main.o
+		  main.o \
 
 BOUNDINGBOX = BoundingBox
 
@@ -79,6 +79,7 @@ IMAGE= Image
 SESSION= Session
 
 BINARIZATION= Binarization
+
 
 
 
