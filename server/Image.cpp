@@ -32,9 +32,11 @@ const std::vector<Line> Image::getListLine()
 
 cv::Rect Image::getBoundingBoxAtIndex(int index,int line)
 {
+
   std::vector<ConnectedComponent> ListTmpCC = m_listLine[line].getListCC();
   return cv::boundingRect(ListTmpCC[index].getListPoint());
 }
+
 
 ConnectedComponent Image::getConnectedComponnentAt(int index, int line){
   return m_listLine[line].getConnectedComponentAtIndex(index);
