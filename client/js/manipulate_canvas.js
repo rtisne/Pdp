@@ -37,7 +37,7 @@ function Controller(canvas, previewCanvas) {
             {
                 controller.canvas.boundingBox.select(id);
                 controller.canvas.selectedCC = [id];
-                session.getInfoOnCC(id, controller);
+                session.getInfoOnCC(id,controller.canvas.boundingBox.rects[id].idCC, controller.canvas.boundingBox.rects[id].idLine, controller);
             }    
         }
         // Check if we clic on a Baseline
@@ -107,7 +107,21 @@ function Controller(canvas, previewCanvas) {
             for(var i = 0; i < controller.canvas.selectedCC.length; i++)
                 controller.canvas.boundingBox.rects[controller.canvas.selectedCC[i]].labeled = false;
         }
-        session.updateInfoOnCC(controller.previewCanvas.ccSelected,controller.canvas.selectedCC, parseFloat($("#left").val()), parseFloat($("#right").val()),  parseFloat($("#up").val()), parseFloat($("#down").val()), $("#letter").val());
+        var ids = controller.canvas.selectedCC;
+        var jsonId = "{";
+        for (index = 0; index < ids.length; index++) {
+            jsonId += "\"" + index + "\":{";
+            jsonId += "\"idCC\":" + controller.canvas.boundingBox.rects[ids[index]].idCC + ",";
+            jsonId += "\"idLine\":" + controller.canvas.boundingBox.rects[ids[index]].idLine;
+            jsonId += "}";
+            if(index < ids.length-1)
+            {
+                jsonId += ",";
+            }
+           
+        }
+        jsonId += "}";
+        session.updateInfoOnCC(controller.previewCanvas.ccSelected,jsonId,controller.canvas.selectedCC, parseFloat($("#left").val()), parseFloat($("#right").val()),  parseFloat($("#up").val()), parseFloat($("#down").val()), $("#letter").val());
     }, true);
 
     $('.container_right').keypress(function (e) {
@@ -242,8 +256,10 @@ Baseline.prototype.select = function (id){
 }
 
 
-function Rectangle(rect){
+function Rectangle(rect, idCC, idLine){
     this.rect = rect;
+    this.idCC = idCC;
+    this.idLine = idLine;
     this.color = '#3498db';
     this.selectedColor = '#e74c3c';
     this.labeledColor = '#2ecc71';
@@ -268,7 +284,7 @@ Rectangle.prototype.draw = function(ctx, image){
     }
 }
 
-//Constructeur de la bounding box
+//Constructeur des bounding box
 function BoundingBox(rects) {
     this.rects = rects;
 
@@ -583,7 +599,7 @@ function init(src, boundingBox) {
 
     var listRect = new Array();
     for (var rect in boundingBox) {
-        listRect.push(new Rectangle({x:boundingBox[rect].x, y:boundingBox[rect].y, w:boundingBox[rect].width, h: boundingBox[rect].height}));
+        listRect.push(new Rectangle({x:boundingBox[rect].x, y:boundingBox[rect].y, w:boundingBox[rect].width, h: boundingBox[rect].height},boundingBox[rect].idCC, boundingBox[rect].idLine));
     }
 
     var boundingBox = new BoundingBox(listRect);

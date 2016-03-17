@@ -73,18 +73,18 @@ Session.prototype.removeSession = function()
 
 
 
-Session.prototype.getInfoOnCC = function(id, callback)
+Session.prototype.getInfoOnCC = function(id, idCC, idLine, callback)
 {
-	console.log(id);
+    console.log(idCC + ":" + idLine);
 	$.ajax({
     url: 'getInfoOnCC.txt',
     type: 'POST',
-    data: "token=" + this.token + "&id=" + id,
+    data: "token=" + this.token + "&idCC=" + idCC +"&idLine="+ idLine,
     context: callback,
     success: function(data, textStatus, jqXHR)
     {
     	var info = JSON.parse(data);
-    	callback.manipulateInfos(info.id, info.left, info.right, info.up, info.down, info.letter);
+    	callback.manipulateInfos(id, info.left, info.right, info.up, info.down, info.letter);
     },
     error: function(error)
     {
@@ -93,17 +93,9 @@ Session.prototype.getInfoOnCC = function(id, callback)
 	});
 }
 
-Session.prototype.updateInfoOnCC = function(activeId, ids, left, right, up, down, letter)
+Session.prototype.updateInfoOnCC = function(activeId, jsonId, ids, left, right, up, down, letter)
 {
-	var jsonId = "{";
-	for	(index = 0; index < ids.length; index++) {
-    jsonId += "\"" + ids[index] + "\":" + ids[index];
-    if(index < ids.length-1)
-    {
-    	jsonId += ",";
-    }
-	}
-	jsonId += "}";
+	console.log(jsonId);
 	$.ajax({
     url: 'updateInfoOnCC.txt',
     type: 'POST',

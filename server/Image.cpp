@@ -17,21 +17,7 @@ void Image::setImg(cv::Mat P)
 
 const cv::Mat Image::getImg()
 {
-	return m_img;
-}
-
-void Image::setListConnectedComponent(std::vector<ConnectedComponent> L)
-{
-  m_listConnectedComponent = L;
-}
-
-const std::vector<ConnectedComponent> Image::getListConnectedComponent() const
-{
-	return m_listConnectedComponent;
-}
-ConnectedComponent* Image::getConnectedComponentAtIndex(int index)
-{
-  return &m_listConnectedComponent.at(index);
+  return m_img;
 }
 
 void Image::setListLine(std::vector<Line> L)
@@ -44,162 +30,151 @@ const std::vector<Line> Image::getListLine()
   return m_listLine;
 }
 
-void Image::BinarizedImage()
+cv::Rect Image::getBoundingBoxAtIndex(int index,int line)
 {
-  NiblackSauvolaWolfJolion (m_img, m_img, WOLFJOLION);
-  // Create a window
-
+  std::vector<ConnectedComponent> ListTmpCC = m_listLine[line].getListCC();
+  return cv::boundingRect(ListTmpCC[index].getListPoint());
 }
 
-void Image::ImgMask()
+ConnectedComponent Image::getConnectedComponnentAt(int index, int line){
+  return m_listLine[line].getConnectedComponentAtIndex(index);
+}
+
+cv::Mat Image::BinarizedImage()
 {
- cv::blur(m_img,m_mask,cv::Size(105,5));
+  cv::Mat m_img_bin (m_img.rows, m_img.cols, CV_8U);
+  NiblackSauvolaWolfJolion (m_img, m_img_bin, WOLFJOLION);
+  return m_img_bin;
+}
 
- cv::threshold(m_mask, m_mask,170,255,1);
+cv::vector<ConnectedComponent> Image::extractComposentConnectImage(cv::Mat img){
 
- cv::medianBlur(m_mask, m_mask,9);
+  if(img.channels()>1){
+    cv::cvtColor(img,img,CV_RGB2GRAY);
+  }
 
- cv::namedWindow("foobar");
+  bitwise_not(img,img);
+  cv::vector<ConnectedComponent> tmpCC;
+  cv::vector<cv::vector<cv::Point>> contours;
+  cv::findContours(img, contours, CV_RETR_EXTERNAL, CV_CHAIN_APPROX_NONE);
+  for(int i =0; i< contours.size();i++){
+    ConnectedComponent cc = ConnectedComponent(contours[i]);
+    tmpCC.push_back(cc);
+  }
+  return tmpCC;
+}
+
+int Image::getCharacterHeight(cv::Mat img){
+    /* Returns the median height of a character in a given binary image */
+  if(img.empty())
+    return false;
+  else if(img.channels()>1){
+    cv::cvtColor(img,img,CV_RGB2GRAY);
+  }
+    // Smooth the image to remove unwanted noise from extracted CCs
+    cv::medianBlur(img,img,9);
+
+    bitwise_not(img,img);
+
+    // CCs extraction
+    cv::vector<cv::vector<cv::Point> > contours;
+    cv::findContours(img, contours, CV_RETR_CCOMP, CV_CHAIN_APPROX_TC89_KCOS);
+    // We sort the array with respect to their height
+    sort(contours.begin(), contours.end(), [](const cv::vector<cv::Point>& c1, const cv::vector<cv::Point>& c2){
+        return cv::boundingRect(c1).height < cv::boundingRect(c2).height;
+    });
+
+
+    // Merely return the median's height
+    int median = (int)contours.size()/2;
+    return cv::boundingRect(contours[median]).height; 
+}
+
+void Image::ComputeMask()
+{   
+  BinarizedImage().copyTo(m_img);
+  int character_height = getCharacterHeight(m_img.clone());
+
+  cv::Mat tmp;
+
+  // horizontal blur
+  cv::blur(m_img,tmp,cv::Size(5*character_height,0.5*character_height));
+
+  // binarization + median filtering
+  cv::threshold(tmp,tmp,190,255,1);
+  if(tmp.empty())
+    return;
+  else if(tmp.channels()>1){
+    cv::cvtColor(tmp,tmp,CV_RGB2GRAY);
+  }
  
-// Display image in window
-cv::imshow("foobar", m_mask);
- 
-// Wait for user to press a key in window
-cv::waitKey(0);
-}
+  cv::medianBlur(tmp,tmp,9);
+  cv::vector<cv::vector<cv::Point>> contours_mask;
+  cv::findContours(tmp, contours_mask, CV_RETR_CCOMP, CV_CHAIN_APPROX_TC89_KCOS);
+  cv::vector<ConnectedComponent> tmpCC = extractComposentConnectImage(m_img.clone());
 
-void Image::extractConnectedComponent(cv::Mat &input,const cv::Point &seed,ConnectedComponent &cc)
-{
-  //assert(input.type() == CV_8U);
-  assert(seed.x < input.cols && seed.y < input.rows && seed.x >= 0 && seed.y >= 0);
-  std::vector<cv::Point> ListTmp;
-  ListTmp = cc.getListPoint();
-  ListTmp.clear();
-  cc.setListPoint(ListTmp);
-
-  std::deque<cv::Point> ptsQueue;
-  uchar &pixS = input.at<unsigned char>(seed.y, seed.x);
-  if (pixS != BACKGROUND) {
-    ptsQueue.push_back(seed);
-    pixS = BACKGROUND;
-  }    
-  while (! ptsQueue.empty()) {
-
-    cv::Point current = ptsQueue.front();
-    ptsQueue.pop_front();
-
-    ListTmp = cc.getListPoint();
-    ListTmp.push_back(current);
-    cc.setListPoint(ListTmp);
-    // enque neighboors
-    const cv::Point e(current.x + 1, current.y);
-    const cv::Point w(current.x - 1, current.y);
-    const cv::Point n(current.x, current.y - 1);
-    const cv::Point s(current.x, current.y + 1);
-    if (n.y >= 0) {
-      uchar &pix = input.at<unsigned char>(n.y, n.x);
-      if (pix != BACKGROUND) {
-        ptsQueue.push_back(n);
-    pix = BACKGROUND;
-      }
-    }
-
-    if (e.x < input.cols) {
-      uchar &pix = input.at<unsigned char>(e.y, e.x);
-      if (pix != BACKGROUND) {
-        ptsQueue.push_back(e);
-        pix = BACKGROUND;
-      }
-    }
-
-    if (s.y < input.rows) {
-      uchar &pix = input.at<unsigned char>(s.y, s.x);
-      if (pix != BACKGROUND) {
-        ptsQueue.push_back(s);
-        pix = BACKGROUND;
-      }
-    }
-
-    if (w.x >= 0) {
-      uchar &pix = input.at<unsigned char>(w.y, w.x);
-      if (pix != BACKGROUND) {
-        ptsQueue.push_back(w);
-        pix = BACKGROUND;
-      }
-    }
-  }
-
-}
-
-void Image::extractAllConnectedComponents()
-{
-  //assert(Img.type() == CV_8U);
-
-  m_listConnectedComponent.clear();
-  m_listConnectedComponent.reserve(m_img.rows); //arbitrary
- 
-  cv::Mat tmp = m_img.clone();
-  ConnectedComponent cc;
-  for (int i = 0; i < m_img.rows; ++i) {
-    const uchar *r = tmp.ptr<uchar>(i);
-    for (int j = 0; j < m_img.cols; ++j) {
-      if (r[j] != BACKGROUND) {
-        std::vector<cv::Point> ListTmp;
-        ListTmp = cc.getListPoint();
-        ListTmp.clear();
-        cc.setListPoint(ListTmp);
-        extractConnectedComponent(tmp, cv::Point(j, i), cc);
-        cc.initBase();
-        m_listConnectedComponent.push_back(cc);
-      }
-    }
-  }
-//Initialization Bounding Box
-for(int i=0; i < m_listConnectedComponent.size()-1; i++)
-{
-  m_listConnectedComponent[i].initBoundingBox();
-m_listConnectedComponent[i].initBase();
-
-}
-}
-
-
-
-void Image::putInLine()
-{
- int max = 0;
-
- // set Max value
- for(int i= 0; i < m_listConnectedComponent.size()-1; i++)
+  for(int i = 0 ; i < contours_mask.size(); i++)
   {
-     if (m_listConnectedComponent[i].getBoundingBox().getHeight()  > max)
-     {
-       max = m_listConnectedComponent[i].getBoundingBox().getHeight();
-     }
-
+    Line line = Line();
+    cv::Rect rMask = cv::boundingRect(contours_mask[i]);
+    cv::vector<ConnectedComponent>::iterator itr = tmpCC.begin();
+      for(int k = tmpCC.size()-1; k >= 0;k--)
+      {
+          cv::Rect r = cv::boundingRect(tmpCC[k].getListPoint());
+          if(CompareBB(rMask,r) == true && tmpCC[k].getInline() == false)
+          {
+            line.addCC(tmpCC[k]);
+            tmpCC[k].setInline(true);
+          }
+        }  
+      m_listLine.push_back(line);
   }
 
- Line * L = new Line();
-
- for(int i= 0; i < m_listConnectedComponent.size()-1; i++)
+  Line line = Line();
+  for(int i = 0; i < tmpCC.size(); i++)
   {
-    L->addConnectedComponent(m_listConnectedComponent[i]);
-
-     if (m_listConnectedComponent[i+1].getBase() - m_listConnectedComponent[i].getBase() > max)
-     {
-        m_listLine.push_back(*L);
-        L = new Line();
-     }
+    if(tmpCC[i].getInline() == false){line.addCC(tmpCC[i]);}
   }
-
-  //inialization all Baseline of Image
- for(int i= 0; i < m_listLine.size()-1; i++)
-  {
-      m_listLine[i].computeBaseline();
-  }
-
-
+  m_listLine.push_back(line);
 }
 
+std::string Image::jsonBoundingRect(){
+  std::string json;
+  int id = 0;
+  for(int line = 0 ; line < m_listLine.size(); line++)
+  {
+    std::vector<ConnectedComponent> ListTmpCC = m_listLine[line].getListCC();
+    for(int i = 0; i < ListTmpCC.size(); i++)
+    {
+      cv::Rect rect = cv::boundingRect(ListTmpCC[i].getListPoint());
+      json += ("\""+ std::to_string(id) +"\":{");
+      json += ("\"idCC\":" + std::to_string(i) + ",");
+      json += ("\"idLine\":" + std::to_string(line) + ",");
+      json += ("\"x\":" + std::to_string(rect.x) + ",");
+      json += ("\"y\":" + std::to_string(rect.y) + ",");
+      json += ("\"width\":" + std::to_string(rect.width) + ",");
+      json += ("\"height\":" + std::to_string(rect.height));
+      json += ("}");
+      json += (",");
+      id++;
+    }
+  }
+  std::cout << "nb objet" << id << std::endl;
+  json = json.substr(0, json.size()-1);
+  return json;
+}
 
+bool Image::CompareBB(cv::Rect bb1, cv::Rect bb2)
+{
+  int x_bb1 = std::max(bb1.x,bb2.x);
+  int x_bb2 = std::max(bb1.y,bb2.y);
+  int y_bb1 = std::min(bb1.x + bb1.width,bb2.x + bb2.width);
+  int y_bb2 = std::min(bb1.y + bb1.height,bb2.y + bb2.height);
+
+  if(x_bb1 < y_bb1 && x_bb2 < y_bb2)
+  {
+    return true;
+  }
+  return false;
+}
 
