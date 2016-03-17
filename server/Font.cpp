@@ -60,12 +60,12 @@ int Font::indexOfCharacter(std::string c)
   }
   return -1;
 }
-int Font::indexOfCharacterForCC(int idCC)
+int Font::indexOfCharacterForCC(int idCC, int idLine)
 {
   for (unsigned i=0; i < m_listCharacter.size(); i++)
   {
     Character s = m_listCharacter.at(i);
-    if(s.hasComposant(idCC))
+    if(s.hasComposant(idCC, idLine))
       return i;
   }
   return -1;

@@ -29,35 +29,31 @@ const int Character::getBase()
 	return m_base;
 }
 
-void Character::setImg(cv::Mat i)
-{
-   m_img = i;
-}
-
-const cv::Mat Character::getImg()
-{
-	return m_img;
-}
-
 const int Character::countComposant()
 {
 	return m_idComposantsConnexes.size();
 }
-void Character::addComposant(int idCC)
+void Character::addComposant(int idCC, int idLine)
 {
-	if(!hasComposant(idCC))
-		m_idComposantsConnexes.push_back(idCC);
+	if(!hasComposant(idCC, idLine))
+		m_idComposantsConnexes.push_back(std::make_pair(idLine,idCC));
 }
-void Character::removeComposant(int idCC)
+void Character::removeComposant(int idCC, int idLine)
 {
-	if(hasComposant(idCC))
-		m_idComposantsConnexes.erase(std::remove(m_idComposantsConnexes.begin(), m_idComposantsConnexes.end(), idCC), m_idComposantsConnexes.end()); 
+	if(hasComposant(idCC, idLine))
+		//m_idComposantsConnexes.erase(std::remove(m_idComposantsConnexes.begin(), m_idComposantsConnexes.end(), idCC), m_idComposantsConnexes.end()); 
+		m_idComposantsConnexes.erase(std::remove(m_idComposantsConnexes.begin(), m_idComposantsConnexes.end(), std::make_pair(idLine,idCC)), m_idComposantsConnexes.end()); 
 }
-bool Character::hasComposant(int idCC)
+bool Character::hasComposant(int idCC, int idLine)
 {
-	return (std::find(m_idComposantsConnexes.begin(), m_idComposantsConnexes.end(), idCC) != m_idComposantsConnexes.end());
+	// return (std::find(m_idComposantsConnexes.begin(), m_idComposantsConnexes.end(), idCC) != m_idComposantsConnexes.end());
+	for(std::vector<std::pair<int,int>>::iterator it = m_idComposantsConnexes.begin(); it != m_idComposantsConnexes.end();++it)
+		if(it->first == idLine && it->second == idCC)
+			return true;
+		return false;
+
 }
-int Character::getIdComposantAtIndex(int index)
+std::pair<int,int> Character::getIdComposantAtIndex(int index)
 {
 	return m_idComposantsConnexes.at(index);
 }

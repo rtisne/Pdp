@@ -75,15 +75,18 @@ string extractFontInOl(int sessionIndex, string fontName)
 
         for(int j = 0; j < character->countComposant(); j++)
         {
-          int indexCC = character->getIdComposantAtIndex(j);
-          ConnectedComponent* component = activeSessions.at(sessionIndex)->getImage()->getConnectedComponentAtIndex(indexCC); 
+          pair<int,int> ids = character->getIdComposantAtIndex(j);
+          int indexLine = ids.first;
+          int indexCC = ids.second;
+
+          ConnectedComponent component = activeSessions.at(sessionIndex)->getImage()->getConnectedComponnentAt(indexCC, indexLine); 
           xmlDocument << "<picture id=\"" + to_string(j) + "\">"<< endl; 
           xmlDocument << "<imageData>"<< endl; 
-          xmlDocument << "<width>"+to_string((int) activeSessions.at(sessionIndex)->getImage()->getConnectedComponentAtIndex(indexCC)->getBoundingBox().getWidth() + 1)+"</width>"<< endl; 
-          xmlDocument << "<height>"+to_string((int) activeSessions.at(sessionIndex)->getImage()->getConnectedComponentAtIndex(indexCC)->getBoundingBox().getHeight() + 1)+"</height>"<< endl; 
+          xmlDocument << "<width>"+to_string((int) activeSessions.at(sessionIndex)->getImage()->getBoundingBoxAtIndex(indexCC, indexLine).width + 1)+"</width>"<< endl; 
+          xmlDocument << "<height>"+to_string((int) activeSessions.at(sessionIndex)->getImage()->getBoundingBoxAtIndex(indexCC, indexLine).height + 1)+"</height>"<< endl; 
           xmlDocument << "<format>5</format>"<< endl; 
           xmlDocument << "<degradationlevel>0</degradationlevel>"<< endl; 
-          xmlDocument << "<data>" + activeSessions.at(sessionIndex)->getImage()->extractDataFromComponent(indexCC) + "</data>"<< endl; 
+          xmlDocument << "<data>" + activeSessions.at(sessionIndex)->getImage()->extractDataFromComponent(indexCC, indexLine) + "</data>"<< endl; 
           xmlDocument << "</imageData>"<< endl; 
           xmlDocument << "</picture>"<< endl; 
         }
@@ -122,10 +125,7 @@ std::string InitiateSession(std::string fileName,HttpRequest *request)
   mySession->setToken(cptExample);
   mySession->setFileName((UPLOAD_DIR)+fileName);  
   activeSessions.push_back(mySession);
-  mySession->getImage()->BinarizedImage();
-  mySession->getImage()->extractAllConnectedComponents();
-
-  //mySession->getImage()->extractAllConnectedComponents();
+  mySession->getImage()->ComputeMask();
   return "{\"fileName\":\""+fileName+"\",\"token\":"+to_string(mySession->getToken())+"}";
 }
 
@@ -211,24 +211,7 @@ class MyDynamicRepository : public DynamicRepository
         int sessionIndex = getActiveSessionFromToken(stoi(token));
 
         Image* img = activeSessions.at(sessionIndex)->getImage();
-        vector<ConnectedComponent> ListTmpCC = img->getListConnectedComponent();
-        string json = "{";
-        for(int i= 0; i < ListTmpCC.size()-1; i++)
-        {
-          BoundingBox bb = ListTmpCC[i].getBoundingBox();
-          json += ("\" "+ to_string(i) +"\":{");
-          json += ("\"x\":" + to_string(bb.getX().x) + ",");
-          json += ("\"y\":" + to_string(bb.getX().y) + ",");
-          json += ("\"width\":" + to_string(bb.getWidth()) + ",");
-          json += ("\"height\":" + to_string(bb.getHeight()));
-          json += ("}");
-
-          if(i != ListTmpCC.size()-2)
-          {
-            json += (",");
-          }
-        }
-        json += ("}");   
+        string json = "{" + img->jsonBoundingRect() + "}";
         return fromString(json, response);
       }
         
@@ -240,22 +223,23 @@ class MyDynamicRepository : public DynamicRepository
       {
         string token;
         string ccId;
+        string lineId;
         request->getParameter("token", token);
-        request->getParameter("id", ccId);
+        request->getParameter("idCC", ccId);
+        request->getParameter("idLine", lineId);
         int sessionIndex = getActiveSessionFromToken(stoi(token));
-        ConnectedComponent cc = activeSessions.at(sessionIndex)->getImage()->getListConnectedComponent().at(stoi(ccId));
-        BoundingBox bb = cc.getBoundingBox();
-        int charactereId = activeSessions.at(sessionIndex)->getFont()->indexOfCharacterForCC(stoi(ccId));
+        cv::Rect bb = activeSessions.at(sessionIndex)->getImage()->getBoundingBoxAtIndex(stoi(ccId),stoi(lineId));
+        int charactereId = activeSessions.at(sessionIndex)->getFont()->indexOfCharacterForCC(stoi(ccId),stoi(lineId));
         string letter = "";
         if(charactereId != -1)
           letter = activeSessions.at(sessionIndex)->getFont()->characterAtIndex(charactereId)->getLabel();
         
         string json = "{";
         json += ("\"id\":" + ccId + ",");
-        json += ("\"left\":" + to_string(bb.getX().x) + ",");
-        json += ("\"right\":" + to_string(bb.getX().x + bb.getWidth()) + ",");
-        json += ("\"up\":" + to_string(bb.getX().y) + ",");
-        json += ("\"down\":" + to_string(bb.getX().y + bb.getHeight()) + ",");
+        json += ("\"left\":" + to_string(bb.x) + ",");
+        json += ("\"right\":" + to_string(bb.x + bb.width) + ",");
+        json += ("\"up\":" + to_string(bb.y) + ",");
+        json += ("\"down\":" + to_string(bb.y + bb.height) + ",");
         json += ("\"letter\":\"" + letter + "\"");
         json += "}";
         return fromString(json, response);
@@ -287,19 +271,20 @@ class MyDynamicRepository : public DynamicRepository
         request->getParameter("activeid", activeId);
 
         int sessionIndex = getActiveSessionFromToken(stoi(token));
-
         auto j = json::parse(listCCId);
-        for (json::iterator it = j.begin(); it != j.end(); ++it) {
-          int idCC = *it;
+
+        for (json::iterator it = j.begin(); it != j.end(); ++it) 
+        {
+          int idCC = it->find("idCC")->get<int>();
+          int idLine = it->find("idLine")->get<int>();
 
           if(idCC == stoi(activeId))
-            activeSessions.at(sessionIndex)->getImage()->getConnectedComponentAtIndex(idCC)->setBoundingBox( BoundingBox(cv::Point2f(stof(left), stof(up)), stof(right) - stof(left), stof(down) - stof(up)));
+            activeSessions.at(sessionIndex)->getImage()->getConnectedComponnentAt(idCC, idLine).setBoundingBox(stoi(up),stoi(down),stoi(right),stoi(left));
 
-          int indexCharacterForCC = activeSessions.at(sessionIndex)->getFont()->indexOfCharacterForCC(idCC);
+          int indexCharacterForCC = activeSessions.at(sessionIndex)->getFont()->indexOfCharacterForCC(idCC, idLine);
           if(indexCharacterForCC != -1)
           {
-            activeSessions.at(sessionIndex)->getFont()->characterAtIndex(indexCharacterForCC)->removeComposant(
-              idCC);
+            activeSessions.at(sessionIndex)->getFont()->characterAtIndex(indexCharacterForCC)->removeComposant(idCC, idLine);
             if(activeSessions.at(sessionIndex)->getFont()->characterAtIndex(indexCharacterForCC)->countComposant() <= 0)
               activeSessions.at(sessionIndex)->getFont()->removeCharacter(indexCharacterForCC);
           }
@@ -310,15 +295,11 @@ class MyDynamicRepository : public DynamicRepository
 
           indexCharacter = activeSessions.at(sessionIndex)->getFont()->indexOfCharacter(letter);
 
-          activeSessions.at(sessionIndex)->getFont()->characterAtIndex(indexCharacter)->addComposant(idCC);
+          activeSessions.at(sessionIndex)->getFont()->characterAtIndex(indexCharacter)->addComposant(idCC, idLine);
+          
         }
         
         // activeSessions.at(sessionIndex)->getImage()->getConnectedComponentAtIndex(stoi(ccId))->setBoundingBox( BoundingBox(cv::Point2f(stof(left), stof(up)), stof(right) - stof(left), stof(down) - stof(up)));
-
-        
-        
-        
-
 
         return fromString("ok", response);
       

@@ -19,7 +19,7 @@ public:
     void addCharacter(Character c);
     bool hasCharacter(Character c);
     int indexOfCharacter(std::string c);
-    int indexOfCharacterForCC(int idCC);
+    int indexOfCharacterForCC(int idCC, int idLine);
     Character* characterAtIndex(int id);
     void removeCharacter(int id);
     int countCharacter();

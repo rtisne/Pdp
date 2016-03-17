@@ -1,16 +1,22 @@
 #include "ConnectedComponent.hpp"
 
 ConnectedComponent::ConnectedComponent()
-{}
+{
+
+}
+
+ConnectedComponent::ConnectedComponent(std::vector<cv::Point> vec){
+	m_listPoint = vec;
+}
 
 void ConnectedComponent::setListPoint(std::vector<cv::Point> L)
 {
-  m_listPoint = L;
+	m_listPoint = L;
 }
 
 const std::vector<cv::Point> ConnectedComponent::getListPoint()
 {
-  return m_listPoint;
+	return m_listPoint;
 }
 
 int ConnectedComponent::sizeListP()
@@ -18,53 +24,49 @@ int ConnectedComponent::sizeListP()
 	return m_listPoint.size();
 }
 
-void ConnectedComponent::initBoundingBox()
+void ConnectedComponent::setOffsetBaseline(int x)
 {
-  cv::Rect rect = boundingRect(m_listPoint);
-  cv::Point P;
-  P.x = rect.x;
-  P.y = rect.y;
-  
-  m_boundingBox.setX(P);
-  m_boundingBox.setHeight(rect.height);
-  m_boundingBox.setWidth(rect.width);
-}
-void ConnectedComponent::setBoundingBox(const BoundingBox b){
-  m_boundingBox = b;
-}
-BoundingBox ConnectedComponent::getBoundingBox()
-{
-  return m_boundingBox;
+	m_offset_baseline = x;
 }
 
-void ConnectedComponent::initCharacter(std::string name)
+const int ConnectedComponent::getOffsetBaseline()
 {
-  m_char.setLabel(name);
-  m_char.setBase(m_base);
-
+	return m_offset_baseline;
 }
 
-void ConnectedComponent::initBase()
+const bool ConnectedComponent::getInline()
 {
-  m_base = m_boundingBox.getX().y + m_boundingBox.getHeight();
+	return m_inline;
 }
 
-void ConnectedComponent::setCharacter(Character c)
+void ConnectedComponent::setInline(bool x)
 {
-   m_char = c;
+	m_inline = x;
 }
 
-Character ConnectedComponent::getCharacter()
-{
-  return m_char;
+void ConnectedComponent::setBoundingBox(int up, int down, int left, int right){
+	m_up = up;
+	m_down = down;
+	m_right = right;
+	m_left = left;
 }
 
-void ConnectedComponent::setBase(int x)
+const int ConnectedComponent::getUpLine()
 {
-  m_base = x;
+	return m_up;
 }
 
-const int ConnectedComponent::getBase()
+const int ConnectedComponent::getDownLine()
 {
-  return m_base;
+	return m_down;
+}
+
+const int ConnectedComponent::getRightLine()
+{
+	return m_right;
+}
+
+const int ConnectedComponent::getLeftLine()
+{
+	return m_left;
 }

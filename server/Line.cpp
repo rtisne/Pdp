@@ -1,40 +1,34 @@
 #include "Line.hpp"
 
-Line::Line()
-{}
+Line::Line(){
 
-void Line::computeBaseline()
-{
-  int i;
-  int sumBaseline = 0;
-  for(i= 0; (unsigned)i < m_listConnectedComponent.size()-1; i++)
-    {
-      sumBaseline += m_listConnectedComponent[i].getBase();
-    }
-    Line::setBaseline(sumBaseline / i);
 }
 
-void Line::setBaseline(int x)
+void Line::setBaseline(float x)
 {
-	m_baseline = x;
+  m_baseline = x;
 }
 
-const int Line::getBaseline()
+const float Line::getBaseline()
 {
-	return m_baseline;
+  return m_baseline;
 }
 
-void Line::addConnectedComponent(ConnectedComponent cc)
+void Line::addCC(ConnectedComponent cc)
 {
-	 m_listConnectedComponent.push_back(cc);
+  m_ListCC.push_back(cc);
 }
 
-void Line::setListConnectedComponent(std::vector<ConnectedComponent> cc)
+void Line::setListCC(std::vector<ConnectedComponent> cc)
 {
-  m_listConnectedComponent = cc;
+  m_ListCC = cc;
 }
 
-const std::vector<ConnectedComponent> Line::getListConnectedComponent()
+const std::vector<ConnectedComponent> Line::getListCC()
 {
-  return m_listConnectedComponent;
+  return m_ListCC;
+}
+
+ConnectedComponent Line::getConnectedComponentAtIndex(int index){
+	return m_ListCC.at(index);
 }

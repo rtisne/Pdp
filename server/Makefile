@@ -54,7 +54,6 @@ LDFLAGS        = -Wall -Wno-unused -O3
 MAIN_NAME     = main
 
 MAIN_OBJS = \
-		  BoundingBox.o \
 		  ConnectedComponent.o \
 		  Font.o \
 		  Character.o \
@@ -63,8 +62,6 @@ MAIN_OBJS = \
 		  Session.o \
 		  Binarization.o \
 		  main.o \
-
-BOUNDINGBOX = BoundingBox
 
 CONNECTEDCOMPONENT= ConnectedComponent
 
@@ -99,10 +96,6 @@ $(MAIN_NAME): $(MAIN_OBJS) $(LIB_STATIC_NAME)
 
 
 $(IMAGE): $(MAIN_OBJS) $(LIB_STATIC_NAME)
-	rm -f $@
-	$(LD) $(LDFLAGS) -o $@ $(MAIN_OBJS) $(LIB_STATIC_NAME) $(LIBS) 
-
-$(BOUNDINGBOX): $(MAIN_OBJS) $(LIB_STATIC_NAME)
 	rm -f $@
 	$(LD) $(LDFLAGS) -o $@ $(MAIN_OBJS) $(LIB_STATIC_NAME) $(LIBS) 
 
