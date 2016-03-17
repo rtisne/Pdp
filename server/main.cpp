@@ -55,6 +55,49 @@ bool test_format(std::string fileName)
   }
 }
 
+
+string extractFontInOl(int sessionIndex, string fontName)
+{
+  ostringstream xmlDocument;
+
+  xmlDocument << "<?xml version=\"1.0\" encoding=\"UTF-8\"?><font name=\"" + fontName + "\">" << endl; 
+  //string xmlDocument = "<?xml version=\"1.0\" encoding=\"UTF-8\"?><font name=\"" + fontName + "\">";
+  for(int i = 0; i < activeSessions.at(sessionIndex)->getFont()->countCharacter(); i ++)
+  {
+        Character* character = activeSessions.at(sessionIndex)->getFont()->characterAtIndex(i);
+        xmlDocument << "<letter char=\"" +  character->getLabel() + "\">"<< endl; 
+        xmlDocument << "<anchor>"<< endl; 
+        xmlDocument << "<upLine>0</upLine>"<< endl; 
+        xmlDocument << "<baseLine>100</baseLine>"<< endl; 
+        xmlDocument << "<leftLine>0</leftLine>"<< endl; 
+        xmlDocument << "<rightLine>100</rightLine>"<< endl; 
+        xmlDocument << "</anchor>" << endl;
+
+        for(int j = 0; j < character->countComposant(); j++)
+        {
+          int indexCC = character->getIdComposantAtIndex(j);
+          ConnectedComponent* component = activeSessions.at(sessionIndex)->getImage()->getConnectedComponentAtIndex(indexCC); 
+          xmlDocument << "<picture id=\"" + to_string(j) + "\">"<< endl; 
+          xmlDocument << "<imageData>"<< endl; 
+          xmlDocument << "<width>"+to_string((int) activeSessions.at(sessionIndex)->getImage()->getConnectedComponentAtIndex(indexCC)->getBoundingBox().getWidth() + 1)+"</width>"<< endl; 
+          xmlDocument << "<height>"+to_string((int) activeSessions.at(sessionIndex)->getImage()->getConnectedComponentAtIndex(indexCC)->getBoundingBox().getHeight() + 1)+"</height>"<< endl; 
+          xmlDocument << "<format>5</format>"<< endl; 
+          xmlDocument << "<degradationlevel>0</degradationlevel>"<< endl; 
+          xmlDocument << "<data>" + activeSessions.at(sessionIndex)->getImage()->extractDataFromComponent(indexCC) + "</data>"<< endl; 
+          xmlDocument << "</imageData>"<< endl; 
+          xmlDocument << "</picture>"<< endl; 
+        }
+        xmlDocument << "</letter>" << endl;
+
+  }
+  xmlDocument << "</font>" << endl;
+  ofstream myfile;
+  myfile.open ("example.of");
+  myfile << xmlDocument.str();
+  myfile.close();
+  return xmlDocument.str();
+} 
+
 std::string gen_random(std::string extension) {
     static const char letter[] =
         "0123456789"
@@ -247,7 +290,6 @@ class MyDynamicRepository : public DynamicRepository
 
         auto j = json::parse(listCCId);
         for (json::iterator it = j.begin(); it != j.end(); ++it) {
-          std::cout << *it << '\n';
           int idCC = *it;
 
           if(idCC == stoi(activeId))
@@ -307,6 +349,18 @@ class MyDynamicRepository : public DynamicRepository
         
     } stopSession;
 
+    class extractFont: public MyDynamicPage
+    {
+      bool getPage(HttpRequest* request, HttpResponse *response)
+      {
+        string token;
+        request->getParameter("token", token);
+        int sessionIndex = getActiveSessionFromToken(stoi(token));
+        return fromString(extractFontInOl(sessionIndex, "font"),response);
+      }
+        
+    } extractFont;
+
     class Controller: public MyDynamicPage
     {
       bool getPage(HttpRequest* request, HttpResponse *response)
@@ -328,6 +382,7 @@ class MyDynamicRepository : public DynamicRepository
       add("getInfoOnCC.txt",&getInfoOnCC);
       add("updateInfoOnCC.txt",&updateInfoOnCC);
       add("stopSession.txt",&stopSession);
+      add("extractFont.txt",&extractFont);
     }
 };
 

@@ -123,9 +123,13 @@ function Controller(canvas, previewCanvas) {
     // Détection boutton reset
     document.getElementById('button_trash').addEventListener('click', function(e){
         session.removeSession();
-        
+    }, true);    
 
+    document.getElementById('button_export').addEventListener('click', function(e){
+        session.extractFont();
     }, true);
+
+
     window.onunload = function() { 
        session.removeSession();
     };

@@ -57,6 +57,10 @@ bool Character::hasComposant(int idCC)
 {
 	return (std::find(m_idComposantsConnexes.begin(), m_idComposantsConnexes.end(), idCC) != m_idComposantsConnexes.end());
 }
+int Character::getIdComposantAtIndex(int index)
+{
+	return m_idComposantsConnexes.at(index);
+}
 
 bool operator== ( const Character &c1, const Character &c2) 
 {

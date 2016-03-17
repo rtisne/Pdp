@@ -23,12 +23,15 @@ public:
     void extractConnectedComponent(cv::Mat &input,const cv::Point &seed,ConnectedComponent &cc);
     void extractAllConnectedComponents();
     void putInLine();
+    const std::string extractDataFromComponent(int index); 
+
 
 private:
-   cv::Mat m_img;
-   cv::Mat m_mask;
-   std::vector<ConnectedComponent> m_listConnectedComponent;
-   std::vector<Line> m_listLine;
+  std::string m_filename;
+  cv::Mat m_img;
+  cv::Mat m_mask;
+  std::vector<ConnectedComponent> m_listConnectedComponent;
+  std::vector<Line> m_listLine;
 };
 
 #endif // IMAGE_H

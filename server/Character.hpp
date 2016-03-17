@@ -20,6 +20,7 @@ public:
     void addComposant(int idCC);
     void removeComposant(int idCC);
     bool hasComposant(int idCC);
+    int getIdComposantAtIndex(int index);
 
     friend bool operator== ( const Character &c1, const Character &c2);
 private:

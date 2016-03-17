@@ -99,15 +99,31 @@ Session.prototype.updateInfoOnCC = function(activeId, ids, left, right, up, down
 	for	(index = 0; index < ids.length; index++) {
     jsonId += "\"" + ids[index] + "\":" + ids[index];
     if(index < ids.length-1)
-    {
     	jsonId += ",";
-    }
 	}
 	jsonId += "}";
+	
 	$.ajax({
     url: 'updateInfoOnCC.txt',
     type: 'POST',
     data: "token=" + this.token + "&activeid=" + activeId + "&id=" + jsonId + "&left=" + left + "&right=" + right + "&up=" + up + "&down=" + down + "&letter=" + letter,
+    success: function(data, textStatus, jqXHR)
+    {
+    	console.log(data);
+    },
+    error: function(error)
+    {
+ 			console.log('ERRORS: ' + error);
+    }
+	});
+}
+
+Session.prototype.extractFont = function()
+{
+	$.ajax({
+    url: 'extractFont.txt',
+    type: 'POST',
+    data: "token=" + this.token,
     success: function(data, textStatus, jqXHR)
     {
     	console.log(data);

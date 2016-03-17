@@ -4,6 +4,7 @@
 Image::Image(std::string path)
 {
   m_img = cv::imread(path, CV_LOAD_IMAGE_COLOR);
+  m_filename = path;
   if(! m_img.data )                              // Check for invalid input
   {
     std::cout <<  "Could not open or find the image" << std::endl ;
@@ -200,6 +201,37 @@ void Image::putInLine()
 
 
 }
+
+const std::string Image::extractDataFromComponent(int index)
+{
+
+  cv::Mat img = cv::imread(m_filename, CV_LOAD_IMAGE_COLOR);
+  if(! img.data )                              // Check for invalid input
+  {
+    std::cout <<  "Could not open or find the image" << std::endl ;
+  }
+
+  std::string data;
+  int rows = img.rows;
+  int cols = img.cols;
+
+  cv::Point2f startPoint = getConnectedComponentAtIndex(index)->getBoundingBox().getX();
+  float width = getConnectedComponentAtIndex(index)->getBoundingBox().getWidth();
+  float height = getConnectedComponentAtIndex(index)->getBoundingBox().getHeight();
+  for (int i=startPoint.y; i<=startPoint.y+height; ++i) {
+    cv::Vec3b *p = img.ptr<cv::Vec3b>(i);
+    for (int j=startPoint.x; j<=startPoint.x+width; ++j) {
+      const cv::Vec3b pix = p[j];
+      unsigned char opacity = 255;
+      unsigned int v = (opacity<<24)|(pix[0]<<16)|(pix[1]<<8)|(pix[2]);
+      std::cout << pix << std::endl;
+      data += std::to_string(v);
+      data += ",";
+
+    }
+  }
+  return data.substr(0, data.size()-1);
+} 
 
 
 
