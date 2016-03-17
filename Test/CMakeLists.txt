@@ -1,12 +1,11 @@
 cmake_minimum_required(VERSION 3.0)
-
+set (CMAKE_CXX_STANDARD 11)
 
 project(Unit_test)
 find_package( OpenCV REQUIRED )
 
 set(SRCS
     main.cpp
-     ../server/BoundingBox.cpp
      ../server/ConnectedComponent.cpp
      ../server/Font.cpp
      ../server/Character.cpp
@@ -17,7 +16,8 @@ set(SRCS
     )
     
 set(HEADERS
-     ../server/BoundingBox.hpp
+     ../server/json.hpp
+     ../server/JSON.h
      ../server/ConnectedComponent.hpp
      ../server/Font.hpp
      ../server/Character.hpp
