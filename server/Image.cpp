@@ -46,6 +46,7 @@ const std::vector<Line> Image::getListLine()
 
 void Image::BinarizedImage()
 {
+  std::cout << "Je suis la";
   NiblackSauvolaWolfJolion (m_img, m_img, WOLFJOLION);
   // Create a window
 
