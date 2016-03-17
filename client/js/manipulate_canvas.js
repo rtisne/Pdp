@@ -139,8 +139,9 @@ function Controller(canvas, previewCanvas) {
         session.removeSession();
     }, true);    
 
-    document.getElementById('button_export').addEventListener('click', function(e){
-        session.extractFont();
+    document.getElementById('exportFont').addEventListener('click', function(e){
+        var fontname = $("#fontName").val();
+        session.extractFont(fontname);
     }, true);
 
 

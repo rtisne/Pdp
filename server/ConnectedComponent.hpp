@@ -14,6 +14,7 @@ public:
     ConnectedComponent(std::vector<cv::Point> vec);
     void setListPoint(std::vector<cv::Point> L);
     const std::vector<cv::Point> getListPoint();
+    bool hasPoint(int x, int y);
     int sizeListP();
     void setOffsetBaseline(int x);
     const int getOffsetBaseline();

@@ -301,3 +301,6 @@ body {
 .controle{
 	margin-top: 5px;
 }
+.modal-backdrop {
+   background-color: white;
+}

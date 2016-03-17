@@ -59,9 +59,7 @@ bool test_format(std::string fileName)
 string extractFontInOl(int sessionIndex, string fontName)
 {
   ostringstream xmlDocument;
-
   xmlDocument << "<?xml version=\"1.0\" encoding=\"UTF-8\"?><font name=\"" + fontName + "\">" << endl; 
-  //string xmlDocument = "<?xml version=\"1.0\" encoding=\"UTF-8\"?><font name=\"" + fontName + "\">";
   for(int i = 0; i < activeSessions.at(sessionIndex)->getFont()->countCharacter(); i ++)
   {
         Character* character = activeSessions.at(sessionIndex)->getFont()->characterAtIndex(i);
@@ -94,10 +92,6 @@ string extractFontInOl(int sessionIndex, string fontName)
 
   }
   xmlDocument << "</font>" << endl;
-  ofstream myfile;
-  myfile.open ("example.of");
-  myfile << xmlDocument.str();
-  myfile.close();
   return xmlDocument.str();
 } 
 
@@ -336,8 +330,10 @@ class MyDynamicRepository : public DynamicRepository
       {
         string token;
         request->getParameter("token", token);
+        string fontname;
+        request->getParameter("fontname", fontname);
         int sessionIndex = getActiveSessionFromToken(stoi(token));
-        return fromString(extractFontInOl(sessionIndex, "font"),response);
+        return fromString(extractFontInOl(sessionIndex, fontname),response);
       }
         
     } extractFont;

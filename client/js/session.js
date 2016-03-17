@@ -110,15 +110,23 @@ Session.prototype.updateInfoOnCC = function(activeId, jsonId, ids, left, right, 
 	});
 }
 
-Session.prototype.extractFont = function()
+Session.prototype.extractFont = function(fontname)
 {
+	console.log("fontname");
 	$.ajax({
     url: 'extractFont.txt',
     type: 'POST',
-    data: "token=" + this.token,
+    data: "token=" + this.token +"&fontname=" + fontname,
     success: function(data, textStatus, jqXHR)
     {
     	console.log(data);
+    	var a = document.createElement("a");
+		  var file = new Blob([data], {type: "of"});
+		  a.href = URL.createObjectURL(file);
+		  a.download = fontname + ".of";
+		  a.click();
+		  $('#saveModal').modal('hide');
+		  
     },
     error: function(error)
     {

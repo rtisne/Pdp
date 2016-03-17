@@ -176,7 +176,6 @@ const std::string Image::extractDataFromComponent(int index, int lineId)
   {
     std::cout <<  "Could not open or find the image" << std::endl ;
   }
-
   std::string data;
   int rows = img.rows;
   int cols = img.cols;
@@ -184,10 +183,17 @@ const std::string Image::extractDataFromComponent(int index, int lineId)
   for (int i=bb.y; i<=bb.y+bb.height; ++i) {
     cv::Vec3b *p = img.ptr<cv::Vec3b>(i);
     for (int j=bb.x; j<=bb.x+bb.width; ++j) {
-      const cv::Vec3b pix = p[j];
-      unsigned char opacity = 255;
-      unsigned int v = (opacity<<24)|(pix[0]<<16)|(pix[1]<<8)|(pix[2]);
-      std::cout << pix << std::endl;
+      unsigned int v;
+      // if(getConnectedComponnentAt(index,lineId).hasPoint(j,i))
+      // {
+        const cv::Vec3b pix = p[j];
+        unsigned char opacity = 255;
+        v = (opacity<<24)|(pix[0]<<16)|(pix[1]<<8)|(pix[2]);
+      // }
+      // else{
+      //   v = (255<<24)|(255<<16)|(255<<8)|(255);
+
+      // }
       data += std::to_string(v);
       data += ",";
 
