@@ -32,3 +32,7 @@ const std::vector<ConnectedComponent> Line::getListCC()
 ConnectedComponent Line::getConnectedComponentAtIndex(int index){
 	return m_ListCC.at(index);
 }
+
+void Line::setBoundingBoxAtIndex(int index, int up, int down, int left, int right){
+	m_ListCC[index].setBoundingBox(up, down, left, right);
+}

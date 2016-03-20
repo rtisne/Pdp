@@ -255,6 +255,7 @@ class MyDynamicRepository : public DynamicRepository
         string down;
         string letter;
         string activeId;
+        string activeLine;
         request->getParameter("token", token);
         request->getParameter("left", left);
         request->getParameter("right", right);
@@ -263,17 +264,18 @@ class MyDynamicRepository : public DynamicRepository
         request->getParameter("letter", letter);
         request->getParameter("id", listCCId);
         request->getParameter("activeid", activeId);
+        request->getParameter("activeline", activeLine);
 
         int sessionIndex = getActiveSessionFromToken(stoi(token));
         auto j = json::parse(listCCId);
-
         for (json::iterator it = j.begin(); it != j.end(); ++it) 
         {
           int idCC = it->find("idCC")->get<int>();
           int idLine = it->find("idLine")->get<int>();
-
-          if(idCC == stoi(activeId))
-            activeSessions.at(sessionIndex)->getImage()->getConnectedComponnentAt(idCC, idLine).setBoundingBox(stoi(up),stoi(down),stoi(right),stoi(left));
+          if(idCC == stoi(activeId) && idLine == stoi(activeLine))
+          {
+            activeSessions.at(sessionIndex)->getImage()->setBoundingBoxAtIndex(idCC, idLine,stoi(up),stoi(down),stoi(left),stoi(right));
+          }
 
           int indexCharacterForCC = activeSessions.at(sessionIndex)->getFont()->indexOfCharacterForCC(idCC, idLine);
           if(indexCharacterForCC != -1)

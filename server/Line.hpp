@@ -13,6 +13,7 @@ public:
   	const std::vector<ConnectedComponent> getListCC();
   	void addCC(ConnectedComponent cc);
   	ConnectedComponent getConnectedComponentAtIndex(int index);
+  	void setBoundingBoxAtIndex(int index, int up, int down, int left, int right);
 
 private:
   std::vector<ConnectedComponent> m_ListCC;

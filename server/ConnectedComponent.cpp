@@ -2,11 +2,18 @@
 
 ConnectedComponent::ConnectedComponent()
 {
-
+	m_up = 0;
+	m_down = 0;
+	m_left = 0;
+	m_right = 0;
 }
 
 ConnectedComponent::ConnectedComponent(std::vector<cv::Point> vec){
 	m_listPoint = vec;
+	m_up = 0;
+	m_down = 0;
+	m_left = 0;
+	m_right = 0;
 }
 
 void ConnectedComponent::setListPoint(std::vector<cv::Point> L)
@@ -50,35 +57,14 @@ void ConnectedComponent::setBoundingBox(int up, int down, int left, int right){
 	m_right = right;
 	m_left = left;
 }
-bool ConnectedComponent::hasPoint(int x, int y)
-{
-  // cv::Point pt = cv::(x,y);Point
-  // return (std::find(m_listPoint.begin(), m_listPoint.end(), pt) != m_listPoint.end());
-
-  for(std::vector<cv::Point>::iterator it = m_listPoint.begin(); it != m_listPoint.end();++it)
-  {
-    if (it->x == x && it->y == y)
-      return true;
-  }
-  return false;
-
-}
-const int ConnectedComponent::getUpLine()
-{
-	return m_up;
-}
-
-const int ConnectedComponent::getDownLine()
-{
-	return m_down;
-}
-
-const int ConnectedComponent::getRightLine()
-{
-	return m_right;
-}
-
-const int ConnectedComponent::getLeftLine()
-{
-	return m_left;
+cv::Rect ConnectedComponent::getBoundingBox(){
+	if (m_up == 0 && m_down == 0 && m_left == 0 && m_right == 0)
+	{
+		cv::Rect bb = cv::boundingRect(m_listPoint);
+		m_up = bb.y;
+		m_down = bb.y + bb.height;
+		m_left = bb.x;
+		m_right = bb.x + bb.width;
+	}
+	return cv::Rect(m_left, m_up, m_right - m_left, m_down - m_up); 
 }

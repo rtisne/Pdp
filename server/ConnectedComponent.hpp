@@ -14,17 +14,13 @@ public:
     ConnectedComponent(std::vector<cv::Point> vec);
     void setListPoint(std::vector<cv::Point> L);
     const std::vector<cv::Point> getListPoint();
-    bool hasPoint(int x, int y);
     int sizeListP();
     void setOffsetBaseline(int x);
     const int getOffsetBaseline();
     const bool getInline();
     void setInline(bool x);
     void setBoundingBox(int up, int down, int left, int right);
-    const int getUpLine();
-    const int getDownLine();
-    const int getRightLine();
-    const int getLeftLine();
+    cv::Rect getBoundingBox();
 private:
    std::vector<cv::Point> m_listPoint;
    float m_offset_baseline;

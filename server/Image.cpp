@@ -35,7 +35,11 @@ cv::Rect Image::getBoundingBoxAtIndex(int index,int line)
 {
 
   std::vector<ConnectedComponent> ListTmpCC = m_listLine[line].getListCC();
-  return cv::boundingRect(ListTmpCC[index].getListPoint());
+  return ListTmpCC[index].getBoundingBox();
+}
+void Image::setBoundingBoxAtIndex(int index,int line, int up, int down, int left, int right)
+{
+  m_listLine[line].setBoundingBoxAtIndex(index, up, down, left, right);
 }
 
 
@@ -94,14 +98,15 @@ int Image::getCharacterHeight(cv::Mat img){
 }
 
 void Image::ComputeMask()
-{   
-  BinarizedImage().copyTo(m_img);
-  int character_height = getCharacterHeight(m_img.clone());
+{  
+  cv::Mat binarize; 
+  BinarizedImage().copyTo(binarize);
+  int character_height = getCharacterHeight(binarize.clone());
 
   cv::Mat tmp;
 
   // horizontal blur
-  cv::blur(m_img,tmp,cv::Size(5*character_height,0.5*character_height));
+  cv::blur(binarize,tmp,cv::Size(5*character_height,0.5*character_height));
 
   // binarization + median filtering
   cv::threshold(tmp,tmp,190,255,1);
@@ -114,7 +119,7 @@ void Image::ComputeMask()
   cv::medianBlur(tmp,tmp,9);
   cv::vector<cv::vector<cv::Point>> contours_mask;
   cv::findContours(tmp, contours_mask, CV_RETR_CCOMP, CV_CHAIN_APPROX_TC89_KCOS);
-  cv::vector<ConnectedComponent> tmpCC = extractComposentConnectImage(m_img.clone());
+  cv::vector<ConnectedComponent> tmpCC = extractComposentConnectImage(binarize.clone());
 
   for(int i = 0 ; i < contours_mask.size(); i++)
   {
@@ -171,29 +176,26 @@ std::string Image::jsonBoundingRect(){
 const std::string Image::extractDataFromComponent(int index, int lineId)
 {
 
-  cv::Mat img = cv::imread(m_filename, CV_LOAD_IMAGE_COLOR);
-  if(! img.data )                              // Check for invalid input
-  {
-    std::cout <<  "Could not open or find the image" << std::endl ;
-  }
+  cv::Mat imgBinarized; 
+  BinarizedImage().copyTo(imgBinarized);
+
   std::string data;
-  int rows = img.rows;
-  int cols = img.cols;
+  int rows = m_img.rows;
+  int cols = m_img.cols;
   cv::Rect bb = getBoundingBoxAtIndex(index, lineId);
   for (int i=bb.y; i<=bb.y+bb.height; ++i) {
-    cv::Vec3b *p = img.ptr<cv::Vec3b>(i);
+    cv::Vec3b *p = m_img.ptr<cv::Vec3b>(i);
+    cv::Vec3b *pB = imgBinarized.ptr<cv::Vec3b>(i);
     for (int j=bb.x; j<=bb.x+bb.width; ++j) {
       unsigned int v;
-      // if(getConnectedComponnentAt(index,lineId).hasPoint(j,i))
-      // {
-        const cv::Vec3b pix = p[j];
-        unsigned char opacity = 255;
+      const cv::Vec3b pix = p[j];
+      const cv::Vec3b pixB = pB[j];
+      unsigned char opacity = 255;
+      // if(pixB[0] == 255 && pixB[1] == 255 && pixB[2] == 255)
+      //   v = (0<<24)|(255<<16)|(255<<8)|(255);
+      // else
         v = (opacity<<24)|(pix[0]<<16)|(pix[1]<<8)|(pix[2]);
-      // }
-      // else{
-      //   v = (255<<24)|(255<<16)|(255<<8)|(255);
-
-      // }
+  
       data += std::to_string(v);
       data += ",";
 

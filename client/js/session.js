@@ -93,12 +93,12 @@ Session.prototype.getInfoOnCC = function(id, idCC, idLine, callback)
 	});
 }
 
-Session.prototype.updateInfoOnCC = function(activeId, jsonId, ids, left, right, up, down, letter)
+Session.prototype.updateInfoOnCC = function(activeId, activeLine, jsonId, ids, left, right, up, down, letter)
 {
 	$.ajax({
     url: 'updateInfoOnCC.txt',
     type: 'POST',
-    data: "token=" + this.token + "&activeid=" + activeId + "&id=" + jsonId + "&left=" + left + "&right=" + right + "&up=" + up + "&down=" + down + "&letter=" + letter,
+    data: "token=" + this.token + "&activeid=" + activeId + "&activeline=" + activeLine + "&id=" + jsonId + "&left=" + left + "&right=" + right + "&up=" + up + "&down=" + down + "&letter=" + letter,
     success: function(data, textStatus, jqXHR)
     {
     	console.log(data);
@@ -112,20 +112,15 @@ Session.prototype.updateInfoOnCC = function(activeId, jsonId, ids, left, right, 
 
 Session.prototype.extractFont = function(fontname)
 {
-	console.log("fontname");
 	$.ajax({
     url: 'extractFont.txt',
     type: 'POST',
     data: "token=" + this.token +"&fontname=" + fontname,
     success: function(data, textStatus, jqXHR)
     {
-    	console.log(data);
-    	var a = document.createElement("a");
-		  var file = new Blob([data], {type: "of"});
-		  a.href = URL.createObjectURL(file);
-		  a.download = fontname + ".of";
-		  a.click();
-		  $('#saveModal').modal('hide');
+        var file = new Blob([data], {type: "text/plain;charset=utf-8"});
+        saveAs(file, fontname + ".of");
+        $('#saveModal').modal('hide');
 		  
     },
     error: function(error)

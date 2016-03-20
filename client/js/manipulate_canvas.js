@@ -1,6 +1,7 @@
-function Controller(canvas, previewCanvas) {
+function Controller(canvas, previewCanvas, listCharacter) {
     this.canvas = canvas;
     this.previewCanvas = previewCanvas;
+    this.listCharacter = listCharacter;
 
     var controller = this;
 
@@ -10,8 +11,6 @@ function Controller(canvas, previewCanvas) {
     this.canvas.boundingBox.select(0);
     this.previewCanvas.zoomTo(this.canvas.boundingBox.rects[0], 0);
     this.previewCanvas.visible = true;
-
-
     
     canvas.canvas.addEventListener('selectstart', function(e) { e.preventDefault(); return false; }, false);
     canvas.canvas.addEventListener('click',function(e) { 
@@ -27,14 +26,36 @@ function Controller(canvas, previewCanvas) {
             $('#baseline_options').hide();
             controller.canvas.baseline.select("false");
             var mergeButton = document.getElementById("mergeButton");
-            if(e.metaKey)
+            if(e.metaKey || e.ctrlKey)
             {
-                controller.canvas.selectedCC.push(id);
-                controller.canvas.boundingBox.addToSelection(id);
-                mergeButton.disabled=false;
+                var i = controller.canvas.selectedCC.indexOf(id);
+                if(i != -1)
+                {
+                    if(controller.previewCanvas.ccSelected == id)
+                    {
+                        if(controller.canvas.selectedCC.length > 1)
+                        {
+                            session.getInfoOnCC(controller.canvas.selectedCC[1],controller.canvas.boundingBox.rects[controller.canvas.selectedCC[1]].idCC, controller.canvas.boundingBox.rects[controller.canvas.selectedCC[1]].idLine, controller);
+                            controller.canvas.selectedCC.splice(i, 1);
+                            controller.canvas.boundingBox.removeToSelection(id);
+                        }
+                    }
+                    else
+                    {
+                        controller.canvas.selectedCC.splice(i, 1);
+                        controller.canvas.boundingBox.removeToSelection(id);
+                    }
+                }
+                else
+                {
+                    controller.canvas.selectedCC.push(id);
+                    controller.canvas.boundingBox.addToSelection(id);
+                    mergeButton.disabled=false;
+                }
             }
             else
             {
+                console.log(controller.canvas.boundingBox.rects[id].labeled)
                 controller.canvas.boundingBox.select(id);
                 controller.canvas.selectedCC = [id];
                 session.getInfoOnCC(id,controller.canvas.boundingBox.rects[id].idCC, controller.canvas.boundingBox.rects[id].idLine, controller);
@@ -100,12 +121,22 @@ function Controller(canvas, previewCanvas) {
         if($("#letter").val() != "")
         {
             for(var i = 0; i < controller.canvas.selectedCC.length; i++)
-                controller.canvas.boundingBox.rects[controller.canvas.selectedCC[i]].labeled = true;
+            {
+                if(controller.canvas.boundingBox.rects[controller.canvas.selectedCC[i]].labeled != false)
+                    controller.listCharacter.removeToCharacter(controller.canvas.boundingBox.rects[controller.canvas.selectedCC[i]].labeled);
+
+                controller.canvas.boundingBox.rects[controller.canvas.selectedCC[i]].labeled = $("#letter").val();
+                controller.listCharacter.addToCharacter($("#letter").val());
+            }
         }
         else
         {
             for(var i = 0; i < controller.canvas.selectedCC.length; i++)
+            {
+                if(controller.canvas.boundingBox.rects[controller.canvas.selectedCC[i]].labeled != false)
+                    controller.listCharacter.removeToCharacter(controller.canvas.boundingBox.rects[controller.canvas.selectedCC[i]].labeled);
                 controller.canvas.boundingBox.rects[controller.canvas.selectedCC[i]].labeled = false;
+            }
         }
         var ids = controller.canvas.selectedCC;
         var jsonId = "{";
@@ -121,7 +152,15 @@ function Controller(canvas, previewCanvas) {
            
         }
         jsonId += "}";
-        session.updateInfoOnCC(controller.previewCanvas.ccSelected,jsonId,controller.canvas.selectedCC, parseFloat($("#left").val()), parseFloat($("#right").val()),  parseFloat($("#up").val()), parseFloat($("#down").val()), $("#letter").val());
+
+        controller.canvas.boundingBox.rects[controller.previewCanvas.ccSelected].rect.x = parseFloat($("#left").val());
+        controller.canvas.boundingBox.rects[controller.previewCanvas.ccSelected].rect.y = parseFloat($("#up").val());
+        controller.canvas.boundingBox.rects[controller.previewCanvas.ccSelected].rect.w = parseFloat($("#right").val()) - parseFloat($("#left").val());
+        controller.canvas.boundingBox.rects[controller.previewCanvas.ccSelected].rect.h = parseFloat($("#down").val()) - parseFloat($("#up").val());
+
+        session.updateInfoOnCC(controller.canvas.boundingBox.rects[controller.previewCanvas.ccSelected].idCC, controller.canvas.boundingBox.rects[controller.previewCanvas.ccSelected].idLine,jsonId,controller.canvas.selectedCC, parseFloat($("#left").val()), parseFloat($("#right").val()),  parseFloat($("#up").val()), parseFloat($("#down").val()), $("#letter").val());
+
+        controller.listCharacter.draw();
     }, true);
 
     $('.container_right').keypress(function (e) {
@@ -144,6 +183,22 @@ function Controller(canvas, previewCanvas) {
         session.extractFont(fontname);
     }, true);
 
+    $(document).on({
+        mouseenter: function(){
+            var character = $(this).data("character");
+            for (var i = 0, len = controller.canvas.boundingBox.rects.length; i < len; i++) {
+                if(controller.canvas.boundingBox.rects[i].labeled == character)
+                    controller.canvas.boundingBox.rects[i].hover = true;
+            }
+        },
+        mouseleave: function(){
+            var character = $(this).data("character");
+            for (var i = 0, len = controller.canvas.boundingBox.rects.length; i < len; i++) {
+                if(controller.canvas.boundingBox.rects[i].labeled == character)
+                    controller.canvas.boundingBox.rects[i].hover = false;
+            }
+        }
+    }, '.listItem');
 
     window.onunload = function() { 
        session.removeSession();
@@ -190,14 +245,12 @@ function ProcessingImage(src) {
 
 }
 
-//Dessine l'image
 ProcessingImage.prototype.draw = function(ctx) {
     var locx = this.x;
     var locy = this.y;
     ctx.drawImage(this.img,locx,locy);
 }
 
-// Determine si un point est dans l'image
 ProcessingImage.prototype.contains = function(mx, my) {
 
   return  (this.x <= mx) && (this.x + (this.w) >= mx) &&
@@ -268,19 +321,23 @@ function Rectangle(rect, idCC, idLine){
     this.color = '#3498db';
     this.selectedColor = '#e74c3c';
     this.labeledColor = '#2ecc71';
+    this.hoverColor = '#f2ca27';
     this.visible = true;
     this.selected = false;
     this.labeled = false;
+    this.hover = false;
 }
 
 Rectangle.prototype.draw = function(ctx, image){
     if(this.visible)
     {
         ctx.fillStyle = this.color;
-        if(this.labeled)
+        if(this.labeled != false)
             ctx.fillStyle = this.labeledColor;
         if(this.selected)
             ctx.fillStyle = this.selectedColor;
+        if(this.hover)
+            ctx.fillStyle = this.hoverColor;
         
 
         ctx.globalAlpha=0.4;
@@ -321,6 +378,10 @@ BoundingBox.prototype.addToSelection = function (id){
     if(id != 'false')
         this.rects[id].selected = true;
 }
+BoundingBox.prototype.removeToSelection = function (id){
+    if(id != 'false')
+        this.rects[id].selected = false;
+}
 
 function CanvasState(canvas, image, baseline, boundingBox) {
   
@@ -345,7 +406,6 @@ function CanvasState(canvas, image, baseline, boundingBox) {
 
     this.selectedCC = [];
 
-    //Coordonnées de la selection sur l'image
     this.dragoffx = 0;
     this.dragoffy = 0;
 
@@ -573,11 +633,11 @@ PreviewCanvas.prototype.zoomTo = function(obj, id){
         var rect = obj;
         this.image.x = (this.width/2) - rect.rect.x - rect.rect.w/2;
         this.image.y = (this.height/2) - rect.rect.y - rect.rect.h/2;
-        if(rect.rect.w > rect.rect.h)
-            this.scaleX = this.width /rect.rect.w - rect.rect.w / 37;
-        else
-            this.scaleX = this.height /rect.rect.h - rect.rect.h / 37;
+    
+     
+        this.scaleX = (this.height /rect.rect.h) - (this.height /rect.rect.h)/2;
 
+        console.log(this.scaleX);
         this.scaleY = this.scaleX;
         var actualRect = rect.rect;
         this.isBaseline = false; 
@@ -597,6 +657,32 @@ PreviewCanvas.prototype.zoomTo = function(obj, id){
     
 }
 
+function ListCharacter(){
+    this.list = new Map();
+}
+ListCharacter.prototype.addToCharacter = function(character){
+    var number = 0;
+    if(this.list.has(character))
+        number = this.list.get(character);
+    this.list.set(character, number+1);
+}
+ListCharacter.prototype.removeToCharacter = function(character){
+    if(this.list.has(character))
+    {
+        var number = this.list.get(character);
+        number--;
+        if(number > 0)
+            this.list.set(character, number);
+        else
+            this.list.delete(character);
+    }
+}
+ListCharacter.prototype.draw = function(){
+    var listHTMl = $("#letter-list");
+    listHTMl.empty();
+    for (var [key, value] of this.list)
+      listHTMl.append( "<li class=\"col-sm-15 listItem\" data-character=\"" + key + "\">" + key + "<span class=\"pull-right letter-number\">" + value + "</span></li>");
+}
 function init(src, boundingBox) {
     var image = new ProcessingImage(src);
     var imagePreview = new ProcessingImage(src);
@@ -609,12 +695,12 @@ function init(src, boundingBox) {
 
     var boundingBox = new BoundingBox(listRect);
 
-
-
     var previewCanvas = new PreviewCanvas(document.getElementById('small_canvas'), imagePreview);
     var normalCanvas = new CanvasState(document.getElementById('canvas'), image, baseline, boundingBox);
 
-    var controller = new Controller(normalCanvas, previewCanvas);
+
+    var listCharacter = new ListCharacter();
+    var controller = new Controller(normalCanvas, previewCanvas, listCharacter);
 }
 
 
