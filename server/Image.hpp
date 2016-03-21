@@ -23,6 +23,7 @@ public:
     void computeBaseline();
     bool CompareBB(cv::Rect bb1, cv::Rect bb2);
     std::string jsonBoundingRect();
+    std::string jsonBaseline();
     cv::Rect getBoundingBoxAtIndex(int index, int line);   
     void setBoundingBoxAtIndex(int index,int line, int up, int down, int left, int right);
     ConnectedComponent getConnectedComponnentAt(int index, int line);
