@@ -194,7 +194,7 @@ const std::string Image::extractDataFromComponent(int index, int lineId)
       // if(pixB[0] == 255 && pixB[1] == 255 && pixB[2] == 255)
       //   v = (0<<24)|(255<<16)|(255<<8)|(255);
       // else
-        v = (opacity<<24)|(pix[0]<<16)|(pix[1]<<8)|(pix[2]);
+        v = (opacity<<24)|(pixB[0]<<16)|(pixB[1]<<8)|(pixB[2]);
   
       data += std::to_string(v);
       data += ",";

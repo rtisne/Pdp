@@ -9,7 +9,7 @@ function Controller(canvas, previewCanvas, listCharacter) {
     $(".container_right").show();
     $('#baseline_options').hide();
     this.canvas.boundingBox.select(0);
-    this.previewCanvas.zoomTo(this.canvas.boundingBox.rects[0], 0);
+    session.getInfoOnCC(0,controller.canvas.boundingBox.rects[0].idCC, controller.canvas.boundingBox.rects[0].idLine, controller);
     this.previewCanvas.visible = true;
     
     canvas.canvas.addEventListener('selectstart', function(e) { e.preventDefault(); return false; }, false);
