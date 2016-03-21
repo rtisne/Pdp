@@ -9,7 +9,7 @@ function Controller(canvas, previewCanvas, listCharacter) {
     $(".container_right").show();
     $('#baseline_options').hide();
     this.canvas.boundingBox.select(0);
-    session.getInfoOnCC(0,controller.canvas.boundingBox.rects[0].idCC, controller.canvas.boundingBox.rects[0].idLine, controller);
+    //session.getInfoOnCC(0,controller.canvas.boundingBox.rects[0].idCC, controller.canvas.boundingBox.rects[0].idLine, controller);
     this.previewCanvas.visible = true;
     
     canvas.canvas.addEventListener('selectstart', function(e) { e.preventDefault(); return false; }, false);
@@ -59,7 +59,8 @@ function Controller(canvas, previewCanvas, listCharacter) {
                 controller.canvas.boundingBox.select(id);
                 controller.canvas.selectedCC = [id];
                 session.getInfoOnCC(id,controller.canvas.boundingBox.rects[id].idCC, controller.canvas.boundingBox.rects[id].idLine, controller);
-            }    
+            } 
+            return;   
         }
         // Check if we clic on a Baseline
         var id = controller.canvas.baseline.contains(mx, my, controller.canvas.image);
@@ -257,7 +258,8 @@ ProcessingImage.prototype.contains = function(mx, my) {
           (this.y <= my) && (this.y + (this.h) >= my);
 }
 
-function Line(startx, y, finishx){
+function Line(lineId, startx, y, finishx){
+    this.id = lineId;
     this.startx = startx;
     this.y = y;
     this.finishx = finishx;
@@ -269,9 +271,11 @@ Line.prototype.draw = function(ctx, image){
     ctx.moveTo(image.x+ this.startx, image.y + this.y);
     ctx.lineTo(image.x + this.finishx, image.y + this.y);
     if(this.selected)
-        ctx.strokeStyle = '#e74c3c';
+        ctx.strokeStyle = COLOR_BASELINE_SELECTED;
     else
-        ctx.strokeStyle = '#2ecc71';
+        ctx.strokeStyle = COLOR_BASELINE;
+
+    ctx.lineWidth = LINE_WIDTH_BASELINE;
     ctx.stroke();
 }
 
@@ -318,10 +322,6 @@ function Rectangle(rect, idCC, idLine){
     this.rect = rect;
     this.idCC = idCC;
     this.idLine = idLine;
-    this.color = '#3498db';
-    this.selectedColor = '#e74c3c';
-    this.labeledColor = '#2ecc71';
-    this.hoverColor = '#f2ca27';
     this.visible = true;
     this.selected = false;
     this.labeled = false;
@@ -331,16 +331,16 @@ function Rectangle(rect, idCC, idLine){
 Rectangle.prototype.draw = function(ctx, image){
     if(this.visible)
     {
-        ctx.fillStyle = this.color;
+        ctx.fillStyle = COLOR_BOUNDINGBOX;
         if(this.labeled != false)
-            ctx.fillStyle = this.labeledColor;
+            ctx.fillStyle = COLOR_BOUNDINGBOX_LABELED;
         if(this.selected)
-            ctx.fillStyle = this.selectedColor;
+            ctx.fillStyle = COLOR_BOUNDINGBOX_SELECTED;
         if(this.hover)
-            ctx.fillStyle = this.hoverColor;
+            ctx.fillStyle = COLOR_BOUNDINGBOX_HOVER;
         
 
-        ctx.globalAlpha=0.4;
+        ctx.globalAlpha = ALPHA_BOUNDINGBOX;
         ctx.fillRect(image.x + this.rect.x,image.y + this.rect.y, this.rect.w, this.rect.h);
 
     }
@@ -577,12 +577,18 @@ PreviewCanvas.prototype.draw = function() {
         
         if(this.isBaseline)
         {
+            var rect = this.canvas.getBoundingClientRect();
+            var mx = Math.floor((0-rect.left)/(rect.right-rect.left)*this.canvas.width);
+            var startX = parseInt((mx - panX) / this.scaleX);
+           
+
+
             //Baseline
             ctx.beginPath();
-            ctx.moveTo(0, this.position_baseline);
-            ctx.lineTo(this.width, this.position_baseline);
+            ctx.moveTo(startX, this.position_baseline);
+            ctx.lineTo(this.width*2, this.position_baseline);
             ctx.lineWidth = 1;
-            ctx.strokeStyle = '#ff0000';
+            ctx.strokeStyle = COLOR_PREVIEW_BASELINE;
             ctx.stroke();
         }
         else
@@ -592,7 +598,7 @@ PreviewCanvas.prototype.draw = function() {
             ctx.moveTo(0, this.image.y + this.position_up_line);
             ctx.lineTo(this.width, this.image.y + this.position_up_line);
             ctx.lineWidth = 1 / this.scaleY;
-            ctx.strokeStyle = '#ff0000';
+            ctx.strokeStyle = COLOR_PREVIEW_LINES;
             ctx.stroke();
 
             //DownLine
@@ -600,7 +606,7 @@ PreviewCanvas.prototype.draw = function() {
             ctx.moveTo(0, this.image.y + this.position_down_line);
             ctx.lineTo(this.width, this.image.y + this.position_down_line);
             ctx.lineWidth = 1 / this.scaleY;
-            ctx.strokeStyle = '#ff0000';
+            ctx.strokeStyle = COLOR_PREVIEW_LINES;
             ctx.stroke();
 
             //LeftLine
@@ -608,7 +614,7 @@ PreviewCanvas.prototype.draw = function() {
             ctx.moveTo(this.image.x + this.position_left_line, 0);
             ctx.lineTo(this.image.x + this.position_left_line, this.height);
             ctx.lineWidth = 1 / this.scaleX;
-            ctx.strokeStyle = '#ff0000';
+            ctx.strokeStyle = COLOR_PREVIEW_LINES;
             ctx.stroke();
 
             //RightLine
@@ -616,7 +622,7 @@ PreviewCanvas.prototype.draw = function() {
             ctx.moveTo(this.image.x + this.position_right_line, 0);
             ctx.lineTo(this.image.x + this.position_right_line, this.height);
             ctx.lineWidth = 1 / this.scaleX;
-            ctx.strokeStyle = '#ff0000';
+            ctx.strokeStyle = COLOR_PREVIEW_LINES;
             ctx.stroke();
         }
         ctx.restore();
@@ -683,17 +689,22 @@ ListCharacter.prototype.draw = function(){
     for (var [key, value] of this.list)
       listHTMl.append( "<li class=\"col-sm-15 listItem\" data-character=\"" + key + "\">" + key + "<span class=\"pull-right letter-number\">" + value + "</span></li>");
 }
-function init(src, boundingBox) {
+function init(src, boundingBox, baseline) {
     var image = new ProcessingImage(src);
     var imagePreview = new ProcessingImage(src);
-    var baseline = new Baseline([new Line(50, 90, 560), new Line(50, 130, 570)]);
+    
 
     var listRect = new Array();
     for (var rect in boundingBox) {
         listRect.push(new Rectangle({x:boundingBox[rect].x, y:boundingBox[rect].y, w:boundingBox[rect].width, h: boundingBox[rect].height},boundingBox[rect].idCC, boundingBox[rect].idLine));
-    }
-
+    } 
     var boundingBox = new BoundingBox(listRect);
+    
+    var listBaseline = new Array();
+    for (var line in baseline) {
+        listBaseline.push(new Line(baseline[line].idLine, baseline[line].x_begin,baseline[line].y_baseline,baseline[line].x_end));
+    }
+    var baseline = new Baseline(listBaseline);
 
     var previewCanvas = new PreviewCanvas(document.getElementById('small_canvas'), imagePreview);
     var normalCanvas = new CanvasState(document.getElementById('canvas'), image, baseline, boundingBox);

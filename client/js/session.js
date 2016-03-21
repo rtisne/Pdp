@@ -45,7 +45,7 @@ Session.prototype.imageInfos = function(filename, callback)
       $('.navbar-nav').show();
       
       $('.loader').hide();
-      callback(imagePath, JSON.parse(data));
+      callback(imagePath, JSON.parse(data).boundingbox, JSON.parse(data).baseline);
     },
     error: function(error)
     {

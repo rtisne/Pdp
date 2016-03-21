@@ -186,6 +186,7 @@ std::string Image::jsonBaseline(){
       cv::Rect cc_begin = cv::boundingRect(ListTmpCC[0].getListPoint());
       cv::Rect cc_end = cv::boundingRect(ListTmpCC[ListTmpCC.size()-1].getListPoint());
       json += ("\"" + std::to_string(line) +"\":{");
+      json += ("\"idLine\":" + std::to_string(line) + ",");
       json += ("\"x_begin\":" + std::to_string(cc_begin.x) + ",");
       json += ("\"x_end\":" + std::to_string(cc_end.x + cc_end.width) + ",");
       json += ("\"y_baseline\":" + std::to_string(m_listLine[line].getBaseline()));
