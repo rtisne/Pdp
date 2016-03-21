@@ -206,6 +206,7 @@ class MyDynamicRepository : public DynamicRepository
 
         Image* img = activeSessions.at(sessionIndex)->getImage();
         string json = "{" + img->jsonBoundingRect() + "}";
+        //string json = "{\"boundingbox\":{" + img->jsonBoundingRect() + "},\"baseline\":{" + img ->jsonBaseline() + "}}";
         return fromString(json, response);
       }
         
