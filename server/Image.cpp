@@ -120,8 +120,8 @@ void Image::ComputeMask()
   cv::vector<cv::vector<cv::Point>> contours_mask;
   cv::findContours(tmp, contours_mask, CV_RETR_CCOMP, CV_CHAIN_APPROX_TC89_KCOS);
   cv::vector<ConnectedComponent> tmpCC = extractComposentConnectImage(binarize.clone());
-
-  for(int i = 0 ; i < contours_mask.size(); i++)
+  int i;
+  for(i = 0 ; i < contours_mask.size(); i++)
   {
     Line line = Line();
     cv::Rect rMask = cv::boundingRect(contours_mask[i]);
@@ -136,6 +136,8 @@ void Image::ComputeMask()
           }
         }  
       m_listLine.push_back(line);
+      if(m_listLine[i].getListCC().size() != 0)
+      m_listLine[i].computeBaseLine();
   }
 
   Line line = Line();
@@ -144,7 +146,9 @@ void Image::ComputeMask()
     if(tmpCC[i].getInline() == false){line.addCC(tmpCC[i]);}
   }
   m_listLine.push_back(line);
+  m_listLine[i-1].computeBaseLine();
 }
+
 
 std::string Image::jsonBoundingRect(){
   std::string json;
@@ -168,6 +172,27 @@ std::string Image::jsonBoundingRect(){
     }
   }
   std::cout << "nb objet" << id << std::endl;
+  json = json.substr(0, json.size()-1);
+  return json;
+}
+
+std::string Image::jsonBaseline(){
+  std::string json;
+  for(int line = 0 ; line < m_listLine.size(); line++)
+  {
+    if(m_listLine[line].getListCC().size() != 0)
+    {
+      std::vector<ConnectedComponent> ListTmpCC = m_listLine[line].getListCC();
+      cv::Rect cc_begin = cv::boundingRect(ListTmpCC[0].getListPoint());
+      cv::Rect cc_end = cv::boundingRect(ListTmpCC[ListTmpCC.size()-1].getListPoint());
+      json += ("\"" + std::to_string(line) +"\":{");
+      json += ("\"x_begin\":" + std::to_string(cc_begin.x) + ",");
+      json += ("\"x_end\":" + std::to_string(cc_end.x + cc_end.width) + ",");
+      json += ("\"y_baseline\":" + std::to_string(m_listLine[line].getBaseline()));
+      json += ("}");
+      json += (",");
+    }
+  }
   json = json.substr(0, json.size()-1);
   return json;
 }
