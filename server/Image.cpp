@@ -136,6 +136,7 @@ void Image::ComputeMask()
   sort(contours_mask.begin(), contours_mask.end(), [](const cv::vector<cv::Point>& c1, const cv::vector<cv::Point>& c2){
         return cv::boundingRect(c1).y < cv::boundingRect(c2).y;
     });
+  int nbCCInline = 0;
   if(contours_mask.size() != 0)
   {
     for(int i = 0 ; i < contours_mask.size(); i++)
@@ -152,6 +153,7 @@ void Image::ComputeMask()
               {
                 line.addCC(tmpCC[k]);
                 tmpCC[k].setInline(true);
+                nbCCInline++;
               }
             }  
         }  
@@ -164,9 +166,22 @@ void Image::ComputeMask()
   } else if(tmpCC.size() == 1){
     Line line = Line();
     line.addCC(tmpCC[0]);
+    nbCCInline++;
     m_listLine.push_back(line);
     m_listLine[0].computeBaseLine();
   }
+
+  if(nbCCInline != tmpCC.size())
+  {
+  std::cout << " New Line " << std::endl;
+  Line line = Line();
+  for(int i = 0; i < tmpCC.size() ; i++){
+    if(tmpCC[i].getInline() == false)
+    line.addCC(tmpCC[i]);
+    }
+  m_listLine.push_back(line);
+  }
+  
 }
 
 
