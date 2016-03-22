@@ -79,7 +79,7 @@ int Image::getCharacterHeight(cv::Mat img){
     cv::cvtColor(img,img,CV_RGB2GRAY);
   }
     // Smooth the image to remove unwanted noise from extracted CCs
-    cv::medianBlur(img,img,9);
+    cv::medianBlur(img,img,7);
 
     bitwise_not(img,img);
 
@@ -129,7 +129,7 @@ void Image::ComputeMask()
       for(int k = tmpCC.size()-1; k >= 0;k--)
       {
           cv::Rect r = cv::boundingRect(tmpCC[k].getListPoint());
-          if(CompareBB(rMask,r) == true && tmpCC[k].getInline() == false)
+          if(rMask.contains(r.br()) || rMask.contains(r.tl()))
           {
             line.addCC(tmpCC[k]);
             tmpCC[k].setInline(true);
@@ -146,7 +146,6 @@ void Image::ComputeMask()
     if(tmpCC[i].getInline() == false){line.addCC(tmpCC[i]);}
   }
   m_listLine.push_back(line);
-  m_listLine[i-1].computeBaseLine();
 }
 
 
