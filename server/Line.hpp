@@ -7,8 +7,8 @@ class Line
 {
 public:
     Line();
-  	void setBaseline(float x);
-  	const float getBaseline();
+  	void setBaseline(int x);
+  	const int getBaseline();
   	void setListCC(std::vector<ConnectedComponent> cc);
   	const std::vector<ConnectedComponent> getListCC();
   	void addCC(ConnectedComponent cc);
@@ -18,7 +18,7 @@ public:
 
 private:
   std::vector<ConnectedComponent> m_ListCC;
-  float m_baseline;
+  int m_baseline;
 };
 
 #endif // LINE__H

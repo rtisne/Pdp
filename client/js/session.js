@@ -45,7 +45,7 @@ Session.prototype.imageInfos = function(filename, callback)
       $('.navbar-nav').show();
       
       $('.loader').hide();
-      callback(imagePath, JSON.parse(data));
+      callback(imagePath, JSON.parse(data).boundingbox, JSON.parse(data).baseline);
     },
     error: function(error)
     {
@@ -128,4 +128,20 @@ Session.prototype.extractFont = function(fontname)
  			console.log('ERRORS: ' + error);
     }
 	});
+}
+Session.prototype.updateBaseline = function(idLine, value)
+{
+    $.ajax({
+    url: 'updateBaseline.txt',
+    type: 'POST',
+    data: "token=" + this.token +"&idLine=" + idLine + "&value=" + value,
+    success: function(data, textStatus, jqXHR)
+    {
+          
+    },
+    error: function(error)
+    {
+            console.log('ERRORS: ' + error);
+    }
+    });
 }

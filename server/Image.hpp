@@ -27,6 +27,7 @@ public:
     cv::Rect getBoundingBoxAtIndex(int index, int line);   
     void setBoundingBoxAtIndex(int index,int line, int up, int down, int left, int right);
     ConnectedComponent getConnectedComponnentAt(int index, int line);
+    void setBaselineForLine(int id, int value);
      
 private:
    cv::Mat m_img;

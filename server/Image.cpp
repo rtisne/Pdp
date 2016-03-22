@@ -191,7 +191,7 @@ std::string Image::jsonBaseline(){
       cv::Rect cc_begin = cv::boundingRect(ListTmpCC[0].getListPoint());
       cv::Rect cc_end = cv::boundingRect(ListTmpCC[ListTmpCC.size()-1].getListPoint());
       json += ("\"" + std::to_string(line) +"\":{");
-      json += ("\"line\":" + std::to_string(line) + ",");
+      json += ("\"idLine\":" + std::to_string(line) + ",");
       json += ("\"x_begin\":" + std::to_string(cc_begin.x) + ",");
       json += ("\"x_end\":" + std::to_string(cc_end.x + cc_end.width) + ",");
       json += ("\"y_baseline\":" + std::to_string(m_listLine[line].getBaseline()));
@@ -225,7 +225,7 @@ const std::string Image::extractDataFromComponent(int index, int lineId)
       // if(pixB[0] == 255 && pixB[1] == 255 && pixB[2] == 255)
       //   v = (0<<24)|(255<<16)|(255<<8)|(255);
       // else
-        v = (opacity<<24)|(pix[0]<<16)|(pix[1]<<8)|(pix[2]);
+        v = (opacity<<24)|(pixB[0]<<16)|(pixB[1]<<8)|(pixB[2]);
   
       data += std::to_string(v);
       data += ",";
@@ -235,18 +235,7 @@ const std::string Image::extractDataFromComponent(int index, int lineId)
   return data.substr(0, data.size()-1);
 } 
 
-
-bool Image::CompareBB(cv::Rect bb1, cv::Rect bb2)
+void Image::setBaselineForLine(int id, int value)
 {
-  int x_bb1 = std::max(bb1.x,bb2.x);
-  int x_bb2 = std::max(bb1.y,bb2.y);
-  int y_bb1 = std::min(bb1.x + bb1.width,bb2.x + bb2.width);
-  int y_bb2 = std::min(bb1.y + bb1.height,bb2.y + bb2.height);
-
-  if(x_bb1 < y_bb1 && x_bb2 < y_bb2)
-  {
-    return true;
-  }
-  return false;
+  m_listLine[id].setBaseline(value);
 }
-

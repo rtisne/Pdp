@@ -205,8 +205,8 @@ class MyDynamicRepository : public DynamicRepository
         int sessionIndex = getActiveSessionFromToken(stoi(token));
 
         Image* img = activeSessions.at(sessionIndex)->getImage();
-        string json = "{" + img->jsonBoundingRect() + "}";
-        //string json = "{\"boundingbox\":{" + img->jsonBoundingRect() + "},\"baseline\":{" + img ->jsonBaseline() + "}}";
+        //string json = "{" + img->jsonBoundingRect() + "}";
+        string json = "{\"boundingbox\":{" + img->jsonBoundingRect() + "},\"baseline\":{" + img->jsonBaseline() + "}}";
         return fromString(json, response);
       }
         
@@ -341,6 +341,24 @@ class MyDynamicRepository : public DynamicRepository
         
     } extractFont;
 
+    class updateBaseline: public MyDynamicPage
+    {
+      bool getPage(HttpRequest* request, HttpResponse *response)
+      {
+        string token;
+        request->getParameter("token", token);
+        string idLine;
+        request->getParameter("idLine", idLine);
+        string value;
+        request->getParameter("value", value);
+        int sessionIndex = getActiveSessionFromToken(stoi(token));
+        activeSessions.at(sessionIndex)->getImage()->setBaselineForLine(stoi(idLine), stoi(value));
+        return true;
+
+      }
+        
+    } updateBaseline;
+
     class Controller: public MyDynamicPage
     {
       bool getPage(HttpRequest* request, HttpResponse *response)
@@ -363,6 +381,7 @@ class MyDynamicRepository : public DynamicRepository
       add("updateInfoOnCC.txt",&updateInfoOnCC);
       add("stopSession.txt",&stopSession);
       add("extractFont.txt",&extractFont);
+      add("updateBaseline.txt",&updateBaseline);
     }
 };
 
