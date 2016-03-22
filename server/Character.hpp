@@ -12,8 +12,8 @@ public:
     Character(std::string l);
     void setLabel(std::string l);
     const std::string getLabel();
-    void setBase(int x);
-    const int getBase();
+    void setBaseline(int x);
+    const int getBaseline();
     const int countComposant();
     void addComposant(int idCC, int idLine);
     void removeComposant(int idCC, int idLine);
@@ -24,7 +24,7 @@ public:
 private:
     std::string m_label;
     cv::Mat m_img;
-   	int m_base;
+   	int m_baseline;
     std::vector<std::pair<int,int>> m_idComposantsConnexes;
 };
 

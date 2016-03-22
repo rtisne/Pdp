@@ -6,6 +6,10 @@ Line::Line(){
 
 void Line::setBaseline(int y)
 {
+	for(int unsigned i=0;i<m_ListCC.size();i++)
+		if(m_ListCC[i].getBaseline() == m_baseline)
+			m_ListCC[i].setBaseline(y);
+
   m_baseline = y;
 }
 
@@ -42,7 +46,16 @@ void Line::computeBaseLine(){
         return cv::boundingRect(c1.getListPoint()).x < cv::boundingRect(c2.getListPoint()).x;
     });
 
-    int median = (int)m_ListCC.size()/2;
-    cv::Rect bb = cv::boundingRect(m_ListCC[median].getListPoint());
-    setBaseline(bb.y + bb.height);
+  int median = (int)m_ListCC.size()/2;
+  cv::Rect bb = cv::boundingRect(m_ListCC[median].getListPoint());
+  setBaseline(bb.y + bb.height);
+	for(int unsigned i=0;i<m_ListCC.size();i++)
+	{
+		m_ListCC[i].setBaseline(bb.y + bb.height);
+	} 
+}
+
+void Line::setBaselineAtIndex(int index, int value)
+{
+	m_ListCC[index].setBaseline(value);
 }

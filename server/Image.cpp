@@ -33,15 +33,25 @@ const std::vector<Line> Image::getListLine()
 
 cv::Rect Image::getBoundingBoxAtIndex(int index,int line)
 {
-
   std::vector<ConnectedComponent> ListTmpCC = m_listLine[line].getListCC();
   return ListTmpCC[index].getBoundingBox();
 }
+
+int Image::getBaselineAtIndex(int index,int line)
+{
+  std::vector<ConnectedComponent> ListTmpCC = m_listLine[line].getListCC();
+  return ListTmpCC[index].getBaseline();
+}
+
 void Image::setBoundingBoxAtIndex(int index,int line, int up, int down, int left, int right)
 {
   m_listLine[line].setBoundingBoxAtIndex(index, up, down, left, right);
 }
 
+void Image::setBaselineAtIndex(int index,int line, int value)
+{
+  m_listLine[line].setBaselineAtIndex(index,value);
+}
 
 ConnectedComponent Image::getConnectedComponnentAt(int index, int line){
   return m_listLine[line].getConnectedComponentAtIndex(index);
@@ -248,3 +258,4 @@ void Image::setBaselineForLine(int id, int value)
 {
   m_listLine[id].setBaseline(value);
 }
+

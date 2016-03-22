@@ -25,17 +25,6 @@ void Font::ExportToOd()
 
 }
 
-void Font::computeBaseline()
-{
-  int i;
-  int sumBaseline = 0;
-  for(i= 0; (unsigned)i < m_listCharacter.size()-1; i++)
-    {
-      sumBaseline += m_listCharacter[i].getBase();
-    }
-    m_baseline = (sumBaseline / i);
-}
-
 void Font::setBaseline(int x)
 {
 	m_baseline = x;

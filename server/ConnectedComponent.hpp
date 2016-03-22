@@ -15,15 +15,15 @@ public:
     void setListPoint(std::vector<cv::Point> L);
     const std::vector<cv::Point> getListPoint();
     int sizeListP();
-    void setOffsetBaseline(int x);
-    const int getOffsetBaseline();
+    void setBaseline(int x);
+    const int getBaseline();
     const bool getInline();
     void setInline(bool x);
     void setBoundingBox(int up, int down, int left, int right);
     cv::Rect getBoundingBox();
 private:
    std::vector<cv::Point> m_listPoint;
-   float m_offset_baseline;
+   float m_baseline;
    int m_up;
    int m_down;
    int m_right;

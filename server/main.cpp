@@ -225,12 +225,25 @@ class MyDynamicRepository : public DynamicRepository
         int sessionIndex = getActiveSessionFromToken(stoi(token));
         cv::Rect bb = activeSessions.at(sessionIndex)->getImage()->getBoundingBoxAtIndex(stoi(ccId),stoi(lineId));
         int charactereId = activeSessions.at(sessionIndex)->getFont()->indexOfCharacterForCC(stoi(ccId),stoi(lineId));
+
         string letter = "";
+        int baseline;
         if(charactereId != -1)
+        {
           letter = activeSessions.at(sessionIndex)->getFont()->characterAtIndex(charactereId)->getLabel();
+          baseline = activeSessions.at(sessionIndex)->getFont()->characterAtIndex(charactereId)->getBaseline();
+        }
+        else
+        {
+          baseline = activeSessions.at(sessionIndex)->getImage()->getBaselineAtIndex(stoi(ccId),stoi(lineId));
+        }
         
+
+
         string json = "{";
         json += ("\"id\":" + ccId + ",");
+        json += ("\"idLine\":" + lineId + ",");
+        json += ("\"baseline\":" + to_string(baseline) + ",");
         json += ("\"left\":" + to_string(bb.x) + ",");
         json += ("\"right\":" + to_string(bb.x + bb.width) + ",");
         json += ("\"up\":" + to_string(bb.y) + ",");

@@ -31,14 +31,14 @@ int ConnectedComponent::sizeListP()
 	return m_listPoint.size();
 }
 
-void ConnectedComponent::setOffsetBaseline(int x)
+void ConnectedComponent::setBaseline(int x)
 {
-	m_offset_baseline = x;
+	m_baseline = x;
 }
 
-const int ConnectedComponent::getOffsetBaseline()
+const int ConnectedComponent::getBaseline()
 {
-	return m_offset_baseline;
+	return m_baseline;
 }
 
 const bool ConnectedComponent::getInline()

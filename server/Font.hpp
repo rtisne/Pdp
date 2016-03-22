@@ -13,7 +13,6 @@ public:
     const std::string getName();
     void ExportToBox();
     void ExportToOd();
-    void computeBaseline();
     void setBaseline(int x);
     const int getBaseline();
     void addCharacter(Character c);
