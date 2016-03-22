@@ -83,14 +83,13 @@ cv::vector<ConnectedComponent> Image::extractComposentConnectImage(cv::Mat img){
 
 int Image::getCharacterHeight(cv::Mat img){
     /* Returns the median height of a character in a given binary image */
-  if(img.empty())
-    return false;
-  else if(img.channels()>1){
-    cv::cvtColor(img,img,CV_RGB2GRAY);
-  }
+    if(img.empty())
+      return false;
+    else if(img.channels()>1){
+      cv::cvtColor(img,img,CV_RGB2GRAY);
+    }
     // Smooth the image to remove unwanted noise from extracted CCs
     cv::medianBlur(img,img,7);
-
     bitwise_not(img,img);
 
     // CCs extraction
@@ -125,37 +124,49 @@ void Image::ComputeMask()
   else if(tmp.channels()>1){
     cv::cvtColor(tmp,tmp,CV_RGB2GRAY);
   }
- 
   cv::medianBlur(tmp,tmp,9);
+
   cv::vector<cv::vector<cv::Point>> contours_mask;
   cv::findContours(tmp, contours_mask, CV_RETR_CCOMP, CV_CHAIN_APPROX_TC89_KCOS);
   cv::vector<ConnectedComponent> tmpCC = extractComposentConnectImage(binarize.clone());
-  int i;
-  for(i = 0 ; i < contours_mask.size(); i++)
-  {
-    Line line = Line();
-    cv::Rect rMask = cv::boundingRect(contours_mask[i]);
-    cv::vector<ConnectedComponent>::iterator itr = tmpCC.begin();
-      for(int k = tmpCC.size()-1; k >= 0;k--)
-      {
-          cv::Rect r = cv::boundingRect(tmpCC[k].getListPoint());
-          if(rMask.contains(r.br()) || rMask.contains(r.tl()))
-          {
-            line.addCC(tmpCC[k]);
-            tmpCC[k].setInline(true);
-          }
-        }  
-      m_listLine.push_back(line);
-      if(m_listLine[i].getListCC().size() != 0)
-      m_listLine[i].computeBaseLine();
-  }
+  sort(tmpCC.begin(), tmpCC.end(), []( ConnectedComponent& c1, ConnectedComponent& c2){
+        return cv::boundingRect(c1.getListPoint()).x < cv::boundingRect(c2.getListPoint()).x;
+    });
 
-  Line line = Line();
-  for(int i = 0; i < tmpCC.size(); i++)
+  sort(contours_mask.begin(), contours_mask.end(), [](const cv::vector<cv::Point>& c1, const cv::vector<cv::Point>& c2){
+        return cv::boundingRect(c1).y < cv::boundingRect(c2).y;
+    });
+  if(contours_mask.size() != 0)
   {
-    if(tmpCC[i].getInline() == false){line.addCC(tmpCC[i]);}
+    for(int i = 0 ; i < contours_mask.size(); i++)
+    {
+      Line line = Line();
+      cv::Rect rMask = cv::boundingRect(contours_mask[i]);
+      cv::vector<ConnectedComponent>::iterator itr = tmpCC.begin();
+        for(int k = 0; k < tmpCC.size();k++)
+        {
+          cv::Rect r = cv::boundingRect(tmpCC[k].getListPoint());
+          if(tmpCC[k].getInline() == false)
+            {
+            if(inMiddle(rMask,r) || rMask.contains(r.tl()) || rMask.contains(r.br()))
+              {
+                line.addCC(tmpCC[k]);
+                tmpCC[k].setInline(true);
+              }
+            }  
+        }  
+        m_listLine.push_back(line);
+        if(m_listLine[i].getListCC().size() != 0)
+          {
+            m_listLine[i].computeBaseLine();
+          }     
+    }
+  } else if(tmpCC.size() == 1){
+    Line line = Line();
+    line.addCC(tmpCC[0]);
+    m_listLine.push_back(line);
+    m_listLine[0].computeBaseLine();
   }
-  m_listLine.push_back(line);
 }
 
 
@@ -180,7 +191,6 @@ std::string Image::jsonBoundingRect(){
       id++;
     }
   }
-  std::cout << "nb objet" << id << std::endl;
   json = json.substr(0, json.size()-1);
   return json;
 }
@@ -239,15 +249,13 @@ const std::string Image::extractDataFromComponent(int index, int lineId)
   return data.substr(0, data.size()-1);
 } 
 
-
-bool Image::CompareBB(cv::Rect bb1, cv::Rect bb2)
+bool Image::inMiddle(cv::Rect bb1, cv::Rect bb2)
 {
-  int x_bb1 = std::max(bb1.x,bb2.x);
-  int x_bb2 = std::max(bb1.y,bb2.y);
-  int y_bb1 = std::min(bb1.x + bb1.width,bb2.x + bb2.width);
-  int y_bb2 = std::min(bb1.y + bb1.height,bb2.y + bb2.height);
-
-  if(x_bb1 < y_bb1 && x_bb2 < y_bb2)
+  int bb2_x = bb2.x + (bb2.width/2);
+  int bb2_y = bb2.y + (bb2.height/2);
+  int bb1_x_max = bb1.x + bb1.width + 3;
+  int bb1_y_max = bb1.y + bb1.height + 3;
+  if((bb1.x) <= bb2_x && bb2_x <= bb1_x_max && (bb1.y) <= bb2_y &&  bb2_y <= bb1_y_max)
   {
     return true;
   }
