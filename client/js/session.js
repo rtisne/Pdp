@@ -129,3 +129,19 @@ Session.prototype.extractFont = function(fontname)
     }
 	});
 }
+Session.prototype.updateBaseline = function(idLine, value)
+{
+    $.ajax({
+    url: 'updateBaseline.txt',
+    type: 'POST',
+    data: "token=" + this.token +"&idLine=" + idLine + "&value=" + value,
+    success: function(data, textStatus, jqXHR)
+    {
+          
+    },
+    error: function(error)
+    {
+            console.log('ERRORS: ' + error);
+    }
+    });
+}

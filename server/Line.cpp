@@ -4,12 +4,12 @@ Line::Line(){
 
 }
 
-void Line::setBaseline(float x)
+void Line::setBaseline(int y)
 {
-  m_baseline = x;
+  m_baseline = y;
 }
 
-const float Line::getBaseline()
+const int Line::getBaseline()
 {
   return m_baseline;
 }

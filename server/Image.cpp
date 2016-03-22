@@ -245,3 +245,7 @@ bool Image::CompareBB(cv::Rect bb1, cv::Rect bb2)
   return false;
 }
 
+void Image::setBaselineForLine(int id, int value)
+{
+  m_listLine[id].setBaseline(value);
+}
