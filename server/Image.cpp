@@ -49,6 +49,7 @@ ConnectedComponent Image::getConnectedComponnentAt(int index, int line){
 
 cv::Mat Image::BinarizedImage()
 {
+  imwrite("img.png", m_img);
   cv::Mat m_img_bin (m_img.rows, m_img.cols, CV_8U);
   NiblackSauvolaWolfJolion (m_img, m_img_bin, WOLFJOLION);
   return m_img_bin;
@@ -73,14 +74,13 @@ cv::vector<ConnectedComponent> Image::extractComposentConnectImage(cv::Mat img){
 
 int Image::getCharacterHeight(cv::Mat img){
     /* Returns the median height of a character in a given binary image */
-  if(img.empty())
-    return false;
-  else if(img.channels()>1){
-    cv::cvtColor(img,img,CV_RGB2GRAY);
-  }
+    if(img.empty())
+      return false;
+    else if(img.channels()>1){
+      cv::cvtColor(img,img,CV_RGB2GRAY);
+    }
     // Smooth the image to remove unwanted noise from extracted CCs
-    cv::medianBlur(img,img,9);
-
+    cv::medianBlur(img,img,7);
     bitwise_not(img,img);
 
     // CCs extraction
@@ -115,11 +115,17 @@ void Image::ComputeMask()
   else if(tmp.channels()>1){
     cv::cvtColor(tmp,tmp,CV_RGB2GRAY);
   }
- 
   cv::medianBlur(tmp,tmp,9);
+
   cv::vector<cv::vector<cv::Point>> contours_mask;
   cv::findContours(tmp, contours_mask, CV_RETR_CCOMP, CV_CHAIN_APPROX_TC89_KCOS);
   cv::vector<ConnectedComponent> tmpCC = extractComposentConnectImage(binarize.clone());
+
+  sort(tmpCC.begin(), tmpCC.end(), []( ConnectedComponent& c1, ConnectedComponent& c2){
+        return (cv::boundingRect(c1.getListPoint()).x + cv::boundingRect(c1.getListPoint()).y)  
+        < (cv::boundingRect(c2.getListPoint()).x + cv::boundingRect(c2.getListPoint()).y);
+    });
+
   int i;
   for(i = 0 ; i < contours_mask.size(); i++)
   {
@@ -129,24 +135,23 @@ void Image::ComputeMask()
       for(int k = tmpCC.size()-1; k >= 0;k--)
       {
           cv::Rect r = cv::boundingRect(tmpCC[k].getListPoint());
-          if(CompareBB(rMask,r) == true && tmpCC[k].getInline() == false)
+          if(rMask.contains(r.br()) || rMask.contains(r.tl()))
           {
             line.addCC(tmpCC[k]);
             tmpCC[k].setInline(true);
           }
         }  
       m_listLine.push_back(line);
-      if(m_listLine[i].getListCC().size() != 0)
+          if(m_listLine[i].getListCC().size() != 0){
       m_listLine[i].computeBaseLine();
+    }     
   }
-
   Line line = Line();
   for(int i = 0; i < tmpCC.size(); i++)
   {
     if(tmpCC[i].getInline() == false){line.addCC(tmpCC[i]);}
   }
   m_listLine.push_back(line);
-  m_listLine[i-1].computeBaseLine();
 }
 
 
@@ -186,6 +191,7 @@ std::string Image::jsonBaseline(){
       cv::Rect cc_begin = cv::boundingRect(ListTmpCC[0].getListPoint());
       cv::Rect cc_end = cv::boundingRect(ListTmpCC[ListTmpCC.size()-1].getListPoint());
       json += ("\"" + std::to_string(line) +"\":{");
+      json += ("\"line\":" + std::to_string(line) + ",");
       json += ("\"x_begin\":" + std::to_string(cc_begin.x) + ",");
       json += ("\"x_end\":" + std::to_string(cc_end.x + cc_end.width) + ",");
       json += ("\"y_baseline\":" + std::to_string(m_listLine[line].getBaseline()));

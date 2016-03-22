@@ -39,9 +39,10 @@ void Line::setBoundingBoxAtIndex(int index, int up, int down, int left, int righ
 
 void Line::computeBaseLine(){
 	sort(m_ListCC.begin(), m_ListCC.end(), [](ConnectedComponent &c1, ConnectedComponent &c2){
-        return cv::boundingRect(c1.getListPoint()).y > cv::boundingRect(c2.getListPoint()).y;
+        return cv::boundingRect(c1.getListPoint()).x < cv::boundingRect(c2.getListPoint()).x;
     });
 
     int median = (int)m_ListCC.size()/2;
     cv::Rect bb = cv::boundingRect(m_ListCC[median].getListPoint());
+    setBaseline(bb.y + bb.height);
 }
