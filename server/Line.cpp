@@ -41,7 +41,7 @@ void Line::computeBaseLine(){
 	sort(m_ListCC.begin(), m_ListCC.end(), [](ConnectedComponent &c1, ConnectedComponent &c2){
         return cv::boundingRect(c1.getListPoint()).x < cv::boundingRect(c2.getListPoint()).x;
     });
-
+    
     int median = (int)m_ListCC.size()/2;
     cv::Rect bb = cv::boundingRect(m_ListCC[median].getListPoint());
     setBaseline(bb.y + bb.height);

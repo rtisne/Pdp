@@ -21,7 +21,7 @@ public:
     cv::Mat BinarizedImage();
     cv::vector<ConnectedComponent> extractComposentConnectImage(cv::Mat img);
     void computeBaseline();
-    bool CompareBB(cv::Rect bb1, cv::Rect bb2);
+    bool inMiddle(cv::Rect bb1, cv::Rect bb2);
     std::string jsonBoundingRect();
     std::string jsonBaseline();
     cv::Rect getBoundingBoxAtIndex(int index, int line);   

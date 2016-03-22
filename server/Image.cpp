@@ -49,7 +49,6 @@ ConnectedComponent Image::getConnectedComponnentAt(int index, int line){
 
 cv::Mat Image::BinarizedImage()
 {
-  imwrite("img.png", m_img);
   cv::Mat m_img_bin (m_img.rows, m_img.cols, CV_8U);
   NiblackSauvolaWolfJolion (m_img, m_img_bin, WOLFJOLION);
   return m_img_bin;
@@ -120,38 +119,44 @@ void Image::ComputeMask()
   cv::vector<cv::vector<cv::Point>> contours_mask;
   cv::findContours(tmp, contours_mask, CV_RETR_CCOMP, CV_CHAIN_APPROX_TC89_KCOS);
   cv::vector<ConnectedComponent> tmpCC = extractComposentConnectImage(binarize.clone());
-
   sort(tmpCC.begin(), tmpCC.end(), []( ConnectedComponent& c1, ConnectedComponent& c2){
-        return (cv::boundingRect(c1.getListPoint()).x + cv::boundingRect(c1.getListPoint()).y)  
-        < (cv::boundingRect(c2.getListPoint()).x + cv::boundingRect(c2.getListPoint()).y);
+        return cv::boundingRect(c1.getListPoint()).x < cv::boundingRect(c2.getListPoint()).x;
     });
 
-  int i;
-  for(i = 0 ; i < contours_mask.size(); i++)
+  sort(contours_mask.begin(), contours_mask.end(), [](const cv::vector<cv::Point>& c1, const cv::vector<cv::Point>& c2){
+        return cv::boundingRect(c1).y < cv::boundingRect(c2).y;
+    });
+  if(contours_mask.size() != 0)
   {
-    Line line = Line();
-    cv::Rect rMask = cv::boundingRect(contours_mask[i]);
-    cv::vector<ConnectedComponent>::iterator itr = tmpCC.begin();
-      for(int k = tmpCC.size()-1; k >= 0;k--)
-      {
+    for(int i = 0 ; i < contours_mask.size(); i++)
+    {
+      Line line = Line();
+      cv::Rect rMask = cv::boundingRect(contours_mask[i]);
+      cv::vector<ConnectedComponent>::iterator itr = tmpCC.begin();
+        for(int k = 0; k < tmpCC.size();k++)
+        {
           cv::Rect r = cv::boundingRect(tmpCC[k].getListPoint());
-          if(rMask.contains(r.br()) || rMask.contains(r.tl()))
-          {
-            line.addCC(tmpCC[k]);
-            tmpCC[k].setInline(true);
-          }
+          if(tmpCC[k].getInline() == false)
+            {
+            if(inMiddle(rMask,r) || rMask.contains(r.tl()) || rMask.contains(r.br()))
+              {
+                line.addCC(tmpCC[k]);
+                tmpCC[k].setInline(true);
+              }
+            }  
         }  
-      m_listLine.push_back(line);
-          if(m_listLine[i].getListCC().size() != 0){
-      m_listLine[i].computeBaseLine();
-    }     
+        m_listLine.push_back(line);
+        if(m_listLine[i].getListCC().size() != 0)
+          {
+            m_listLine[i].computeBaseLine();
+          }     
+    }
+  } else if(tmpCC.size() == 1){
+    Line line = Line();
+    line.addCC(tmpCC[0]);
+    m_listLine.push_back(line);
+    m_listLine[0].computeBaseLine();
   }
-  Line line = Line();
-  for(int i = 0; i < tmpCC.size(); i++)
-  {
-    if(tmpCC[i].getInline() == false){line.addCC(tmpCC[i]);}
-  }
-  m_listLine.push_back(line);
 }
 
 
@@ -176,7 +181,6 @@ std::string Image::jsonBoundingRect(){
       id++;
     }
   }
-  std::cout << "nb objet" << id << std::endl;
   json = json.substr(0, json.size()-1);
   return json;
 }
@@ -234,6 +238,19 @@ const std::string Image::extractDataFromComponent(int index, int lineId)
   }
   return data.substr(0, data.size()-1);
 } 
+
+bool Image::inMiddle(cv::Rect bb1, cv::Rect bb2)
+{
+  int bb2_x = bb2.x + (bb2.width/2);
+  int bb2_y = bb2.y + (bb2.height/2);
+  int bb1_x_max = bb1.x + bb1.width + 3;
+  int bb1_y_max = bb1.y + bb1.height + 3;
+  if((bb1.x) <= bb2_x && bb2_x <= bb1_x_max && (bb1.y) <= bb2_y &&  bb2_y <= bb1_y_max)
+  {
+    return true;
+  }
+  return false;
+}
 
 void Image::setBaselineForLine(int id, int value)
 {
