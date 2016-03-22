@@ -7,8 +7,14 @@ Line::Line(){
 void Line::setBaseline(int y)
 {
 	for(int unsigned i=0;i<m_ListCC.size();i++)
+	{
+		std::cout << m_ListCC[i].getBaseline() << ":" << m_baseline << std::endl;
 		if(m_ListCC[i].getBaseline() == m_baseline)
+		{
 			m_ListCC[i].setBaseline(y);
+			
+		}
+	}
 
   m_baseline = y;
 }

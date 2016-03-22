@@ -231,15 +231,13 @@ class MyDynamicRepository : public DynamicRepository
         if(charactereId != -1)
         {
           letter = activeSessions.at(sessionIndex)->getFont()->characterAtIndex(charactereId)->getLabel();
-          baseline = activeSessions.at(sessionIndex)->getFont()->characterAtIndex(charactereId)->getBaseline();
+          int percent = activeSessions.at(sessionIndex)->getFont()->characterAtIndex(charactereId)->getBaseline();
+          baseline = round((float)bb.y + ((float)bb.height * (float)percent / 100));
         }
         else
         {
           baseline = activeSessions.at(sessionIndex)->getImage()->getBaselineAtIndex(stoi(ccId),stoi(lineId));
         }
-        
-
-
         string json = "{";
         json += ("\"id\":" + ccId + ",");
         json += ("\"idLine\":" + lineId + ",");
@@ -270,6 +268,7 @@ class MyDynamicRepository : public DynamicRepository
         string letter;
         string activeId;
         string activeLine;
+        string baseline;
         request->getParameter("token", token);
         request->getParameter("left", left);
         request->getParameter("right", right);
@@ -279,6 +278,7 @@ class MyDynamicRepository : public DynamicRepository
         request->getParameter("id", listCCId);
         request->getParameter("activeid", activeId);
         request->getParameter("activeline", activeLine);
+        request->getParameter("baseline", baseline);
 
         int sessionIndex = getActiveSessionFromToken(stoi(token));
         auto j = json::parse(listCCId);
@@ -289,6 +289,7 @@ class MyDynamicRepository : public DynamicRepository
           if(idCC == stoi(activeId) && idLine == stoi(activeLine))
           {
             activeSessions.at(sessionIndex)->getImage()->setBoundingBoxAtIndex(idCC, idLine,stoi(up),stoi(down),stoi(left),stoi(right));
+            activeSessions.at(sessionIndex)->getImage()->setBaselineAtIndex(idCC, idLine, stoi(baseline));
           }
 
           int indexCharacterForCC = activeSessions.at(sessionIndex)->getFont()->indexOfCharacterForCC(idCC, idLine);
@@ -306,13 +307,9 @@ class MyDynamicRepository : public DynamicRepository
           indexCharacter = activeSessions.at(sessionIndex)->getFont()->indexOfCharacter(letter);
 
           activeSessions.at(sessionIndex)->getFont()->characterAtIndex(indexCharacter)->addComposant(idCC, idLine);
-          
+          activeSessions.at(sessionIndex)->getFont()->characterAtIndex(indexCharacter)->setBaseline(round(((stof(baseline)-stof(up))/(stof(down) - stof(up))) * 100));
         }
-        
-        // activeSessions.at(sessionIndex)->getImage()->getConnectedComponentAtIndex(stoi(ccId))->setBoundingBox( BoundingBox(cv::Point2f(stof(left), stof(up)), stof(right) - stof(left), stof(down) - stof(up)));
-
         return fromString("ok", response);
-      
       }
         
     } updateInfoOnCC;
