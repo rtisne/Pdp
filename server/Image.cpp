@@ -156,6 +156,7 @@ void Image::ComputeMask()
   } else if(tmpCC.size() == 1){
     Line line = Line();
     line.addCC(tmpCC[0]);
+    nbCCInline++;
     m_listLine.push_back(line);
     m_listLine[0].computeBaseLine();
   }
