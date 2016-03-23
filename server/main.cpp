@@ -363,7 +363,7 @@ class MyDynamicRepository : public DynamicRepository
         request->getParameter("value", value);
         int sessionIndex = getActiveSessionFromToken(stoi(token));
         activeSessions.at(sessionIndex)->getImage()->setBaselineForLine(stoi(idLine), stoi(value));
-        return true;
+        return fromString("ok", response);
 
       }
         
