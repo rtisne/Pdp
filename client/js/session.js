@@ -120,6 +120,8 @@ Session.prototype.extractFont = function(fontname)
     {
         var file = new Blob([data], {type: "text/plain;charset=utf-8"});
         saveAs(file, fontname + ".of");
+        
+
         $('#saveModal').modal('hide');
 		  
     },

@@ -244,17 +244,17 @@ const std::string Image::extractDataFromComponent(int index, int lineId)
   int cols = m_img.cols;
   cv::Rect bb = getBoundingBoxAtIndex(index, lineId);
   for (int i=bb.y; i<=bb.y+bb.height; ++i) {
-    cv::Vec3b *p = m_img.ptr<cv::Vec3b>(i);
-    cv::Vec3b *pB = imgBinarized.ptr<cv::Vec3b>(i);
     for (int j=bb.x; j<=bb.x+bb.width; ++j) {
       unsigned int v;
+      cv::Vec3b *p = m_img.ptr<cv::Vec3b>(i);
+      cv::Vec3b *pB = imgBinarized.ptr<cv::Vec3b>(i);
       const cv::Vec3b pix = p[j];
       const cv::Vec3b pixB = pB[j];
       unsigned char opacity = 255;
       // if(pixB[0] == 255 && pixB[1] == 255 && pixB[2] == 255)
       //   v = (0<<24)|(255<<16)|(255<<8)|(255);
       // else
-        v = (opacity<<24)|(pixB[0]<<16)|(pixB[1]<<8)|(pixB[2]);
+        v = (opacity<<24)|(pix[0]<<16)|(pix[1]<<8)|(pix[2]);
   
       data += std::to_string(v);
       data += ",";

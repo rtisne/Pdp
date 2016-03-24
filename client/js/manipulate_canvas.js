@@ -178,7 +178,7 @@ function Controller(canvas, previewCanvas, listCharacter) {
     document.getElementById('saveBaseline').addEventListener('click', function(e){
         var value = parseFloat($("#baselineValue").val());
         controller.canvas.baseline.lines[controller.previewCanvas.idElementSelected].y = value;
-        session.updateBaseline(controller.previewCanvas.idElementSelected, value);
+        session.updateBaseline(controller.canvas.baseline.lines[controller.previewCanvas.idElementSelected].id, value);
     }, true);
 
     $('.container_right').keypress(function (e) {

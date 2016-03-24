@@ -59,14 +59,14 @@ bool test_format(std::string fileName)
 string extractFontInOl(int sessionIndex, string fontName)
 {
   ostringstream xmlDocument;
-  xmlDocument << "<?xml version=\"1.0\" encoding=\"UTF-8\"?><font name=\"" + fontName + "\">" << endl; 
+  xmlDocument << "<?xml version=\"1.0\" encoding=\"UTF-8\"?>" << endl << "<font name=\"" + fontName + "\">" << endl; 
   for(int i = 0; i < activeSessions.at(sessionIndex)->getFont()->countCharacter(); i ++)
   {
         Character* character = activeSessions.at(sessionIndex)->getFont()->characterAtIndex(i);
         xmlDocument << "<letter char=\"" +  character->getLabel() + "\">"<< endl; 
         xmlDocument << "<anchor>"<< endl; 
         xmlDocument << "<upLine>0</upLine>"<< endl; 
-        xmlDocument << "<baseLine>100</baseLine>"<< endl; 
+        xmlDocument << "<baseLine>" << character->getBaseline() << "</baseLine>"<< endl; 
         xmlDocument << "<leftLine>0</leftLine>"<< endl; 
         xmlDocument << "<rightLine>100</rightLine>"<< endl; 
         xmlDocument << "</anchor>" << endl;
@@ -286,12 +286,13 @@ class MyDynamicRepository : public DynamicRepository
         {
           int idCC = it->find("idCC")->get<int>();
           int idLine = it->find("idLine")->get<int>();
+          int oldBaseline;
           if(idCC == stoi(activeId) && idLine == stoi(activeLine))
           {
             activeSessions.at(sessionIndex)->getImage()->setBoundingBoxAtIndex(idCC, idLine,stoi(up),stoi(down),stoi(left),stoi(right));
+            oldBaseline = activeSessions.at(sessionIndex)->getImage()->getBaselineAtIndex(idCC, idLine);
             activeSessions.at(sessionIndex)->getImage()->setBaselineAtIndex(idCC, idLine, stoi(baseline));
           }
-
           int indexCharacterForCC = activeSessions.at(sessionIndex)->getFont()->indexOfCharacterForCC(idCC, idLine);
           if(indexCharacterForCC != -1)
           {
@@ -299,15 +300,26 @@ class MyDynamicRepository : public DynamicRepository
             if(activeSessions.at(sessionIndex)->getFont()->characterAtIndex(indexCharacterForCC)->countComposant() <= 0)
               activeSessions.at(sessionIndex)->getFont()->removeCharacter(indexCharacterForCC);
           }
-          int indexCharacter = activeSessions.at(sessionIndex)->getFont()->indexOfCharacter(letter);
+          if(letter != "")
+          {
+            
+            int indexCharacter = activeSessions.at(sessionIndex)->getFont()->indexOfCharacter(letter);
+            
+            if(indexCharacter == -1)
+            {
+              activeSessions.at(sessionIndex)->getFont()->addCharacter(Character(letter));
+              indexCharacter = activeSessions.at(sessionIndex)->getFont()->indexOfCharacter(letter);
+              activeSessions.at(sessionIndex)->getFont()->characterAtIndex(indexCharacter)->setBaseline(round(((stof(baseline)-stof(up))/(stof(down) - stof(up))) * 100));
+            }
+
+            activeSessions.at(sessionIndex)->getFont()->characterAtIndex(indexCharacter)->addComposant(idCC, idLine);
+
+            if(stoi(baseline) != oldBaseline)
+            {
+              activeSessions.at(sessionIndex)->getFont()->characterAtIndex(indexCharacter)->setBaseline(round(((stof(baseline)-stof(up))/(stof(down) - stof(up))) * 100));
+            }
+          }
           
-          if(indexCharacter == -1)
-            activeSessions.at(sessionIndex)->getFont()->addCharacter(Character(letter));
-
-          indexCharacter = activeSessions.at(sessionIndex)->getFont()->indexOfCharacter(letter);
-
-          activeSessions.at(sessionIndex)->getFont()->characterAtIndex(indexCharacter)->addComposant(idCC, idLine);
-          activeSessions.at(sessionIndex)->getFont()->characterAtIndex(indexCharacter)->setBaseline(round(((stof(baseline)-stof(up))/(stof(down) - stof(up))) * 100));
         }
         return fromString("ok", response);
       }
