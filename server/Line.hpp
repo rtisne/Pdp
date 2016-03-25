@@ -14,6 +14,7 @@ public:
   	void addCC(ConnectedComponent cc);
   	ConnectedComponent getConnectedComponentAtIndex(int index);
   	void setBoundingBoxAtIndex(int index, int up, int down, int left, int right);
+  	void setBaselineAtIndex(int index, int value);
     void computeBaseLine();
 
 private:

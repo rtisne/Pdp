@@ -59,14 +59,14 @@ bool test_format(std::string fileName)
 string extractFontInOl(int sessionIndex, string fontName)
 {
   ostringstream xmlDocument;
-  xmlDocument << "<?xml version=\"1.0\" encoding=\"UTF-8\"?><font name=\"" + fontName + "\">" << endl; 
+  xmlDocument << "<?xml version=\"1.0\" encoding=\"UTF-8\"?>" << endl << "<font name=\"" + fontName + "\">" << endl; 
   for(int i = 0; i < activeSessions.at(sessionIndex)->getFont()->countCharacter(); i ++)
   {
         Character* character = activeSessions.at(sessionIndex)->getFont()->characterAtIndex(i);
         xmlDocument << "<letter char=\"" +  character->getLabel() + "\">"<< endl; 
         xmlDocument << "<anchor>"<< endl; 
         xmlDocument << "<upLine>0</upLine>"<< endl; 
-        xmlDocument << "<baseLine>100</baseLine>"<< endl; 
+        xmlDocument << "<baseLine>" << character->getBaseline() << "</baseLine>"<< endl; 
         xmlDocument << "<leftLine>0</leftLine>"<< endl; 
         xmlDocument << "<rightLine>100</rightLine>"<< endl; 
         xmlDocument << "</anchor>" << endl;
@@ -225,12 +225,23 @@ class MyDynamicRepository : public DynamicRepository
         int sessionIndex = getActiveSessionFromToken(stoi(token));
         cv::Rect bb = activeSessions.at(sessionIndex)->getImage()->getBoundingBoxAtIndex(stoi(ccId),stoi(lineId));
         int charactereId = activeSessions.at(sessionIndex)->getFont()->indexOfCharacterForCC(stoi(ccId),stoi(lineId));
+
         string letter = "";
+        int baseline;
         if(charactereId != -1)
+        {
           letter = activeSessions.at(sessionIndex)->getFont()->characterAtIndex(charactereId)->getLabel();
-        
+          int percent = activeSessions.at(sessionIndex)->getFont()->characterAtIndex(charactereId)->getBaseline();
+          baseline = round((float)bb.y + ((float)bb.height * (float)percent / 100));
+        }
+        else
+        {
+          baseline = activeSessions.at(sessionIndex)->getImage()->getBaselineAtIndex(stoi(ccId),stoi(lineId));
+        }
         string json = "{";
         json += ("\"id\":" + ccId + ",");
+        json += ("\"idLine\":" + lineId + ",");
+        json += ("\"baseline\":" + to_string(baseline) + ",");
         json += ("\"left\":" + to_string(bb.x) + ",");
         json += ("\"right\":" + to_string(bb.x + bb.width) + ",");
         json += ("\"up\":" + to_string(bb.y) + ",");
@@ -257,6 +268,7 @@ class MyDynamicRepository : public DynamicRepository
         string letter;
         string activeId;
         string activeLine;
+        string baseline;
         request->getParameter("token", token);
         request->getParameter("left", left);
         request->getParameter("right", right);
@@ -266,6 +278,7 @@ class MyDynamicRepository : public DynamicRepository
         request->getParameter("id", listCCId);
         request->getParameter("activeid", activeId);
         request->getParameter("activeline", activeLine);
+        request->getParameter("baseline", baseline);
 
         int sessionIndex = getActiveSessionFromToken(stoi(token));
         auto j = json::parse(listCCId);
@@ -273,11 +286,13 @@ class MyDynamicRepository : public DynamicRepository
         {
           int idCC = it->find("idCC")->get<int>();
           int idLine = it->find("idLine")->get<int>();
+          int oldBaseline;
           if(idCC == stoi(activeId) && idLine == stoi(activeLine))
           {
             activeSessions.at(sessionIndex)->getImage()->setBoundingBoxAtIndex(idCC, idLine,stoi(up),stoi(down),stoi(left),stoi(right));
+            oldBaseline = activeSessions.at(sessionIndex)->getImage()->getBaselineAtIndex(idCC, idLine);
+            activeSessions.at(sessionIndex)->getImage()->setBaselineAtIndex(idCC, idLine, stoi(baseline));
           }
-
           int indexCharacterForCC = activeSessions.at(sessionIndex)->getFont()->indexOfCharacterForCC(idCC, idLine);
           if(indexCharacterForCC != -1)
           {
@@ -285,21 +300,28 @@ class MyDynamicRepository : public DynamicRepository
             if(activeSessions.at(sessionIndex)->getFont()->characterAtIndex(indexCharacterForCC)->countComposant() <= 0)
               activeSessions.at(sessionIndex)->getFont()->removeCharacter(indexCharacterForCC);
           }
-          int indexCharacter = activeSessions.at(sessionIndex)->getFont()->indexOfCharacter(letter);
-          
-          if(indexCharacter == -1)
-            activeSessions.at(sessionIndex)->getFont()->addCharacter(Character(letter));
+          if(letter != "")
+          {
+            
+            int indexCharacter = activeSessions.at(sessionIndex)->getFont()->indexOfCharacter(letter);
+            
+            if(indexCharacter == -1)
+            {
+              activeSessions.at(sessionIndex)->getFont()->addCharacter(Character(letter));
+              indexCharacter = activeSessions.at(sessionIndex)->getFont()->indexOfCharacter(letter);
+              activeSessions.at(sessionIndex)->getFont()->characterAtIndex(indexCharacter)->setBaseline(round(((stof(baseline)-stof(up))/(stof(down) - stof(up))) * 100));
+            }
 
-          indexCharacter = activeSessions.at(sessionIndex)->getFont()->indexOfCharacter(letter);
+            activeSessions.at(sessionIndex)->getFont()->characterAtIndex(indexCharacter)->addComposant(idCC, idLine);
 
-          activeSessions.at(sessionIndex)->getFont()->characterAtIndex(indexCharacter)->addComposant(idCC, idLine);
+            if(stoi(baseline) != oldBaseline)
+            {
+              activeSessions.at(sessionIndex)->getFont()->characterAtIndex(indexCharacter)->setBaseline(round(((stof(baseline)-stof(up))/(stof(down) - stof(up))) * 100));
+            }
+          }
           
         }
-        
-        // activeSessions.at(sessionIndex)->getImage()->getConnectedComponentAtIndex(stoi(ccId))->setBoundingBox( BoundingBox(cv::Point2f(stof(left), stof(up)), stof(right) - stof(left), stof(down) - stof(up)));
-
         return fromString("ok", response);
-      
       }
         
     } updateInfoOnCC;
@@ -353,7 +375,7 @@ class MyDynamicRepository : public DynamicRepository
         request->getParameter("value", value);
         int sessionIndex = getActiveSessionFromToken(stoi(token));
         activeSessions.at(sessionIndex)->getImage()->setBaselineForLine(stoi(idLine), stoi(value));
-        return true;
+        return fromString("ok", response);
 
       }
         

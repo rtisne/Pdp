@@ -116,6 +116,11 @@ function Controller(canvas, previewCanvas, listCharacter) {
     //Déplacement de la base RIGHT du caractère
     document.getElementById('right').addEventListener('change', function(e){
         controller.previewCanvas.position_right_line = parseFloat($("#right").val());
+    }, true); 
+
+
+    document.getElementById('baselineCC').addEventListener('change', function(e){
+        controller.previewCanvas.position_baseline = parseFloat($("#baselineCC").val());
     }, true);   
 
     //Déplacement de la baseline
@@ -165,7 +170,7 @@ function Controller(canvas, previewCanvas, listCharacter) {
         controller.canvas.boundingBox.rects[controller.previewCanvas.idElementSelected].rect.w = parseFloat($("#right").val()) - parseFloat($("#left").val());
         controller.canvas.boundingBox.rects[controller.previewCanvas.idElementSelected].rect.h = parseFloat($("#down").val()) - parseFloat($("#up").val());
 
-        session.updateInfoOnCC(controller.canvas.boundingBox.rects[controller.previewCanvas.idElementSelected].idCC, controller.canvas.boundingBox.rects[controller.previewCanvas.idElementSelected].idLine,jsonId,controller.canvas.selectedCC, parseFloat($("#left").val()), parseFloat($("#right").val()),  parseFloat($("#up").val()), parseFloat($("#down").val()), $("#letter").val());
+        session.updateInfoOnCC(controller.canvas.boundingBox.rects[controller.previewCanvas.idElementSelected].idCC, controller.canvas.boundingBox.rects[controller.previewCanvas.idElementSelected].idLine,jsonId,controller.canvas.selectedCC, parseFloat($("#left").val()), parseFloat($("#right").val()),  parseFloat($("#up").val()), parseFloat($("#down").val()),parseInt($("#baselineCC").val()), $("#letter").val());
 
         controller.listCharacter.draw();
     }, true);
@@ -173,7 +178,7 @@ function Controller(canvas, previewCanvas, listCharacter) {
     document.getElementById('saveBaseline').addEventListener('click', function(e){
         var value = parseFloat($("#baselineValue").val());
         controller.canvas.baseline.lines[controller.previewCanvas.idElementSelected].y = value;
-        session.updateBaseline(controller.previewCanvas.idElementSelected, value);
+        session.updateBaseline(controller.canvas.baseline.lines[controller.previewCanvas.idElementSelected].id, value);
     }, true);
 
     $('.container_right').keypress(function (e) {
@@ -230,13 +235,14 @@ Controller.prototype.draw = function(){
 }
 
 
-Controller.prototype.manipulateInfos = function manipulateInfos(id, left, right, up, down, letter){
+Controller.prototype.manipulateInfos = function manipulateInfos(id, left, right, up, down, letter, baseline){
     this.previewCanvas.zoomTo(this.canvas.boundingBox.rects[id], id);
     this.previewCanvas.visible = true;
     this.previewCanvas.position_up_line = up;
     this.previewCanvas.position_down_line = down;
     this.previewCanvas.position_left_line = left;
     this.previewCanvas.position_right_line = right;
+    this.previewCanvas.position_baseline = baseline;
     if(letter == "null")
         $("#letter").val("");
     else
@@ -246,6 +252,7 @@ Controller.prototype.manipulateInfos = function manipulateInfos(id, left, right,
     $("#down").val(down);
     $("#left").val(left);
     $("#right").val(right);
+    $("#baselineCC").val(baseline);
 
     mergeButton.disabled="disabled";
 }
@@ -635,6 +642,14 @@ PreviewCanvas.prototype.draw = function() {
             ctx.lineTo(this.image.x + this.position_right_line, this.height);
             ctx.lineWidth = 1 / this.scaleX;
             ctx.strokeStyle = COLOR_PREVIEW_LINES;
+            ctx.stroke();
+
+            //Baseline
+            ctx.beginPath();
+            ctx.moveTo(0, this.image.y + this.position_baseline);
+            ctx.lineTo(this.width , this.image.y + this.position_baseline);
+            ctx.lineWidth = 1 / this.scaleX;
+            ctx.strokeStyle = COLOR_PREVIEW_BASELINE;
             ctx.stroke();
         }
         ctx.restore();

@@ -84,7 +84,7 @@ Session.prototype.getInfoOnCC = function(id, idCC, idLine, callback)
     success: function(data, textStatus, jqXHR)
     {
     	var info = JSON.parse(data);
-    	callback.manipulateInfos(id, info.left, info.right, info.up, info.down, info.letter);
+    	callback.manipulateInfos(id, info.left, info.right, info.up, info.down, info.letter, info.baseline);
     },
     error: function(error)
     {
@@ -93,12 +93,12 @@ Session.prototype.getInfoOnCC = function(id, idCC, idLine, callback)
 	});
 }
 
-Session.prototype.updateInfoOnCC = function(activeId, activeLine, jsonId, ids, left, right, up, down, letter)
+Session.prototype.updateInfoOnCC = function(activeId, activeLine, jsonId, ids, left, right, up, down, baseline,letter)
 {
 	$.ajax({
     url: 'updateInfoOnCC.txt',
     type: 'POST',
-    data: "token=" + this.token + "&activeid=" + activeId + "&activeline=" + activeLine + "&id=" + jsonId + "&left=" + left + "&right=" + right + "&up=" + up + "&down=" + down + "&letter=" + letter,
+    data: "token=" + this.token + "&activeid=" + activeId + "&activeline=" + activeLine + "&id=" + jsonId + "&left=" + left + "&right=" + right + "&up=" + up + "&down=" + down + "&baseline=" + baseline + "&letter=" + letter,
     success: function(data, textStatus, jqXHR)
     {
     	console.log(data);
@@ -120,6 +120,8 @@ Session.prototype.extractFont = function(fontname)
     {
         var file = new Blob([data], {type: "text/plain;charset=utf-8"});
         saveAs(file, fontname + ".of");
+        
+
         $('#saveModal').modal('hide');
 		  
     },

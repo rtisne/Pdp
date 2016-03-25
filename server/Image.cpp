@@ -33,15 +33,25 @@ const std::vector<Line> Image::getListLine()
 
 cv::Rect Image::getBoundingBoxAtIndex(int index,int line)
 {
-
   std::vector<ConnectedComponent> ListTmpCC = m_listLine[line].getListCC();
   return ListTmpCC[index].getBoundingBox();
 }
+
+int Image::getBaselineAtIndex(int index,int line)
+{
+  std::vector<ConnectedComponent> ListTmpCC = m_listLine[line].getListCC();
+  return ListTmpCC[index].getBaseline();
+}
+
 void Image::setBoundingBoxAtIndex(int index,int line, int up, int down, int left, int right)
 {
   m_listLine[line].setBoundingBoxAtIndex(index, up, down, left, right);
 }
 
+void Image::setBaselineAtIndex(int index,int line, int value)
+{
+  m_listLine[line].setBaselineAtIndex(index,value);
+}
 
 ConnectedComponent Image::getConnectedComponnentAt(int index, int line){
   return m_listLine[line].getConnectedComponentAtIndex(index);
@@ -236,17 +246,17 @@ const std::string Image::extractDataFromComponent(int index, int lineId)
   int cols = m_img.cols;
   cv::Rect bb = getBoundingBoxAtIndex(index, lineId);
   for (int i=bb.y; i<=bb.y+bb.height; ++i) {
-    cv::Vec3b *p = m_img.ptr<cv::Vec3b>(i);
-    cv::Vec3b *pB = imgBinarized.ptr<cv::Vec3b>(i);
     for (int j=bb.x; j<=bb.x+bb.width; ++j) {
       unsigned int v;
+      cv::Vec3b *p = m_img.ptr<cv::Vec3b>(i);
+      cv::Vec3b *pB = imgBinarized.ptr<cv::Vec3b>(i);
       const cv::Vec3b pix = p[j];
       const cv::Vec3b pixB = pB[j];
       unsigned char opacity = 255;
       // if(pixB[0] == 255 && pixB[1] == 255 && pixB[2] == 255)
       //   v = (0<<24)|(255<<16)|(255<<8)|(255);
       // else
-        v = (opacity<<24)|(pixB[0]<<16)|(pixB[1]<<8)|(pixB[2]);
+        v = (opacity<<24)|(pix[0]<<16)|(pix[1]<<8)|(pix[2]);
   
       data += std::to_string(v);
       data += ",";
@@ -274,3 +284,4 @@ void Image::setBaselineForLine(int id, int value)
 {
   m_listLine[id].setBaseline(value);
 }
+

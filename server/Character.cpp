@@ -19,14 +19,14 @@ const std::string Character::getLabel()
 	return m_label;
 }
 
-void Character::setBase(int x)
+void Character::setBaseline(int x)
 {
-	m_base = x;
+	m_baseline = x;
 }
 
-const int Character::getBase()
+const int Character::getBaseline()
 {
-	return m_base;
+	return m_baseline;
 }
 
 const int Character::countComposant()
