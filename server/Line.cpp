@@ -45,4 +45,5 @@ void Line::computeBaseLine(){
     int median = (int)m_ListCC.size()/2;
     cv::Rect bb = cv::boundingRect(m_ListCC[median].getListPoint());
     setBaseline(bb.y + bb.height);
+
 }

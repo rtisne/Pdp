@@ -5,6 +5,7 @@ cv::Mat resize(const cv::Mat &im, double resize_factor){
     cv::Mat curr = cv::Mat::zeros((int)((double)im.rows * resize_factor) , (int)((double)im.cols * resize_factor) , im.type());
     cv::resize(im, curr, curr.size());
     return curr;
+    curr.release();
 }
 
 void preProcess(cv::Mat &src, cv::Mat &dst,int erosion){
@@ -31,6 +32,7 @@ void preProcess(cv::Mat &src, cv::Mat &dst,int erosion){
     cv::cvtColor(dst, dst, CV_RGB2GRAY);
     cv::bitwise_not(dst, dst);
 	
+    background.release();
 }
 void postProcess(cv::Mat &src, cv::Mat &dst, double v, int win){
     /* Removes unwanted noise and enhances pixels connectivity */
@@ -136,6 +138,7 @@ void binarize(cv::Mat &src, cv::Mat &dst, int method, int thresholdType, int blo
 void applyErosion(cv::Mat &src, cv::Mat &dst, int erosion_type, int erosion_size){
     cv::Mat element = cv::getStructuringElement(erosion_type, cv::Size(2*erosion_size + 1, 2*erosion_size+1), cv::Point(erosion_size, erosion_size));
     cv::erode(src, dst, element);
+    element.release();
 }
 
 void applyDilation(cv::Mat &src, cv::Mat &dst, int dilation_type, int dilation_size){
@@ -143,6 +146,7 @@ void applyDilation(cv::Mat &src, cv::Mat &dst, int dilation_type, int dilation_s
                                        cv::Size( 2*dilation_size + 1, 2*dilation_size+1 ),
                                        cv::Point( dilation_size, dilation_size ) );
  cv::dilate(src, dst, element);
+ element.release();
 }
 
 double calcLocalStats (cv::Mat &im, cv::Mat &map_m, cv::Mat &map_s, int winx, int winy) {
@@ -190,7 +194,8 @@ double calcLocalStats (cv::Mat &im, cv::Mat &map_m, cv::Mat &map_s, int winx, in
 			map_s.fset(i+wxh, j, s);
 		}
 	}
-
+    im_sum.release();
+    im_sum_sq.release();
 	return max_s;
 }
 
@@ -312,4 +317,7 @@ void NiblackSauvolaWolfJolion (cv::Mat im, cv::Mat output, NiblackVersion versio
     	    output.uset(x,y,0);
     	}
     }
+    map_m.release();
+    map_s.release();
+    thsurf.release();
 }

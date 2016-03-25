@@ -45,7 +45,7 @@ bool test_format(std::string fileName)
   {
     return true;
   }
-  else if (extension.compare("tif") == 0)
+  else if (extension.compare("tiff") == 0)
   {
     return true;
   }

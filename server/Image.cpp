@@ -52,6 +52,7 @@ cv::Mat Image::BinarizedImage()
   cv::Mat m_img_bin (m_img.rows, m_img.cols, CV_8U);
   NiblackSauvolaWolfJolion (m_img, m_img_bin, WOLFJOLION);
   return m_img_bin;
+  m_img_bin.release();
 }
 
 cv::vector<ConnectedComponent> Image::extractComposentConnectImage(cv::Mat img){
@@ -106,7 +107,6 @@ void Image::ComputeMask()
 
   // horizontal blur
   cv::blur(binarize,tmp,cv::Size(5*character_height,0.5*character_height));
-
   // binarization + median filtering
   cv::threshold(tmp,tmp,190,255,1);
   if(tmp.empty())
@@ -133,7 +133,6 @@ void Image::ComputeMask()
     {
       Line line = Line();
       cv::Rect rMask = cv::boundingRect(contours_mask[i]);
-      cv::vector<ConnectedComponent>::iterator itr = tmpCC.begin();
         for(int k = 0; k < tmpCC.size();k++)
         {
           cv::Rect r = cv::boundingRect(tmpCC[k].getListPoint());
@@ -160,10 +159,8 @@ void Image::ComputeMask()
     m_listLine.push_back(line);
     m_listLine[0].computeBaseLine();
   }
-
   if(nbCCInline != tmpCC.size())
   {
-  std::cout << " New Line " << std::endl;
   Line line = Line();
   for(int i = 0; i < tmpCC.size() ; i++){
     if(tmpCC[i].getInline() == false)
@@ -172,6 +169,8 @@ void Image::ComputeMask()
   m_listLine.push_back(line);
   }
   
+  tmp.release();
+  binarize.release();
 }
 
 
@@ -195,7 +194,9 @@ std::string Image::jsonBoundingRect(){
       json += (",");
       id++;
     }
+  ListTmpCC.clear();
   }
+
   json = json.substr(0, json.size()-1);
   return json;
 }
@@ -216,6 +217,7 @@ std::string Image::jsonBaseline(){
       json += ("\"y_baseline\":" + std::to_string(m_listLine[line].getBaseline()));
       json += ("}");
       json += (",");
+      ListTmpCC.clear();
     }
   }
   json = json.substr(0, json.size()-1);
@@ -251,6 +253,7 @@ const std::string Image::extractDataFromComponent(int index, int lineId)
 
     }
   }
+  imgBinarized.release();
   return data.substr(0, data.size()-1);
 } 
 
