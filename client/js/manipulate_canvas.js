@@ -9,7 +9,7 @@ function Controller(canvas, previewCanvas, listCharacter) {
     $(".container_right").show();
     $('#baseline_options').hide();
     this.canvas.boundingBox.select(0);
-    //session.getInfoOnCC(0,controller.canvas.boundingBox.rects[0].idCC, controller.canvas.boundingBox.rects[0].idLine, controller);
+    session.getInfoOnCC(0,controller.canvas.boundingBox.rects[0].idCC, controller.canvas.boundingBox.rects[0].idLine, controller);
     this.previewCanvas.visible = true;
     
     canvas.canvas.addEventListener('selectstart', function(e) { e.preventDefault(); return false; }, false);
@@ -97,11 +97,20 @@ function Controller(canvas, previewCanvas, listCharacter) {
             controller.canvas.baseline.visible = false;
         }     
     }, true);
-
     //Déplacement de la base UP du caractère
     document.getElementById('up').addEventListener('change', function(e){
         controller.previewCanvas.position_up_line = parseFloat($("#up").val());
-    }, true);
+    }, true);  
+
+    // $(':input[type="number"]').on( "click", function (e) {
+    //     e.preventDefault();
+    //     if ($(this).data('old-value') < $(this).val()) {
+    //         $(this).val(parseInt($(this).data('old-value')) - 1);
+    //     } else if($(this).data('old-value') > $(this).val()) {
+    //         $(this).val(parseInt($(this).data('old-value')) + 1);
+    //     }
+    //     $(this).data('old-value', $(this).val());           
+    // });
 
     //Déplacement de la base DOWN du caractère
     document.getElementById('down').addEventListener('change', function(e){
@@ -249,10 +258,15 @@ Controller.prototype.manipulateInfos = function manipulateInfos(id, left, right,
         $("#letter").val(letter);
 
     $("#up").val(up);
+    $("#up").data('old-value', up);
     $("#down").val(down);
+    $("#down").data('old-value', down);
     $("#left").val(left);
+    $("#left").data('old-value', left);
     $("#right").val(right);
+    $("#right").data('old-value', right);
     $("#baselineCC").val(baseline);
+    $("#baselineCC").data('old-value', baselineCC);
 
     mergeButton.disabled="disabled";
 }

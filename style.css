@@ -90,7 +90,7 @@ p{font-size:1em;line-height: 1.7em; margin-bottom: 1.7em;}
 	.navbar-nav > li > a {line-height: 1em;}	
 	.navbar-brand{padding: 7px;height: 50px;line-height: 2em;margin-left: 15px !important;}	
 	.navbar-default{background: #fff !important;}
-	.navbar-default .navbar-toggle,.navbar-default .navbar-toggle:hover, .navbar-default .navbar-toggle:focus{background:#681D4D ;color: #fff;border: none;border-radius: 0;}
+	.navbar-default .navbar-toggle,.navbar-default .navbar-toggle:hover, .navbar-default .navbar-toggle:focus{background:#3B4346 ;color: #fff;border: none;border-radius: 0;}
 	.navbar-default .navbar-toggle .icon-bar{background-color: #fff;}
 	.footer{margin-top: 2em;padding-bottom: 2em;}
 

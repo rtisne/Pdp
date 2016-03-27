@@ -27,7 +27,11 @@ std::vector<Session*> activeSessions;
 
 void exitFunction( int dummy )
 {
-   if (webServer != NULL) webServer->stopService();
+  for (unsigned i=0; i<activeSessions.size(); i++)
+  {
+    delete activeSessions.at(i);
+  }
+  if (webServer != NULL) webServer->stopService();
 }
 
 bool test_format(std::string fileName)
@@ -140,12 +144,6 @@ class MyDynamicRepository : public DynamicRepository
 {
     class MyDynamicPage : public DynamicPage
     {
-      protected:
-        bool isValidSession(HttpRequest* request)
-        {
-          void *myAttribute = request->getSessionAttribute("username");          
-          return myAttribute != NULL;
-        }
     };
 
     class Uploader: public DynamicPage
@@ -385,9 +383,7 @@ class MyDynamicRepository : public DynamicRepository
     {
       bool getPage(HttpRequest* request, HttpResponse *response)
       {
-
-        if (!isValidSession(request))
-          response->forwardTo("index.php");
+        response->forwardTo("index.php");
         return true;
       }
 
