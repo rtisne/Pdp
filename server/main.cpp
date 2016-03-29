@@ -306,7 +306,7 @@ class MyDynamicRepository : public DynamicRepository
             if(indexCharacter == -1)
             {
               activeSessions.at(sessionIndex)->getFont()->addCharacter(Character(letter));
-              indexCharacter = activeSessions.at(sessionIndex)->getFont()->indexOfCharacter(letter);
+              indexCharacter = activeSessions.at(sessionIndex)->getFont()->indexOfCharacter(l);
               activeSessions.at(sessionIndex)->getFont()->characterAtIndex(indexCharacter)->setBaseline(round(((stof(baseline)-stof(up))/(stof(down) - stof(up))) * 100));
             }
 

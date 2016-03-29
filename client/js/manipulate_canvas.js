@@ -97,45 +97,33 @@ function Controller(canvas, previewCanvas, listCharacter) {
             controller.canvas.baseline.visible = false;
         }     
     }, true);
-    //Déplacement de la base UP du caractère
-    document.getElementById('up').addEventListener('change', function(e){
-        controller.previewCanvas.position_up_line = parseFloat($("#up").val());
-    }, true);  
 
-    // $(':input[type="number"]').on( "click", function (e) {
-    //     e.preventDefault();
-    //     if ($(this).data('old-value') < $(this).val()) {
-    //         $(this).val(parseInt($(this).data('old-value')) - 1);
-    //     } else if($(this).data('old-value') > $(this).val()) {
-    //         $(this).val(parseInt($(this).data('old-value')) + 1);
-    //     }
-    //     $(this).data('old-value', $(this).val());           
-    // });
-
+     //Déplacement de la base UP du caractère
+    $( "#up" ).change(function() {
+        controller.previewCanvas.position_up_line = parseFloat($(this).val());
+    });
     //Déplacement de la base DOWN du caractère
-    document.getElementById('down').addEventListener('change', function(e){
-        controller.previewCanvas.position_down_line = parseFloat($("#down").val());
-    }, true);
+    $( "#down" ).change(function() {
+        controller.previewCanvas.position_down_line = parseFloat($(this).val());
+    });
 
     //Déplacement de la base LEFT du caractère
-    document.getElementById('left').addEventListener('change', function(e){
-        controller.previewCanvas.position_left_line = parseFloat($("#left").val());
-    }, true);
+    $( "#left" ).change(function() {
+        controller.previewCanvas.position_left_line = parseFloat($(this).val());
+    });
 
     //Déplacement de la base RIGHT du caractère
-    document.getElementById('right').addEventListener('change', function(e){
-        controller.previewCanvas.position_right_line = parseFloat($("#right").val());
-    }, true); 
+    $( "#right" ).change(function() {
+        controller.previewCanvas.position_right_line = parseFloat($(this).val());
+    });
 
+    $( "#baselineCC" ).change(function() {
+        controller.previewCanvas.position_baseline = parseFloat($(this).val());
+    }); 
 
-    document.getElementById('baselineCC').addEventListener('change', function(e){
-        controller.previewCanvas.position_baseline = parseFloat($("#baselineCC").val());
-    }, true);   
-
-    //Déplacement de la baseline
-    document.getElementById('baselineValue').addEventListener('change', function(e){
-        controller.previewCanvas.position_baseline = parseFloat($("#baselineValue").val());
-    }, true);
+    $( "#baselineValue" ).change(function() {
+        controller.previewCanvas.position_baseline = parseFloat($(this).val());
+    }); 
 
     //Appui sur le boutton save
     document.getElementById('save').addEventListener('click', function(e){
@@ -227,6 +215,17 @@ function Controller(canvas, previewCanvas, listCharacter) {
         }
     }, '.listItem');
 
+    (function ($) {
+      $('.spinner .btn:first-of-type').on('click', function() {
+        var id = $(this).data("id");
+        $("#"+id).val(parseInt($("#"+id).val(), 10) - 1).change();
+      });
+      $('.spinner .btn:last-of-type').on('click', function() {
+        var id = $(this).data("id");
+        $("#"+id).val(parseInt($("#"+id).val(), 10) + 1).change();
+      });
+    })(jQuery);
+
     window.onunload = function() { 
        session.removeSession();
     };
@@ -240,7 +239,6 @@ function Controller(canvas, previewCanvas, listCharacter) {
 Controller.prototype.draw = function(){
     this.canvas.draw();
     this.previewCanvas.draw();
-
 }
 
 
@@ -660,6 +658,7 @@ PreviewCanvas.prototype.draw = function() {
 
             //Baseline
             ctx.beginPath();
+            ctx.setLineDash([5,2]);
             ctx.moveTo(0, this.image.y + this.position_baseline);
             ctx.lineTo(this.width , this.image.y + this.position_baseline);
             ctx.lineWidth = 1 / this.scaleX;
