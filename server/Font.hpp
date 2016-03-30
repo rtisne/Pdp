@@ -13,7 +13,7 @@ public:
     void setName(const std::string &n);
     const std::string getName() const;
     void addCharacter(const Character &c);
-    bool hasCharacter(const Character &c);
+    //bool hasCharacter(const Character &c);
     int indexOfCharacter(const std::string &c);
 
     int indexOfCharacterForCC(int idCC, int idLine);

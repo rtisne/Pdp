@@ -56,7 +56,7 @@ bool isFormatSupported( const std::string &fileName)
       NVJ_LOG->append(NVJ_ERROR, "4");
       return true;
     }
-    it++;
+    ++it;
   }
   NVJ_LOG->append(NVJ_ERROR, "5");
   return false;

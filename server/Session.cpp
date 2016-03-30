@@ -1,9 +1,11 @@
 #include "Session.hpp"
 
 
-Session::Session(const std::string &f):m_token(0),m_font(new Font()),m_image(new Image(f))
+Session::Session(const std::string &f):m_fileName(""),m_token(0),m_font(new Font()),m_image(new Image(f))
 {}
-
+Session::Session(const Session& session):m_fileName(""),m_token(session.getToken()),m_font(NULL), m_image(NULL)
+{
+}
 Session::~Session()
 {
 	delete m_image;

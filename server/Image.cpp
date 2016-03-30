@@ -8,28 +8,8 @@ Image::Image(const std::string &path){
     std::cout <<  "Could not open or find the image" << std::endl ;
   }
 }
-void Image::setImg(cv::Mat P)
-{
- m_img = P;
-}
 
-cv::Mat Image::getMat()
-{
-  return m_img;
-}
-
-void Image::setListLine(const std::vector<Line> &L)
-{
-  m_listLine = L;
-}
-
-std::vector<Line> Image::getListLine()
-{
-  return m_listLine;
-}
-
-
-cv::Rect Image::getBoundingBoxAtIndex(int index,int line)
+const cv::Rect Image::getBoundingBoxAtIndex(int index,int line) const
 {
   std::vector<ConnectedComponent> ListTmpCC = m_listLine[line].getListCC();
   return ListTmpCC[index].getBoundingBox();
@@ -55,15 +35,14 @@ ConnectedComponent Image::getConnectedComponnentAt(int index, int line){
   return m_listLine[line].getConnectedComponentAtIndex(index);
 }
 
-cv::Mat Image::binarizeImage()
+const cv::Mat Image::binarizeImage() const
 {
   cv::Mat m_img_bin (m_img.rows, m_img.cols, CV_8U);
   NiblackSauvolaWolfJolion (m_img, m_img_bin, WOLFJOLION);
   return m_img_bin;
-  m_img_bin.release();
 }
 
-const cv::vector<ConnectedComponent> Image::extractComposentConnectImage(cv::Mat img) const{
+cv::vector<ConnectedComponent> Image::extractComposentConnectImage(cv::Mat img){
 
   if(img.channels()>1){
     cv::cvtColor(img,img,CV_RGB2GRAY);
@@ -80,7 +59,7 @@ const cv::vector<ConnectedComponent> Image::extractComposentConnectImage(cv::Mat
   return tmpCC;
 }
 
-const int Image::getCharacterHeight(const cv::Mat &img) const{
+int Image::getCharacterHeight(const cv::Mat &img){
     /* Returns the median height of a character in a given binary image */
 if(img.empty())
   return false;
@@ -240,7 +219,7 @@ std::string Image::jsonBaseline(){
 }
 
 
-const std::string Image::extractDataFromComponent(int index, int lineId)
+const std::string Image::extractDataFromComponent(int index, int lineId) const
 {
 
   cv::Mat imgBinarized; 
@@ -251,8 +230,8 @@ const std::string Image::extractDataFromComponent(int index, int lineId)
   for (int i=bb.y; i<=bb.y+bb.height; ++i) {
     for (int j=bb.x; j<=bb.x+bb.width; ++j) {
       unsigned int v;
-      cv::Vec3b *p = m_img.ptr<cv::Vec3b>(i);
-      cv::Vec3b *pB = imgBinarized.ptr<cv::Vec3b>(i);
+      const cv::Vec3b *p = m_img.ptr<cv::Vec3b>(i);
+      cv::Vec3b *pB = imgBinarized.clone().ptr<cv::Vec3b>(i);
       const cv::Vec3b pix = p[j];
       const cv::Vec3b pixB = pB[j];
       unsigned char opacity = 255;
@@ -288,7 +267,7 @@ void Image::setBaselineForLine(int id, int value)
   m_listLine[id].setBaseline(value);
 }
 
-int Image::isValidIdLine(int line){
+const int Image::isValidIdLine(int line) const{
   for(int i = 0; i < m_listLine.size(); i++){
     if(line == i)
       return line;
@@ -296,7 +275,7 @@ int Image::isValidIdLine(int line){
   return -1;
 }
 
-int Image::isValidIdCC(int line, int cc){
+const int Image::isValidIdCC(int line, int cc) const{
   if(isValidIdLine(line) != -1)
     for(int i=0; i< m_listLine[line].getListCC().size(); i++)
       if(cc == i)

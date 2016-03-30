@@ -43,10 +43,10 @@ int Font::indexOfCharacterForCC(int idCC, int idLine)
 }
 
 
-bool Font::hasCharacter(const Character &c)
-{
-  return (std::find(m_listCharacter.begin(), m_listCharacter.end(), c) != m_listCharacter.end());
-}
+// bool Font::hasCharacter(const Character &c)
+// {
+//   return (std::find(m_listCharacter.begin(), m_listCharacter.end(), c) != m_listCharacter.end());
+// }
 
 Character* Font::characterAtIndex(int id)
 {
