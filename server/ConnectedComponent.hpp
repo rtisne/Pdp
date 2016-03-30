@@ -11,8 +11,10 @@ class ConnectedComponent
 {
 public:
     ConnectedComponent();
+
     explicit ConnectedComponent(std::vector<cv::Point> vec);
     const std::vector<cv::Point> getListPoint() const;
+
     void setBaseline(int x);
     const int getBaseline() const;
     const bool getInline() const;

@@ -10,7 +10,7 @@ public:
   	void setBaseline(int x);
   	const int getBaseline() const;
   	const std::vector<ConnectedComponent> getListCC() const;
-  	void addCC(ConnectedComponent cc);
+  	void addCC(const ConnectedComponent &cc);
   	ConnectedComponent getConnectedComponentAtIndex(int index);
   	void setBoundingBoxAtIndex(int index, int up, int down, int left, int right);
   	void setBaselineAtIndex(int index, int value);

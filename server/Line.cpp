@@ -17,7 +17,7 @@ const int Line::getBaseline() const
   return m_baseline;
 }
 
-void Line::addCC(ConnectedComponent cc)
+void Line::addCC(const ConnectedComponent &cc)
 {
   m_ListCC.push_back(cc);
 }

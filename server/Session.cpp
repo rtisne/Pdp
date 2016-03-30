@@ -1,6 +1,7 @@
 #include "Session.hpp"
 
-Session::Session():m_token(0),m_font(NULL),m_image(NULL)
+
+Session::Session(const std::string &f):m_token(0),m_font(new Font()),m_image(new Image(f))
 {}
 
 Session::~Session()
@@ -11,10 +12,8 @@ Session::~Session()
 	m_font = NULL;
 }
 
-void Session::setFileName(std::string f){
+void Session::setFileName(const std::string &f){
 	m_fileName = f;
-	m_image = new Image(f);
-	m_font = new Font();
 }
 
 const std::string Session::getFileName() const{

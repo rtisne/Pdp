@@ -7,10 +7,11 @@
 class Session
 {
 public:
-    Session();
+    Session(const std::string &f);
     ~Session();
-    void setFileName(std::string f);
     const std::string getFileName() const;
+    void setFileName(const std::string &f);
+   
     void setToken(int t);
     const int getToken() const;
     Image* getImage();
@@ -22,4 +23,4 @@ private:
     Image* m_image;
 };
 
-#endif // SESSION__HPP
+#endif // SESSION_HPP

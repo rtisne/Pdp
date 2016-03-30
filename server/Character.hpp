@@ -9,6 +9,7 @@ class Character
 {
 public:
     Character();
+
     explicit Character(std::string l);
     const std::string getLabel() const;
     void setBaseline(int x);

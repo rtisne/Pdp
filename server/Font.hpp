@@ -9,11 +9,13 @@ class Font
 {
 public:
     Font();
-    void setName(std::string n);
+
+    void setName(const std::string &n);
     const std::string getName() const;
-    void addCharacter(Character c);
-    bool hasCharacter(Character c);
-    int indexOfCharacter(std::string c);
+    void addCharacter(const Character &c);
+    bool hasCharacter(const Character &c);
+    int indexOfCharacter(const std::string &c);
+
     int indexOfCharacterForCC(int idCC, int idLine);
     Character* characterAtIndex(int id);
     void removeCharacter(int id);
@@ -21,6 +23,7 @@ public:
 private:
    	std::string m_name;
    	std::vector<Character> m_listCharacter;
+
 };
 
 #endif // FONT_H

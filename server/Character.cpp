@@ -6,6 +6,7 @@ Character::Character():m_baseline(0)
 Character::Character(std::string l):m_label(l), m_baseline(0)
 {}
 
+
 const std::string Character::getLabel() const
 {
 	return m_label;
