@@ -5,7 +5,7 @@ Font::Font()
 {
 }
 
-void Font::setName(std::string n)
+void Font::setName(const std::string &n)
 {
 	m_name = n;
 }
@@ -35,11 +35,12 @@ const int Font::getBaseline()
 	return m_baseline;
 }
 
-void Font::addCharacter(Character c)
+void Font::addCharacter(const Character &c)
 {
   m_listCharacter.push_back(c);
 }
-int Font::indexOfCharacter(std::string c)
+
+int Font::indexOfCharacter(const std::string &c)
 {
   for (unsigned i=0; i<m_listCharacter.size(); i++)
   {
@@ -49,6 +50,7 @@ int Font::indexOfCharacter(std::string c)
   }
   return -1;
 }
+
 int Font::indexOfCharacterForCC(int idCC, int idLine)
 {
   for (unsigned i=0; i < m_listCharacter.size(); i++)
@@ -61,7 +63,7 @@ int Font::indexOfCharacterForCC(int idCC, int idLine)
 }
 
 
-bool Font::hasCharacter(Character c)
+bool Font::hasCharacter(const Character &c)
 {
   return (std::find(m_listCharacter.begin(), m_listCharacter.end(), c) != m_listCharacter.end());
 }

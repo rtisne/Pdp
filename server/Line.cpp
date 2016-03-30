@@ -17,12 +17,12 @@ const int Line::getBaseline()
   return m_baseline;
 }
 
-void Line::addCC(ConnectedComponent cc)
+void Line::addCC(const ConnectedComponent &cc)
 {
   m_ListCC.push_back(cc);
 }
 
-void Line::setListCC(std::vector<ConnectedComponent> cc)
+void Line::setListCC( const std::vector<ConnectedComponent> &cc)
 {
   m_ListCC = cc;
 }

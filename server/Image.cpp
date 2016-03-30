@@ -1,8 +1,6 @@
 #include "Image.hpp"
 
-
-Image::Image(std::string path)
-{
+Image::Image(const std::string &path){
   m_img = cv::imread(path, CV_LOAD_IMAGE_COLOR);
   m_filename = path;
   if(! m_img.data )                              // Check for invalid input
@@ -13,20 +11,20 @@ Image::Image(std::string path)
 
 void Image::setImg(cv::Mat P)
 {
-   m_img = P;
+ m_img = P;
 }
 
-const cv::Mat Image::getImg()
+cv::Mat Image::getMat()
 {
   return m_img;
 }
 
-void Image::setListLine(std::vector<Line> L)
+void Image::setListLine(const std::vector<Line> &L)
 {
   m_listLine = L;
 }
 
-const std::vector<Line> Image::getListLine()
+std::vector<Line> Image::getListLine()
 {
   return m_listLine;
 }
@@ -57,7 +55,7 @@ ConnectedComponent Image::getConnectedComponnentAt(int index, int line){
   return m_listLine[line].getConnectedComponentAtIndex(index);
 }
 
-cv::Mat Image::BinarizedImage()
+cv::Mat Image::binarizeImage()
 {
   cv::Mat m_img_bin (m_img.rows, m_img.cols, CV_8U);
   NiblackSauvolaWolfJolion (m_img, m_img_bin, WOLFJOLION);
@@ -82,35 +80,36 @@ cv::vector<ConnectedComponent> Image::extractComposentConnectImage(cv::Mat img){
   return tmpCC;
 }
 
-int Image::getCharacterHeight(cv::Mat img){
+int Image::getCharacterHeight(cv::Mat img){ /* Code provided by Antoine BILLY */
     /* Returns the median height of a character in a given binary image */
-    if(img.empty())
-      return false;
-    else if(img.channels()>1){
-      cv::cvtColor(img,img,CV_RGB2GRAY);
-    }
+if(img.empty())
+  return false;
+else if(img.channels()>1){
+  cv::cvtColor(img,img,CV_RGB2GRAY);
+}
     // Smooth the image to remove unwanted noise from extracted CCs
-    cv::medianBlur(img,img,7);
-    bitwise_not(img,img);
+cv::medianBlur(img,img,7);
+bitwise_not(img,img);
 
     // CCs extraction
-    cv::vector<cv::vector<cv::Point> > contours;
-    cv::findContours(img, contours, CV_RETR_CCOMP, CV_CHAIN_APPROX_TC89_KCOS);
+cv::vector<cv::vector<cv::Point> > contours;
+cv::findContours(img, contours, CV_RETR_CCOMP, CV_CHAIN_APPROX_TC89_KCOS);
     // We sort the array with respect to their height
-    sort(contours.begin(), contours.end(), [](const cv::vector<cv::Point>& c1, const cv::vector<cv::Point>& c2){
-        return cv::boundingRect(c1).height < cv::boundingRect(c2).height;
-    });
+sort(contours.begin(), contours.end(), [](const cv::vector<cv::Point>& c1, const cv::vector<cv::Point>& c2){
+  return cv::boundingRect(c1).height < cv::boundingRect(c2).height;
+});
 
 
     // Merely return the median's height
-    int median = (int)contours.size()/2;
-    return cv::boundingRect(contours[median]).height; 
+int median = (int)contours.size()/2;
+return cv::boundingRect(contours[median]).height; 
 }
 
 void Image::ComputeMask()
 {  
+  /* Create the mask for had each line and add each ConnectedComponent to a line */
   cv::Mat binarize; 
-  BinarizedImage().copyTo(binarize);
+  binarizeImage().copyTo(binarize);
   int character_height = getCharacterHeight(binarize.clone());
 
   cv::Mat tmp;
@@ -127,40 +126,46 @@ void Image::ComputeMask()
   cv::medianBlur(tmp,tmp,9);
 
   cv::vector<cv::vector<cv::Point>> contours_mask;
+  // CCs extraction of mask 
   cv::findContours(tmp, contours_mask, CV_RETR_CCOMP, CV_CHAIN_APPROX_TC89_KCOS);
+  // CCs extraction of image
   cv::vector<ConnectedComponent> tmpCC = extractComposentConnectImage(binarize.clone());
+  //We sort the CCs with respect to their position in the image
   sort(tmpCC.begin(), tmpCC.end(), []( ConnectedComponent& c1, ConnectedComponent& c2){
-        return cv::boundingRect(c1.getListPoint()).x < cv::boundingRect(c2.getListPoint()).x;
-    });
+    return cv::boundingRect(c1.getListPoint()).x < cv::boundingRect(c2.getListPoint()).x;
+  });
 
+  //We sort the array with respect to their y 
   sort(contours_mask.begin(), contours_mask.end(), [](const cv::vector<cv::Point>& c1, const cv::vector<cv::Point>& c2){
-        return cv::boundingRect(c1).y < cv::boundingRect(c2).y;
-    });
+    return cv::boundingRect(c1).y < cv::boundingRect(c2).y;
+  });
+
   int nbCCInline = 0;
+
   if(contours_mask.size() != 0)
   {
     for(int i = 0 ; i < contours_mask.size(); i++)
     {
       Line line = Line();
       cv::Rect rMask = cv::boundingRect(contours_mask[i]);
-        for(int k = 0; k < tmpCC.size();k++)
+      for(int k = 0; k < tmpCC.size();k++)
+      {
+        cv::Rect r = cv::boundingRect(tmpCC[k].getListPoint());
+        if(tmpCC[k].getInline() == false)
         {
-          cv::Rect r = cv::boundingRect(tmpCC[k].getListPoint());
-          if(tmpCC[k].getInline() == false)
-            {
-            if(inMiddle(rMask,r) || rMask.contains(r.tl()) || rMask.contains(r.br()))
-              {
-                line.addCC(tmpCC[k]);
-                tmpCC[k].setInline(true);
-                nbCCInline++;
-              }
-            }  
-        }  
-        m_listLine.push_back(line);
-        if(m_listLine[i].getListCC().size() != 0)
+          if(inMiddle(rMask,r) || rMask.contains(r.tl()) || rMask.contains(r.br()))
           {
-            m_listLine[i].computeBaseLine();
-          }     
+            line.addCC(tmpCC[k]);
+            tmpCC[k].setInline(true);
+            nbCCInline++;
+          }
+        }  
+      }  
+      m_listLine.push_back(line);
+      if(m_listLine[i].getListCC().size() != 0)
+      {
+        m_listLine[i].computeBaseLine();
+      }     
     }
   } else if(tmpCC.size() == 1){
     Line line = Line();
@@ -171,12 +176,12 @@ void Image::ComputeMask()
   }
   if(nbCCInline != tmpCC.size())
   {
-  Line line = Line();
-  for(int i = 0; i < tmpCC.size() ; i++){
-    if(tmpCC[i].getInline() == false)
-    line.addCC(tmpCC[i]);
+    Line line = Line();
+    for(int i = 0; i < tmpCC.size() ; i++){
+      if(tmpCC[i].getInline() == false)
+        line.addCC(tmpCC[i]);
     }
-  m_listLine.push_back(line);
+    m_listLine.push_back(line);
   }
   
   tmp.release();
@@ -204,7 +209,7 @@ std::string Image::jsonBoundingRect(){
       json += (",");
       id++;
     }
-  ListTmpCC.clear();
+    ListTmpCC.clear();
   }
 
   json = json.substr(0, json.size()-1);
@@ -239,7 +244,7 @@ const std::string Image::extractDataFromComponent(int index, int lineId)
 {
 
   cv::Mat imgBinarized; 
-  BinarizedImage().copyTo(imgBinarized);
+  binarizeImage().copyTo(imgBinarized);
 
   std::string data;
   int rows = m_img.rows;
@@ -256,8 +261,8 @@ const std::string Image::extractDataFromComponent(int index, int lineId)
       // if(pixB[0] == 255 && pixB[1] == 255 && pixB[2] == 255)
       //   v = (0<<24)|(255<<16)|(255<<8)|(255);
       // else
-        v = (opacity<<24)|(pix[0]<<16)|(pix[1]<<8)|(pix[2]);
-  
+      v = (opacity<<24)|(pix[0]<<16)|(pix[1]<<8)|(pix[2]);
+
       data += std::to_string(v);
       data += ",";
 
@@ -283,5 +288,22 @@ bool Image::inMiddle(cv::Rect bb1, cv::Rect bb2)
 void Image::setBaselineForLine(int id, int value)
 {
   m_listLine[id].setBaseline(value);
+}
+
+int Image::isValidIdLine(int line){
+  for(int i = 0; i < m_listLine.size(); i++){
+    if(line == i)
+      return line;
+  }
+  return -1;
+}
+
+int Image::isValidIdCC(int line, int cc){
+  if(isValidIdLine(line) != -1)
+    for(int i=0; i< m_listLine[line].getListCC().size(); i++)
+      if(cc == i)
+        return cc;
+
+  return -1;
 }
 

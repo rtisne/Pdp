@@ -10,7 +10,7 @@ class Character
 public:
     Character();
     Character(std::string l);
-    void setLabel(std::string l);
+    void setLabel(const std::string &l);
     const std::string getLabel();
     void setBaseline(int x);
     const int getBaseline();

@@ -9,7 +9,7 @@ Character::Character(std::string l)
 }
 
 
-void Character::setLabel(std::string l)
+void Character::setLabel(const std::string &l)
 {
 	m_label = l;
 }

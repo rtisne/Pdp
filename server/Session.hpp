@@ -7,9 +7,9 @@
 class Session
 {
 public:
-    Session();
+    Session(const std::string &f);
 
-    void setFileName(std::string f);
+    void setFileName(const std::string &f);
     const std::string getFileName();
     void setToken(int t);
     const int getToken();

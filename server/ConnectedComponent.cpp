@@ -16,17 +16,17 @@ ConnectedComponent::ConnectedComponent(std::vector<cv::Point> vec){
 	m_right = 0;
 }
 
-void ConnectedComponent::setListPoint(std::vector<cv::Point> L)
+void ConnectedComponent::setListPoint(const std::vector<cv::Point> &L)
 {
 	m_listPoint = L;
 }
 
-const std::vector<cv::Point> ConnectedComponent::getListPoint()
+std::vector<cv::Point> ConnectedComponent::getListPoint()
 {
 	return m_listPoint;
 }
 
-int ConnectedComponent::sizeListP()
+int ConnectedComponent::sizeListPoints()
 {
 	return m_listPoint.size();
 }

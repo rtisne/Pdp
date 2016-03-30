@@ -12,9 +12,9 @@ class ConnectedComponent
 public:
     ConnectedComponent();
     ConnectedComponent(std::vector<cv::Point> vec);
-    void setListPoint(std::vector<cv::Point> L);
-    const std::vector<cv::Point> getListPoint();
-    int sizeListP();
+    void setListPoint(const std::vector<cv::Point> &L);
+    std::vector<cv::Point> getListPoint();
+    int sizeListPoints();
     void setBaseline(int x);
     const int getBaseline();
     const bool getInline();

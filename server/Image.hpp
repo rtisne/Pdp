@@ -5,36 +5,38 @@
 #include "Binarization.hpp"
 #include <deque>
 
-static const uchar BACKGROUND = 255;
-
 class Image
 {
 public:
-    void setListLine(std::vector<Line> L);
-    const std::vector<Line> getListLine();
-    Image(std::string path);
-    void setImg(cv::Mat P);
-    const cv::Mat getImg();
+    
+    cv::Mat getMat();
     const std::string extractDataFromComponent(int index, int lineId); 
     void ComputeMask();
-    int getCharacterHeight(cv::Mat img);
-    cv::Mat BinarizedImage();
+    cv::Mat binarizeImage();
     cv::vector<ConnectedComponent> extractComposentConnectImage(cv::Mat img);
-    void computeBaseline();
     bool inMiddle(cv::Rect bb1, cv::Rect bb2);
     std::string jsonBoundingRect();
     std::string jsonBaseline();
+    int isValidIdLine(int line);
+    int isValidIdCC(int line, int cc);
+    
+    void setBoundingBoxAtIndex(int index,int line, int up, int down, int left, int right);
+    void setBaselineAtIndex(int index,int line, int value);    
+    void setBaselineForLine(int id, int value);
+    void setListLine(const std::vector<Line> &L);
+    Image(const std::string &path);
+    void setImg(cv::Mat P);
+
+    std::vector<Line> getListLine();
+    int getCharacterHeight(cv::Mat img);
     cv::Rect getBoundingBoxAtIndex(int index, int line);   
     int getBaselineAtIndex(int index,int line);
-    void setBoundingBoxAtIndex(int index,int line, int up, int down, int left, int right);
-    void setBaselineAtIndex(int index,int line, int value);
     ConnectedComponent getConnectedComponnentAt(int index, int line);
-    void setBaselineForLine(int id, int value);
-     
+
 private:
-   cv::Mat m_img;
-   std::string m_filename;
-   std::vector<Line> m_listLine;
+ cv::Mat m_img;
+ std::string m_filename;
+ std::vector<Line> m_listLine;
 };
 
 #endif // IMAGE_H
