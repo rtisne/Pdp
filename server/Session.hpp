@@ -8,11 +8,11 @@ class Session
 {
 public:
     Session();
-
+    ~Session();
     void setFileName(std::string f);
-    const std::string getFileName();
+    const std::string getFileName() const;
     void setToken(int t);
-    const int getToken();
+    const int getToken() const;
     Image* getImage();
     Font* getFont();
 private:

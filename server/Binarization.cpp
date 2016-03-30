@@ -7,38 +7,38 @@ cv::Mat resize(const cv::Mat &im, double resize_factor){
     return curr;
 }
 
-void preProcess(cv::Mat &src, cv::Mat &dst,int erosion){
-    /* Estimates a text-free background which is subtracted from the original image
-     * to improve the characters visualisation in a given image
-     * The erosion parameter represents the size of the dilation area */
-    if(erosion == 0){
-        src.copyTo(dst);
-        return;
-    }
+// void preProcess(cv::Mat &src, cv::Mat &dst,int erosion){
+//     /* Estimates a text-free background which is subtracted from the original image
+//      * to improve the characters visualisation in a given image
+//      * The erosion parameter represents the size of the dilation area */
+//     if(erosion == 0){
+//         src.copyTo(dst);
+//         return;
+//     }
 
-    int blur = 3;
-	// Naive noise removal
-    medianBlur(src, dst, blur);
+//     int blur = 3;
+// 	// Naive noise removal
+//     medianBlur(src, dst, blur);
 
-	// Background estimation
-    cv::Mat background;
-    applyDilation(dst, background, 1, erosion);
-    applyErosion(background, background, 1, erosion);
+// 	// Background estimation
+//     cv::Mat background;
+//     applyDilation(dst, background, 1, erosion);
+//     applyErosion(background, background, 1, erosion);
 
 
-    // Background subtraction
-    cv::absdiff(dst, background, dst);
-    cv::cvtColor(dst, dst, CV_RGB2GRAY);
-    cv::bitwise_not(dst, dst);
+//     // Background subtraction
+//     cv::absdiff(dst, background, dst);
+//     cv::cvtColor(dst, dst, CV_RGB2GRAY);
+//     cv::bitwise_not(dst, dst);
 	
-}
-void postProcess(cv::Mat &src, cv::Mat &dst, double v, int win){
-    /* Removes unwanted noise and enhances pixels connectivity */
-    shrinkFilter(src,dst,v,win);
-    // single pixel artifacts
-    //connectivityFilter(src,dst);
-    //medianBlur(dst, dst, win);
-}
+// }
+// void postProcess(cv::Mat &src, cv::Mat &dst, double v, int win){
+//     /* Removes unwanted noise and enhances pixels connectivity */
+//     shrinkFilter(src,dst,v,win);
+//     // single pixel artifacts
+//     //connectivityFilter(src,dst);
+//     //medianBlur(dst, dst, win);
+// }
 
 void shrinkFilter(cv::Mat &src, cv::Mat &dst, double v, int win){
     /* Counts the number of background pixels in a given window centered on a foreground pixel
@@ -64,51 +64,51 @@ void shrinkFilter(cv::Mat &src, cv::Mat &dst, double v, int win){
 }
 
 
-void connectivityFilter(cv::Mat &src, cv::Mat &dst){
-    /* We check the symetric sides of any foreground pixel, if they belong to the same class,
-     * one of them is set to foreground, the other to background */
-    src.copyTo(dst);
-    for (int i=1; i< src.rows-1; i++)
-        for (int j=1; j< src.cols-1; j++){
-            if(dst.at<uchar>(i,j) == 0){ // if foreground
-                if(dst.at<uchar>(i-1,j) == dst.at<uchar>(i+1,j)){
-                    dst.at<uchar>(i-1,j) = 0;
-                    dst.at<uchar>(i+1,j) = 255;
-                }
+// void connectivityFilter(cv::Mat &src, cv::Mat &dst){
+//     /* We check the symetric sides of any foreground pixel, if they belong to the same class,
+//      * one of them is set to foreground, the other to background */
+//     src.copyTo(dst);
+//     for (int i=1; i< src.rows-1; i++)
+//         for (int j=1; j< src.cols-1; j++){
+//             if(dst.at<uchar>(i,j) == 0){ // if foreground
+//                 if(dst.at<uchar>(i-1,j) == dst.at<uchar>(i+1,j)){
+//                     dst.at<uchar>(i-1,j) = 0;
+//                     dst.at<uchar>(i+1,j) = 255;
+//                 }
 
-                if(dst.at<uchar>(i,j-1) == dst.at<uchar>(i,j+1)){
-                    dst.at<uchar>(i,j-1) = 0;
-                    dst.at<uchar>(i,j+1) = 255;
-                }
-            }
-        }
+//                 if(dst.at<uchar>(i,j-1) == dst.at<uchar>(i,j+1)){
+//                     dst.at<uchar>(i,j-1) = 0;
+//                     dst.at<uchar>(i,j+1) = 255;
+//                 }
+//             }
+//         }
 
-}
+// }
 
-void swellFilter(cv::Mat &src, cv::Mat &dst, int win){
-    /* The opposite of shrink filter, counts the number of background pixels in a given window centered
-     *  on a background pixel if this number is to high, the center pixel is considerd as noise
-     * and thus set as foreground */
-	int ksh = (int)(0.35*win*win);
+// void swellFilter(cv::Mat &src, cv::Mat &dst, int win){
+//     /* The opposite of shrink filter, counts the number of background pixels in a given window centered
+//      *  on a background pixel if this number is to high, the center pixel is considerd as noise
+//      * and thus set as foreground */
+// 	int ksh = (int)(0.35*win*win);
 
-	src.copyTo(dst);
-    for (int i=0; i< src.rows; i++)
-        for (int j=0; j< src.cols; j++){
-            if(dst.at<uchar>(i,j) == 255){ // if background
-            	int curr_k = 0;
-			    for (int ii=-win; ii< win; ii++)
-			        for (int jj=-win; jj< win; jj++){
-			        	if(i+ii <0 || i+ii >= src.rows || j+jj < 0 || j+jj >= src.cols) // deal with borders
-			        		continue;
-			        	if(dst.at<uchar>(i+ii,j+jj) == 0)
-			        		curr_k++;
-			        }
-			    if(curr_k > ksh)
-            		dst.at<uchar>(i,j)=255;
+// 	src.copyTo(dst);
+//     for (int i=0; i< src.rows; i++)
+//         for (int j=0; j< src.cols; j++){
+//             if(dst.at<uchar>(i,j) == 255){ // if background
+//             	int curr_k = 0;
+// 			    for (int ii=-win; ii< win; ii++)
+// 			        for (int jj=-win; jj< win; jj++){
+// 			        	if(i+ii <0 || i+ii >= src.rows || j+jj < 0 || j+jj >= src.cols) // deal with borders
+// 			        		continue;
+// 			        	if(dst.at<uchar>(i+ii,j+jj) == 0)
+// 			        		curr_k++;
+// 			        }
+// 			    if(curr_k > ksh)
+//             		dst.at<uchar>(i,j)=255;
 
-            }
-        }
-}
+//             }
+//         }
+// }
 
 void binarize(cv::Mat &src, cv::Mat &dst, int method, int thresholdType, int blockSize){
     /* Calls the right function considering the input method */
@@ -150,7 +150,7 @@ double calcLocalStats (cv::Mat &im, cv::Mat &map_m, cv::Mat &map_s, int winx, in
     cv::Mat im_sum, im_sum_sq;
     cv::integral(im,im_sum,im_sum_sq,CV_64F);
 
-	double m,s,max_s,sum,sum_sq;	
+	double max_s = 0;	
 	int wxh	= winx/2;
 	int wyh	= winy/2;
 	int x_firstth= wxh;
@@ -158,10 +158,8 @@ double calcLocalStats (cv::Mat &im, cv::Mat &map_m, cv::Mat &map_s, int winx, in
 	int y_firstth= wyh;
 	double winarea = winx*winy;
 
-	max_s = 0;
 	for	(int j = y_firstth ; j<=y_lastth; j++){   
-		sum = sum_sq = 0;
-
+        double m,s,sum,sum_sq;
         sum = im_sum.at<double>(j-wyh+winy,winx) - im_sum.at<double>(j-wyh,winx) - im_sum.at<double>(j-wyh+winy,0) + im_sum.at<double>(j-wyh,0);
         sum_sq = im_sum_sq.at<double>(j-wyh+winy,winx) - im_sum_sq.at<double>(j-wyh,winx) - im_sum_sq.at<double>(j-wyh+winy,0) + im_sum_sq.at<double>(j-wyh,0);
 

@@ -11,13 +11,11 @@ class ConnectedComponent
 {
 public:
     ConnectedComponent();
-    ConnectedComponent(std::vector<cv::Point> vec);
-    void setListPoint(std::vector<cv::Point> L);
-    const std::vector<cv::Point> getListPoint();
-    int sizeListP();
+    explicit ConnectedComponent(std::vector<cv::Point> vec);
+    const std::vector<cv::Point> getListPoint() const;
     void setBaseline(int x);
-    const int getBaseline();
-    const bool getInline();
+    const int getBaseline() const;
+    const bool getInline() const;
     void setInline(bool x);
     void setBoundingBox(int up, int down, int left, int right);
     cv::Rect getBoundingBox();

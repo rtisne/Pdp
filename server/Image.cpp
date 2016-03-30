@@ -10,26 +10,10 @@ Image::Image(std::string path)
     std::cout <<  "Could not open or find the image" << std::endl ;
   }
 }
-
-void Image::setImg(cv::Mat P)
-{
-   m_img = P;
-}
-
-const cv::Mat Image::getImg()
-{
-  return m_img;
-}
-
-void Image::setListLine(std::vector<Line> L)
-{
-  m_listLine = L;
-}
-
-const std::vector<Line> Image::getListLine()
-{
-  return m_listLine;
-}
+// const std::vector<Line> Image::getListLine() const
+// {
+//   return m_listLine;
+// }
 
 cv::Rect Image::getBoundingBoxAtIndex(int index,int line)
 {
@@ -64,7 +48,7 @@ cv::Mat Image::BinarizedImage()
   return m_img_bin;
 }
 
-cv::vector<ConnectedComponent> Image::extractComposentConnectImage(cv::Mat img){
+const cv::vector<ConnectedComponent> Image::extractComposentConnectImage(cv::Mat img) const{
 
   if(img.channels()>1){
     cv::cvtColor(img,img,CV_RGB2GRAY);
@@ -81,7 +65,7 @@ cv::vector<ConnectedComponent> Image::extractComposentConnectImage(cv::Mat img){
   return tmpCC;
 }
 
-int Image::getCharacterHeight(cv::Mat img){
+const int Image::getCharacterHeight(const cv::Mat img) const{
     /* Returns the median height of a character in a given binary image */
     if(img.empty())
       return false;
@@ -240,8 +224,6 @@ const std::string Image::extractDataFromComponent(int index, int lineId)
   BinarizedImage().copyTo(imgBinarized);
 
   std::string data;
-  int rows = m_img.rows;
-  int cols = m_img.cols;
   cv::Rect bb = getBoundingBoxAtIndex(index, lineId);
   for (int i=bb.y; i<=bb.y+bb.height; ++i) {
     for (int j=bb.x; j<=bb.x+bb.width; ++j) {
@@ -264,7 +246,7 @@ const std::string Image::extractDataFromComponent(int index, int lineId)
   return data.substr(0, data.size()-1);
 } 
 
-bool Image::inMiddle(cv::Rect bb1, cv::Rect bb2)
+static const bool Image::inMiddle(const cv::Rect bb1,const cv::Rect bb2) const
 {
   int bb2_x = bb2.x + (bb2.width/2);
   int bb2_y = bb2.y + (bb2.height/2);

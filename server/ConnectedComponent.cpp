@@ -1,6 +1,6 @@
 #include "ConnectedComponent.hpp"
 
-ConnectedComponent::ConnectedComponent()
+ConnectedComponent::ConnectedComponent():m_baseline(0)
 {
 	m_up = 0;
 	m_down = 0;
@@ -8,27 +8,16 @@ ConnectedComponent::ConnectedComponent()
 	m_right = 0;
 }
 
-ConnectedComponent::ConnectedComponent(std::vector<cv::Point> vec){
-	m_listPoint = vec;
+ConnectedComponent::ConnectedComponent(std::vector<cv::Point> vec):m_listPoint(vec), m_baseline(0){
 	m_up = 0;
 	m_down = 0;
 	m_left = 0;
 	m_right = 0;
 }
 
-void ConnectedComponent::setListPoint(std::vector<cv::Point> L)
-{
-	m_listPoint = L;
-}
-
-const std::vector<cv::Point> ConnectedComponent::getListPoint()
+const std::vector<cv::Point> ConnectedComponent::getListPoint() const
 {
 	return m_listPoint;
-}
-
-int ConnectedComponent::sizeListP()
-{
-	return m_listPoint.size();
 }
 
 void ConnectedComponent::setBaseline(int x)
@@ -36,12 +25,12 @@ void ConnectedComponent::setBaseline(int x)
 	m_baseline = x;
 }
 
-const int ConnectedComponent::getBaseline()
+const int ConnectedComponent::getBaseline() const
 {
 	return m_baseline;
 }
 
-const bool ConnectedComponent::getInline()
+const bool ConnectedComponent::getInline() const
 {
 	return m_inline;
 }
@@ -53,6 +42,8 @@ void ConnectedComponent::setInline(bool x)
 
 void ConnectedComponent::setBoundingBox(int up, int down, int left, int right){
 	m_up = up;
+	if(m_down == 0)
+		m_baseline = down;
 	m_down = down;
 	m_right = right;
 	m_left = left;

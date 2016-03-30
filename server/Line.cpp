@@ -1,6 +1,6 @@
 #include "Line.hpp"
 
-Line::Line(){
+Line::Line():m_baseline(0){
 
 }
 
@@ -12,7 +12,7 @@ void Line::setBaseline(int y)
   m_baseline = y;
 }
 
-const int Line::getBaseline()
+const int Line::getBaseline() const
 {
   return m_baseline;
 }
@@ -22,12 +22,7 @@ void Line::addCC(ConnectedComponent cc)
   m_ListCC.push_back(cc);
 }
 
-void Line::setListCC(std::vector<ConnectedComponent> cc)
-{
-  m_ListCC = cc;
-}
-
-const std::vector<ConnectedComponent> Line::getListCC()
+const std::vector<ConnectedComponent> Line::getListCC() const
 {
   return m_ListCC;
 }

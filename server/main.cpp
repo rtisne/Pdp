@@ -157,7 +157,7 @@ class MyDynamicRepository : public DynamicRepository
 
         std::map<std::string,MPFD::Field *> fields=parser->GetFieldsMap();
         std::map<std::string,MPFD::Field *>::iterator it;
-        for (it=fields.begin();it!=fields.end();it++) 
+        for (it=fields.begin();it!=fields.end();++it) 
         {
           if(test_format(fields[it->first]->GetFileName()))
           {
@@ -306,7 +306,7 @@ class MyDynamicRepository : public DynamicRepository
             if(indexCharacter == -1)
             {
               activeSessions.at(sessionIndex)->getFont()->addCharacter(Character(letter));
-              indexCharacter = activeSessions.at(sessionIndex)->getFont()->indexOfCharacter(l);
+              indexCharacter = activeSessions.at(sessionIndex)->getFont()->indexOfCharacter(letter);
               activeSessions.at(sessionIndex)->getFont()->characterAtIndex(indexCharacter)->setBaseline(round(((stof(baseline)-stof(up))/(stof(down) - stof(up))) * 100));
             }
 

@@ -9,12 +9,11 @@ class Character
 {
 public:
     Character();
-    Character(std::string l);
-    void setLabel(std::string l);
-    const std::string getLabel();
+    explicit Character(std::string l);
+    const std::string getLabel() const;
     void setBaseline(int x);
-    const int getBaseline();
-    const int countComposant();
+    const int getBaseline() const;
+    const int countComposant() const;
     void addComposant(int idCC, int idLine);
     void removeComposant(int idCC, int idLine);
     bool hasComposant(int idCC, int idLine);

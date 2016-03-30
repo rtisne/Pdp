@@ -1,8 +1,15 @@
 #include "Session.hpp"
 
-Session::Session()
+Session::Session():m_token(0),m_font(NULL),m_image(NULL)
 {}
 
+Session::~Session()
+{
+	delete m_image;
+	m_image = NULL;
+	delete m_font;
+	m_font = NULL;
+}
 
 void Session::setFileName(std::string f){
 	m_fileName = f;
@@ -10,7 +17,7 @@ void Session::setFileName(std::string f){
 	m_font = new Font();
 }
 
-const std::string Session::getFileName(){
+const std::string Session::getFileName() const{
 	return m_fileName;
 }
 
@@ -26,7 +33,7 @@ void Session::setToken(int t){
 	m_token = t;
 }
 
-const int Session::getToken(){
+const int Session::getToken() const{
 	return m_token;
 }
 

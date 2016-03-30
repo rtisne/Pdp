@@ -1,20 +1,12 @@
 #include "Character.hpp"
 
 
-Character::Character()
+Character::Character():m_baseline(0)
 {}
-Character::Character(std::string l)
-{
-	m_label = l;
-}
+Character::Character(std::string l):m_label(l), m_baseline(0)
+{}
 
-
-void Character::setLabel(std::string l)
-{
-	m_label = l;
-}
-
-const std::string Character::getLabel()
+const std::string Character::getLabel() const
 {
 	return m_label;
 }
@@ -24,12 +16,12 @@ void Character::setBaseline(int x)
 	m_baseline = x;
 }
 
-const int Character::getBaseline()
+const int Character::getBaseline() const
 {
 	return m_baseline;
 }
 
-const int Character::countComposant()
+const int Character::countComposant() const
 {
 	return m_idComposantsConnexes.size();
 }

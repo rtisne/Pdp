@@ -10,18 +10,15 @@ static const uchar BACKGROUND = 255;
 class Image
 {
 public:
-    void setListLine(std::vector<Line> L);
-    const std::vector<Line> getListLine();
-    Image(std::string path);
-    void setImg(cv::Mat P);
-    const cv::Mat getImg();
+    // const std::vector<Line> getListLine() const;
+    explicit Image(std::string path);
     const std::string extractDataFromComponent(int index, int lineId); 
     void ComputeMask();
-    int getCharacterHeight(cv::Mat img);
+    const int getCharacterHeight(cv::Mat img) const;
     cv::Mat BinarizedImage();
-    cv::vector<ConnectedComponent> extractComposentConnectImage(cv::Mat img);
+    const cv::vector<ConnectedComponent> extractComposentConnectImage(const cv::Mat img) const;
     void computeBaseline();
-    bool inMiddle(cv::Rect bb1, cv::Rect bb2);
+    static const bool inMiddle(const cv::Rect bb1,const cv::Rect bb2) const;
     std::string jsonBoundingRect();
     std::string jsonBaseline();
     cv::Rect getBoundingBoxAtIndex(int index, int line);   

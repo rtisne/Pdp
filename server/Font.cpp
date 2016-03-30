@@ -10,29 +10,9 @@ void Font::setName(std::string n)
 	m_name = n;
 }
 
-const std::string Font::getName()
+const std::string Font::getName() const
 {
 	return m_name;
-}
-
-void Font::ExportToBox()
-{
-	
-}
-
-void Font::ExportToOd()
-{
-
-}
-
-void Font::setBaseline(int x)
-{
-	m_baseline = x;
-}
-
-const int Font::getBaseline()
-{
-	return m_baseline;
 }
 
 void Font::addCharacter(Character c)
@@ -76,7 +56,7 @@ void Font::removeCharacter(int id)
   m_listCharacter.erase(m_listCharacter.begin() + id);
 }
 
-int Font::countCharacter()
+const int Font::countCharacter() const
 {
   return m_listCharacter.size();
 }
