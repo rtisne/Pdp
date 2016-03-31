@@ -5,6 +5,9 @@ function Session() {
 
 Session.prototype.startSession = function(file, callback)
 {
+    $('.overlay').show();
+    $('.loader').show();
+   
 	$.ajax({
     url: 'uploader.txt',
     type: 'POST',
@@ -31,7 +34,6 @@ Session.prototype.startSession = function(file, callback)
 
 Session.prototype.imageInfos = function(filename, callback)
 {
-	console.log(this.token);
 	var imagePath = "data/" + filename;
 	$.ajax({
     url: 'getBoundingBox.txt',
@@ -39,12 +41,12 @@ Session.prototype.imageInfos = function(filename, callback)
     data: "token=" + this.token,
     success: function(data, textStatus, jqXHR)
     {
-      console.log(JSON.parse(data));
       $('#canvas').show();
       $('.zoom-icon').show();
       $('.navbar-nav').show();
       
       $('.loader').hide();
+      $('.overlay').hide();
       callback(imagePath, JSON.parse(data).boundingbox, JSON.parse(data).baseline);
     },
     error: function(error)
@@ -75,7 +77,6 @@ Session.prototype.removeSession = function()
 
 Session.prototype.getInfoOnCC = function(id, idCC, idLine, callback)
 {
-    console.log(idCC + ":" + idLine);
 	$.ajax({
     url: 'getInfoOnCC.txt',
     type: 'POST',
@@ -112,6 +113,9 @@ Session.prototype.updateInfoOnCC = function(activeId, activeLine, jsonId, ids, l
 
 Session.prototype.extractFont = function(fontname)
 {
+    $('.overlay').show();
+    $('.loader').show();
+    
 	$.ajax({
     url: 'extractFont.txt',
     type: 'POST',
@@ -121,7 +125,8 @@ Session.prototype.extractFont = function(fontname)
         var file = new Blob([data], {type: "text/plain;charset=utf-8"});
         saveAs(file, fontname + ".of");
         
-
+        $('.loader').hide();
+        $('.overlay').hide();
         $('#saveModal').modal('hide');
 		  
     },

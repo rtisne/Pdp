@@ -22,7 +22,6 @@ function prepareUpload(event)
     });
 
     $('.fileUpload').hide();
-    $('.loader').show();
     
     session.startSession(data, askForInfo);
     

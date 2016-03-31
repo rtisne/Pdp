@@ -223,28 +223,34 @@ const std::string Image::extractDataFromComponent(int index, int lineId) const
 {
 
   cv::Mat imgBinarized; 
-  binarizeImage().copyTo(imgBinarized);
+  imgBinarized = binarizeImage().clone();
 
   std::string data;
   cv::Rect bb = getBoundingBoxAtIndex(index, lineId);
-  for (int i=bb.y; i<=bb.y+bb.height; ++i) {
-    for (int j=bb.x; j<=bb.x+bb.width; ++j) {
-      unsigned int v;
-      const cv::Vec3b *p = m_img.ptr<cv::Vec3b>(i);
-      cv::Vec3b *pB = imgBinarized.clone().ptr<cv::Vec3b>(i);
-      const cv::Vec3b pix = p[j];
-      const cv::Vec3b pixB = pB[j];
-      unsigned char opacity = 255;
-      // if(pixB[0] == 255 && pixB[1] == 255 && pixB[2] == 255)
-      //   v = (0<<24)|(255<<16)|(255<<8)|(255);
-      // else
-      v = (opacity<<24)|(pix[0]<<16)|(pix[1]<<8)|(pix[2]);
 
+  cv::Mat mask = imgBinarized(bb);
+  cv::threshold(mask, mask, 20, 1, cv::THRESH_BINARY_INV); 
+  cv::Mat letter; 
+  letter = cv::Mat::ones(mask.rows,mask.cols,m_img.type());
+  letter.setTo(cv::Scalar(255,255,255));
+  m_img(bb).copyTo(letter, mask);
+  for (int i=0; i<letter.rows; ++i) {
+    cv::Vec3b *p = letter.ptr<cv::Vec3b>(i);
+    for (int j=0; j<letter.cols; ++j) {
+      const cv::Vec3b pix = p[j];
+      unsigned char opacity;
+      if(pix[0] == 255 && pix[1] == 255 && pix[2] == 255)
+        opacity = 0;
+      else
+        opacity = 255;
+
+      unsigned int v = (opacity<<24)|(pix[0]<<16)|(pix[1]<<8)|(pix[2]);
       data += std::to_string(v);
       data += ",";
-
     }
   }
+  mask.release();
+  letter.release();
   imgBinarized.release();
   return data.substr(0, data.size()-1);
 } 

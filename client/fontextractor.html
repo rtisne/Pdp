@@ -21,7 +21,17 @@
 	
 </head>
 <body class="fill-height">
-	
+	<div class="loader">
+  <div class="cs-loader-inner">
+    <label>	●</label>
+    <label>	●</label>
+    <label>	●</label>
+    <label>	●</label>
+    <label>	●</label>
+    <label>	●</label>
+  </div>
+</div>
+	<div class="overlay"></div>
 	<div class="modal fade" id="saveModal" tabindex="-1" role="dialog" aria-labelledby="mySmallModalLabel">
 	  <div class="modal-dialog modal-sm">
 		  <div class="modal-content">
@@ -81,7 +91,6 @@
 				</div>
 
 				<canvas id="canvas" width="500" height="500" data-girar="0"></canvas>
-				<img class="loader" src="img/loader.gif">
 				<div class="fileUpload btn btn-primary">
 					<span>Choose Image</span>
 					<input type="file" class="upload" name="image" accept="image/*"/>

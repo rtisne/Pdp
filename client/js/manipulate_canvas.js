@@ -9,6 +9,7 @@ function Controller(canvas, previewCanvas, listCharacter) {
     $(".container_right").show();
     $('#baseline_options').hide();
     this.canvas.boundingBox.select(0);
+    this.canvas.selectedCC = [0];
     session.getInfoOnCC(0,controller.canvas.boundingBox.rects[0].idCC, controller.canvas.boundingBox.rects[0].idLine, controller);
     this.previewCanvas.visible = true;
     
@@ -55,7 +56,6 @@ function Controller(canvas, previewCanvas, listCharacter) {
             }
             else
             {
-                console.log(controller.canvas.boundingBox.rects[id].labeled)
                 controller.canvas.boundingBox.select(id);
                 controller.canvas.selectedCC = [id];
                 session.getInfoOnCC(id,controller.canvas.boundingBox.rects[id].idCC, controller.canvas.boundingBox.rects[id].idLine, controller);

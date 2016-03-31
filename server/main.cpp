@@ -88,8 +88,8 @@ string extractFontInOl(int sessionIndex, string fontName)
       ConnectedComponent component = activeSessions.at(sessionIndex)->getImage()->getConnectedComponnentAt(indexCC, indexLine); 
       xmlDocument << "<picture id=\"" + to_string(j) + "\">"<< endl; 
       xmlDocument << "<imageData>"<< endl; 
-      xmlDocument << "<width>"+to_string((int) activeSessions.at(sessionIndex)->getImage()->getBoundingBoxAtIndex(indexCC, indexLine).width + 1)+"</width>"<< endl; 
-      xmlDocument << "<height>"+to_string((int) activeSessions.at(sessionIndex)->getImage()->getBoundingBoxAtIndex(indexCC, indexLine).height + 1)+"</height>"<< endl; 
+      xmlDocument << "<width>"+to_string((int) activeSessions.at(sessionIndex)->getImage()->getBoundingBoxAtIndex(indexCC, indexLine).width)+"</width>"<< endl; 
+      xmlDocument << "<height>"+to_string((int) activeSessions.at(sessionIndex)->getImage()->getBoundingBoxAtIndex(indexCC, indexLine).height)+"</height>"<< endl; 
       xmlDocument << "<format>5</format>"<< endl; 
       xmlDocument << "<degradationlevel>0</degradationlevel>"<< endl; 
       xmlDocument << "<data>" + activeSessions.at(sessionIndex)->getImage()->extractDataFromComponent(indexCC, indexLine) + "</data>"<< endl; 
@@ -406,7 +406,7 @@ class MyDynamicRepository : public DynamicRepository
           int sessionIndex = getActiveSessionFromToken(stoi(token));
           string idLine;
           request->getParameter("idLine", idLine);
-          if(activeSessions.at(sessionIndex)->getImage()->isValidIdLine(stoi(idLine)) == - 1)
+          if(activeSessions.at(sessionIndex)->getImage()->isValidIdLine(stoi(idLine)) != - 1)
           {
             string value;
             request->getParameter("value", value);
