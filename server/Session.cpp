@@ -3,22 +3,22 @@
 
 Session::Session(const std::string &f):m_fileName(""),m_token(0),m_font(new Font()),m_image(new Image(f))
 {}
-Session::Session(const Session& session):m_fileName(""),m_token(session.getToken()),m_font(NULL), m_image(NULL)
+Session::Session(const Session& session):m_fileName(""),m_token(session.getToken()),m_font(nullptr), m_image(nullptr)
 {
 }
 Session::~Session()
 {
 	delete m_image;
-	m_image = NULL;
+	m_image = nullptr;
 	delete m_font;
-	m_font = NULL;
+	m_font = nullptr;
 }
 
 void Session::setFileName(const std::string &f){
 	m_fileName = f;
 }
 
-const std::string Session::getFileName() const{
+std::string Session::getFileName() const{
 	return m_fileName;
 }
 
@@ -34,7 +34,7 @@ void Session::setToken(int t){
 	m_token = t;
 }
 
-const int Session::getToken() const{
+int Session::getToken() const{
 	return m_token;
 }
 

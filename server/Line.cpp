@@ -12,7 +12,7 @@ void Line::setBaseline(int y)
   m_baseline = y;
 }
 
-const int Line::getBaseline() const
+int Line::getBaseline() const
 {
   return m_baseline;
 }
@@ -22,12 +22,12 @@ void Line::addCC(const ConnectedComponent &cc)
   m_ListCC.push_back(cc);
 }
 
-const std::vector<ConnectedComponent> Line::getListCC() const
+std::vector<ConnectedComponent> Line::getListCC() const
 {
   return m_ListCC;
 }
 
-ConnectedComponent Line::getConnectedComponentAtIndex(int index){
+ConnectedComponent Line::getConnectedComponentAtIndex(int index) const{
 	return m_ListCC.at(index);
 }
 

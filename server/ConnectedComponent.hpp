@@ -12,15 +12,15 @@ class ConnectedComponent
 public:
     ConnectedComponent();
 
-    explicit ConnectedComponent(std::vector<cv::Point> vec);
-    const std::vector<cv::Point> getListPoint() const;
+    explicit ConnectedComponent(const std::vector<cv::Point> &vec);
+    std::vector<cv::Point> getListPoint() const;
 
-    void setBaseline(int x);
-    const int getBaseline() const;
-    const bool getInline() const;
+    void setBaseline(int y);
+    int getBaseline() const;
+    bool getInline() const;
     void setInline(bool x);
     void setBoundingBox(int up, int down, int left, int right);
-    cv::Rect getBoundingBox();
+    cv::Rect getBoundingBox() const;
 private:
    std::vector<cv::Point> m_listPoint;
    float m_baseline;

@@ -1,4 +1,5 @@
 #include "Image.hpp"
+#include "Binarization.hpp"
 
 Image::Image(const std::string &path){
   m_img = cv::imread(path, CV_LOAD_IMAGE_COLOR);
@@ -9,7 +10,7 @@ Image::Image(const std::string &path){
   }
 }
 
-const cv::Rect Image::getBoundingBoxAtIndex(int index,int line) const
+cv::Rect Image::getBoundingBoxAtIndex(int index,int line) const
 {
   std::vector<ConnectedComponent> ListTmpCC = m_listLine[line].getListCC();
   return ListTmpCC[index].getBoundingBox();
@@ -35,7 +36,7 @@ ConnectedComponent Image::getConnectedComponnentAt(int index, int line){
   return m_listLine[line].getConnectedComponentAtIndex(index);
 }
 
-const cv::Mat Image::binarizeImage() const
+cv::Mat Image::binarizeImage() const
 {
   cv::Mat m_img_bin (m_img.rows, m_img.cols, CV_8U);
   NiblackSauvolaWolfJolion (m_img, m_img_bin, WOLFJOLION);
@@ -219,7 +220,7 @@ std::string Image::jsonBaseline(){
 }
 
 
-const std::string Image::extractDataFromComponent(int index, int lineId) const
+std::string Image::extractDataFromComponent(int index, int lineId) const
 {
 
   cv::Mat imgBinarized; 
@@ -255,7 +256,7 @@ const std::string Image::extractDataFromComponent(int index, int lineId) const
   return data.substr(0, data.size()-1);
 } 
 
-const bool Image::inMiddle(const cv::Rect bb1,const cv::Rect bb2) const
+bool Image::inMiddle(const cv::Rect bb1,const cv::Rect bb2) const
 {
   int bb2_x = bb2.x + (bb2.width/2);
   int bb2_y = bb2.y + (bb2.height/2);
@@ -273,7 +274,7 @@ void Image::setBaselineForLine(int id, int value)
   m_listLine[id].setBaseline(value);
 }
 
-const int Image::isValidIdLine(int line) const{
+int Image::isValidIdLine(int line) const{
   for(int i = 0; i < m_listLine.size(); i++){
     if(line == i)
       return line;
@@ -281,7 +282,7 @@ const int Image::isValidIdLine(int line) const{
   return -1;
 }
 
-const int Image::isValidIdCC(int line, int cc) const{
+int Image::isValidIdCC(int line, int cc) const{
   if(isValidIdLine(line) != -1)
     for(int i=0; i< m_listLine[line].getListCC().size(); i++)
       if(cc == i)

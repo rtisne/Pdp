@@ -17,6 +17,8 @@ using namespace std;
 using json = nlohmann::json;
 
 
+
+#define CLIENT_DIR "../client/"
 #define UPLOAD_DIR "../client/data/"
 
 WebServer *webServer = NULL;
@@ -24,6 +26,7 @@ WebServer *webServer = NULL;
 LocalRepository *myUploadRepo = NULL;
 
 std::vector<Session*> activeSessions;
+
 
 void exitFunction( int dummy )
 {
@@ -50,15 +53,12 @@ bool isFormatSupported( const std::string &fileName)
   
   while(it != format.end())
   {
-  
     if(extension.compare(it->second) == 0)
     {
-      NVJ_LOG->append(NVJ_ERROR, "4");
       return true;
     }
     ++it;
   }
-  NVJ_LOG->append(NVJ_ERROR, "5");
   return false;
 }
 
@@ -135,7 +135,7 @@ int getActiveSessionFromToken(int token)
 {
   for (unsigned i=0; i<activeSessions.size(); i++)
   {
-    Session* s = activeSessions.at(i);
+    const Session *s = activeSessions.at(i);
     if(s->getToken() == token)
       return i;
   }
@@ -458,14 +458,14 @@ class MyDynamicRepository : public DynamicRepository
     webServer = new WebServer;
 
   //webServer->setUseSSL(true, "../mycert.pem");
-    LocalRepository *myLocalRepo = new LocalRepository("", "../client/");
+    LocalRepository *myLocalRepo = new LocalRepository("", CLIENT_DIR);
   //myLocalRepo.addDirectory("", "../client/"); 
     webServer->addRepository(myLocalRepo);
 
     MyDynamicRepository myRepo;
     webServer->addRepository(&myRepo);
 
-    myUploadRepo = new LocalRepository("data", "../client/data/");
+    myUploadRepo = new LocalRepository("data", UPLOAD_DIR);
     webServer->addRepository(myUploadRepo);
 
 

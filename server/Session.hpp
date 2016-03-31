@@ -10,11 +10,11 @@ public:
     explicit Session(const std::string &f);
     Session(const Session& session);
     ~Session();
-    const std::string getFileName() const;
+    std::string getFileName() const;
     void setFileName(const std::string &f);
    
     void setToken(int t);
-    const int getToken() const;
+    int getToken() const;
     Image* getImage();
     Font* getFont();
 private:
