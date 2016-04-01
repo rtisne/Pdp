@@ -1,6 +1,18 @@
 #ifndef IMAGE_H
 #define IMAGE_H
 
+/**
+ * \file Image.hpp
+ * \brief Image to be processed
+ * \author  T.Autret, A.Boschet, T.Labrousse, R.Tisné
+ * \version 1.0
+ * \date Mars 2016
+ *
+ * Image to be processed
+ *
+ */
+
+
 #include "Line.hpp"
 #include <deque>
 

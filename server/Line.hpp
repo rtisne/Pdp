@@ -1,6 +1,18 @@
 #ifndef LINE_H
 #define LINE_H
 
+/**
+ * \file Line.hpp
+ * \brief Lines in this picture
+ * \author  T.Autret, A.Boschet, T.Labrousse, R.Tisné
+ * \version 1.0
+ * \date Mars 2016
+ *
+ * Lines in this picture
+ *
+ */
+
+
 #include "ConnectedComponent.hpp"
 
 class Line

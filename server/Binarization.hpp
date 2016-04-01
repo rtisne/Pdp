@@ -1,6 +1,18 @@
-/* Code provided by Antoine BILLY */
 #ifndef BINARIZATION_H
 #define BINARIZATION_H
+
+/**
+ * \file Binarization.hpp
+ * \brief Binarization operations
+ * \author provided by Antoine BILLY
+ * \version 1.0
+ * \date Mars 2016
+ *
+ * Operations for binarize a image
+ *
+ */
+
+/* Code provided by Antoine BILLY */
 
 #include <opencv2/core/core.hpp>
 #include <opencv2/imgproc/imgproc.hpp>

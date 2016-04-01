@@ -1,6 +1,18 @@
 #ifndef FONT_H
 #define FONT_H
 
+/**
+ * \file Font.hpp
+ * \brief Font of the user
+ * \author  T.Autret, A.Boschet, T.Labrousse, R.Tisné
+ * \version 1.0
+ * \date Mars 2016
+ *
+ * Font generate by the labeling made by the user
+ *
+ */
+
+
 #include <string.h> 
 #include <iostream>
 #include "Character.hpp"

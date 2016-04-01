@@ -1,6 +1,17 @@
 #ifndef CONNECTEDCOMPONENT_H
 #define CONNECTEDCOMPONENT_H
 
+/**
+ * \file ConnectedComponent.hpp
+ * \brief Component on the image
+ * \author  T.Autret, A.Boschet, T.Labrousse, R.Tisné
+ * \version 1.0
+ * \date Mars 2016
+ *
+ * Component on the image
+ *
+ */
+
 #include "Character.hpp"
 
 #include <opencv2/core/core.hpp>

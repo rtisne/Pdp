@@ -1,6 +1,17 @@
 #ifndef CHARACTERE_H
 #define CHARACTERE_H
 
+/**
+ * \file Charactere.hpp
+ * \brief Charactere of the font
+ * \author  T.Autret, A.Boschet, T.Labrousse, R.Tisné
+ * \version 1.0
+ * \date Mars 2016
+ *
+ * Caractere of the font
+ *
+ */
+
 #include <opencv2/core/core.hpp>
 #include <algorithm>
 #include <iostream>
