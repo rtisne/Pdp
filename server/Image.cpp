@@ -3,7 +3,6 @@
 
 Image::Image(const std::string &path){
   m_img = cv::imread(path, CV_LOAD_IMAGE_COLOR);
-  m_filename = path;
   if(! m_img.data )                              // Check for invalid input
   {
     std::cout <<  "Could not open or find the image" << std::endl ;

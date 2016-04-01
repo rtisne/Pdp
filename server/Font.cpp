@@ -34,7 +34,7 @@ int Font::indexOfCharacter(const std::string &c)
 int Font::indexOfCharacterForCC(int idCC, int idLine)
 {
   for (const auto &s : m_listCharacter)
-    if(s.hasComposant(idCC, idLine))
+    if(s.hasComponent(idCC, idLine))
       return find(m_listCharacter.begin(), m_listCharacter.end(), s) - m_listCharacter.begin();;
   return -1;
 }

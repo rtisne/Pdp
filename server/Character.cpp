@@ -22,31 +22,31 @@ int Character::getBaseline() const
 	return m_baseline;
 }
 
-int Character::countComposant() const
+int Character::countComponent() const
 {
-	return m_idComposantsConnexes.size();
+	return m_idComponentsConnexes.size();
 }
-void Character::addComposant(int idCC, int idLine)
+void Character::addComponent(int idCC, int idLine)
 {
-	if(!hasComposant(idCC, idLine))
-		m_idComposantsConnexes.push_back(std::make_pair(idLine,idCC));
+	if(!hasComponent(idCC, idLine))
+		m_idComponentsConnexes.push_back(std::make_pair(idLine,idCC));
 }
-void Character::removeComposant(int idCC, int idLine)
+void Character::removeComponent(int idCC, int idLine)
 {
-	if(hasComposant(idCC, idLine))
-		m_idComposantsConnexes.erase(std::remove(m_idComposantsConnexes.begin(), m_idComposantsConnexes.end(), std::make_pair(idLine,idCC)), m_idComposantsConnexes.end()); 
+	if(hasComponent(idCC, idLine))
+		m_idComponentsConnexes.erase(std::remove(m_idComponentsConnexes.begin(), m_idComponentsConnexes.end(), std::make_pair(idLine,idCC)), m_idComponentsConnexes.end()); 
 }
-bool Character::hasComposant(int idCC, int idLine) const
+bool Character::hasComponent(int idCC, int idLine) const
 {
-	for (const auto &s : m_idComposantsConnexes) 
+	for (const auto &s : m_idComponentsConnexes) 
 		if(s.first == idLine && s.second == idCC)
 			return true;
 		return false;
 
 }
-std::pair<int,int> Character::getIdComposantAtIndex(int index)
+std::pair<int,int> Character::getIdComponentAtIndex(int index)
 {
-	return m_idComposantsConnexes.at(index);
+	return m_idComponentsConnexes.at(index);
 }
 
 bool operator== ( const Character &c1, const Character &c2) 

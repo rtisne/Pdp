@@ -79,9 +79,9 @@ string extractFontInOl(int sessionIndex, string fontName)
     xmlDocument << "<rightLine>100</rightLine>"<< endl; 
     xmlDocument << "</anchor>" << endl;
 
-    for(int j = 0; j < character->countComposant(); j++)
+    for(int j = 0; j < character->countComponent(); j++)
     {
-      pair<int,int> ids = character->getIdComposantAtIndex(j);
+      pair<int,int> ids = character->getIdComponentAtIndex(j);
       int indexLine = ids.first;
       int indexCC = ids.second;
 
@@ -314,8 +314,8 @@ class MyDynamicRepository : public DynamicRepository
           int indexCharacterForCC = activeSessions.at(sessionIndex)->getFont()->indexOfCharacterForCC(idCC, idLine);
           if(indexCharacterForCC != -1)
           {
-            activeSessions.at(sessionIndex)->getFont()->characterAtIndex(indexCharacterForCC)->removeComposant(idCC, idLine);
-            if(activeSessions.at(sessionIndex)->getFont()->characterAtIndex(indexCharacterForCC)->countComposant() <= 0)
+            activeSessions.at(sessionIndex)->getFont()->characterAtIndex(indexCharacterForCC)->removeComponent(idCC, idLine);
+            if(activeSessions.at(sessionIndex)->getFont()->characterAtIndex(indexCharacterForCC)->countComponent() <= 0)
               activeSessions.at(sessionIndex)->getFont()->removeCharacter(indexCharacterForCC);
           }
           if(letter != "")
@@ -330,7 +330,7 @@ class MyDynamicRepository : public DynamicRepository
               activeSessions.at(sessionIndex)->getFont()->characterAtIndex(indexCharacter)->setBaseline(round(((stof(baseline)-stof(up))/(stof(down) - stof(up))) * 100));
             }
 
-            activeSessions.at(sessionIndex)->getFont()->characterAtIndex(indexCharacter)->addComposant(idCC, idLine);
+            activeSessions.at(sessionIndex)->getFont()->characterAtIndex(indexCharacter)->addComponent(idCC, idLine);
 
             if(stoi(baseline) != oldBaseline)
             {

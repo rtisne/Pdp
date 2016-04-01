@@ -44,7 +44,6 @@ public:
 
 private:
  cv::Mat m_img;
- std::string m_filename;
  std::vector<Line> m_listLine;
 };
 
