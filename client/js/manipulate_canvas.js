@@ -1,294 +1,39 @@
-function Controller(canvas, previewCanvas, listCharacter) {
-    this.canvas = canvas;
-    this.previewCanvas = previewCanvas;
-    this.listCharacter = listCharacter;
-
-    var controller = this;
-
-    // Initialisation
-    $(".container_right").show();
-    $('#baseline_options').hide();
-    this.canvas.boundingBox.select(0);
-    this.canvas.selectedCC = [0];
-    session.getInfoOnCC(0,controller.canvas.boundingBox.rects[0].idCC, controller.canvas.boundingBox.rects[0].idLine, controller);
-    this.previewCanvas.visible = true;
-    
-    canvas.canvas.addEventListener('selectstart', function(e) { e.preventDefault(); return false; }, false);
-    canvas.canvas.addEventListener('click',function(e) { 
-        var mouse = controller.canvas.getMouse(e);
-        var mx = mouse.x;
-        var my = mouse.y;
-
-        // Check if we clic on a BoundingBox
-        var id = controller.canvas.boundingBox.contains(mx, my, controller.canvas.image);
-        if(id != 'false')
-        {   
-            $("#letter_options").show();
-            $('#baseline_options').hide();
-            controller.canvas.baseline.select("false");
-            var mergeButton = document.getElementById("mergeButton");
-            if(e.metaKey || e.ctrlKey)
-            {
-                var i = controller.canvas.selectedCC.indexOf(id);
-                if(i != -1)
-                {
-                    if(controller.previewCanvas.idElementSelected == id)
-                    {
-                        if(controller.canvas.selectedCC.length > 1)
-                        {
-                            session.getInfoOnCC(controller.canvas.selectedCC[1],controller.canvas.boundingBox.rects[controller.canvas.selectedCC[1]].idCC, controller.canvas.boundingBox.rects[controller.canvas.selectedCC[1]].idLine, controller);
-                            controller.canvas.selectedCC.splice(i, 1);
-                            controller.canvas.boundingBox.removeToSelection(id);
-                        }
-                    }
-                    else
-                    {
-                        controller.canvas.selectedCC.splice(i, 1);
-                        controller.canvas.boundingBox.removeToSelection(id);
-                    }
-                }
-                else
-                {
-                    controller.canvas.selectedCC.push(id);
-                    controller.canvas.boundingBox.addToSelection(id);
-                    mergeButton.disabled=false;
-                }
-            }
-            else
-            {
-                controller.canvas.boundingBox.select(id);
-                controller.canvas.selectedCC = [id];
-                session.getInfoOnCC(id,controller.canvas.boundingBox.rects[id].idCC, controller.canvas.boundingBox.rects[id].idLine, controller);
-            } 
-            return;   
-        }
-        // Check if we clic on a Baseline
-        var id = controller.canvas.baseline.contains(mx, my, controller.canvas.image);
-        if(id != 'false')
-        {
-            controller.canvas.boundingBox.select("false");
-            controller.canvas.baseline.select(id);
-            $('#letter_options').hide();
-            $('#baseline_options').show();
-            controller.previewCanvas.zoomTo(controller.canvas.baseline.lines[id], id);
-            controller.previewCanvas.visible = true;
-            $("#baselineValue").val(controller.canvas.baseline.lines[id].y);
-
-        }  
-
-    }, true);
-
-    // Détection Déplacement de l'image
-    canvas.canvas.addEventListener('mousedown', function(e) { canvas.onMouseDown(e); }, true);
-    canvas.canvas.addEventListener('mousemove', function(e) { canvas.onMouseMove(e);}, true);
-    canvas.canvas.addEventListener('mouseup', function(e) { canvas.onMouseUp(e);}, true);
-    
-    // Détection zoom
-    document.getElementById('zoom-in').addEventListener('click', function(e){ canvas.zoomIn();}, true);
-    document.getElementById('zoom-out').addEventListener('click', function(e){ canvas.zoomOut();}, true);
-    document.getElementById('zoom-reset').addEventListener('click', function(e){ canvas.zoomReset();}, true);
-
-    // Détection checkbox baseline
-    document.getElementById('baseline').addEventListener('change', function(e){
-        if(this.checked){
-            controller.canvas.baseline.visible = true;
-        }
-        else{
-            controller.canvas.baseline.visible = false;
-        }     
-    }, true);
-
-     //Déplacement de la base UP du caractère
-    $( "#up" ).change(function() {
-        controller.previewCanvas.position_up_line = parseFloat($(this).val());
-    });
-    //Déplacement de la base DOWN du caractère
-    $( "#down" ).change(function() {
-        controller.previewCanvas.position_down_line = parseFloat($(this).val());
-    });
-
-    //Déplacement de la base LEFT du caractère
-    $( "#left" ).change(function() {
-        controller.previewCanvas.position_left_line = parseFloat($(this).val());
-    });
-
-    //Déplacement de la base RIGHT du caractère
-    $( "#right" ).change(function() {
-        controller.previewCanvas.position_right_line = parseFloat($(this).val());
-    });
-
-    $( "#baselineCC" ).change(function() {
-        controller.previewCanvas.position_baseline = parseFloat($(this).val());
-    }); 
-
-    $( "#baselineValue" ).change(function() {
-        controller.previewCanvas.position_baseline = parseFloat($(this).val());
-    }); 
-
-    //Appui sur le boutton save
-    document.getElementById('save').addEventListener('click', function(e){
-        if($("#letter").val() != "")
-        {
-            for(var i = 0; i < controller.canvas.selectedCC.length; i++)
-            {
-                if(controller.canvas.boundingBox.rects[controller.canvas.selectedCC[i]].labeled != false)
-                    controller.listCharacter.removeToCharacter(controller.canvas.boundingBox.rects[controller.canvas.selectedCC[i]].labeled);
-
-                controller.canvas.boundingBox.rects[controller.canvas.selectedCC[i]].labeled = $("#letter").val();
-                controller.listCharacter.addToCharacter($("#letter").val());
-            }
-        }
-        else
-        {
-            for(var i = 0; i < controller.canvas.selectedCC.length; i++)
-            {
-                if(controller.canvas.boundingBox.rects[controller.canvas.selectedCC[i]].labeled != false)
-                    controller.listCharacter.removeToCharacter(controller.canvas.boundingBox.rects[controller.canvas.selectedCC[i]].labeled);
-                controller.canvas.boundingBox.rects[controller.canvas.selectedCC[i]].labeled = false;
-            }
-        }
-        var ids = controller.canvas.selectedCC;
-        var jsonId = "{";
-        for (index = 0; index < ids.length; index++) {
-            jsonId += "\"" + index + "\":{";
-            jsonId += "\"idCC\":" + controller.canvas.boundingBox.rects[ids[index]].idCC + ",";
-            jsonId += "\"idLine\":" + controller.canvas.boundingBox.rects[ids[index]].idLine;
-            jsonId += "}";
-            if(index < ids.length-1)
-            {
-                jsonId += ",";
-            }
-           
-        }
-        jsonId += "}";
-
-        controller.canvas.boundingBox.rects[controller.previewCanvas.idElementSelected].rect.x = parseFloat($("#left").val());
-        controller.canvas.boundingBox.rects[controller.previewCanvas.idElementSelected].rect.y = parseFloat($("#up").val());
-        controller.canvas.boundingBox.rects[controller.previewCanvas.idElementSelected].rect.w = parseFloat($("#right").val()) - parseFloat($("#left").val());
-        controller.canvas.boundingBox.rects[controller.previewCanvas.idElementSelected].rect.h = parseFloat($("#down").val()) - parseFloat($("#up").val());
-
-        session.updateInfoOnCC(controller.canvas.boundingBox.rects[controller.previewCanvas.idElementSelected].idCC, controller.canvas.boundingBox.rects[controller.previewCanvas.idElementSelected].idLine,jsonId,controller.canvas.selectedCC, parseFloat($("#left").val()), parseFloat($("#right").val()),  parseFloat($("#up").val()), parseFloat($("#down").val()),parseInt($("#baselineCC").val()), $("#letter").val());
-
-        controller.listCharacter.draw();
-    }, true);
-
-    document.getElementById('saveBaseline').addEventListener('click', function(e){
-        var value = parseFloat($("#baselineValue").val());
-        controller.canvas.baseline.lines[controller.previewCanvas.idElementSelected].y = value;
-        session.updateBaseline(controller.canvas.baseline.lines[controller.previewCanvas.idElementSelected].id, value);
-    }, true);
-
-    $('.container_right').keypress(function (e) {
-        var key = e.which;
-        if(key == 13)  // the enter key code
-        {
-           $("#save").click(); 
-        }
-    });
-
-
-
-    // Détection boutton reset
-    document.getElementById('button_trash').addEventListener('click', function(e){
-        session.removeSession();
-    }, true);    
-
-    document.getElementById('exportFont').addEventListener('click', function(e){
-        var fontname = $("#fontName").val();
-        session.extractFont(fontname);
-    }, true);
-
-    $(document).on({
-        mouseenter: function(){
-            var character = $(this).data("character");
-            for (var i = 0, len = controller.canvas.boundingBox.rects.length; i < len; i++) {
-                if(controller.canvas.boundingBox.rects[i].labeled == character)
-                    controller.canvas.boundingBox.rects[i].hover = true;
-            }
-        },
-        mouseleave: function(){
-            var character = $(this).data("character");
-            for (var i = 0, len = controller.canvas.boundingBox.rects.length; i < len; i++) {
-                if(controller.canvas.boundingBox.rects[i].labeled == character)
-                    controller.canvas.boundingBox.rects[i].hover = false;
-            }
-        }
-    }, '.listItem');
-
-    (function ($) {
-      $('.spinner .btn:first-of-type').on('click', function() {
-        var id = $(this).data("id");
-        $("#"+id).val(parseInt($("#"+id).val(), 10) - 1).change();
-      });
-      $('.spinner .btn:last-of-type').on('click', function() {
-        var id = $(this).data("id");
-        $("#"+id).val(parseInt($("#"+id).val(), 10) + 1).change();
-      });
-    })(jQuery);
-
-    window.onunload = function() { 
-       session.removeSession();
-    };
-
-    // Affichage
-    this.interval = 30;
-    setInterval(function() { controller.draw(); }, controller.interval);
-
-}
-
-Controller.prototype.draw = function(){
-    this.canvas.draw();
-    this.previewCanvas.draw();
-}
-
-
-Controller.prototype.manipulateInfos = function manipulateInfos(id, left, right, up, down, letter, baseline){
-    this.previewCanvas.zoomTo(this.canvas.boundingBox.rects[id], id);
-    this.previewCanvas.visible = true;
-    this.previewCanvas.position_up_line = up;
-    this.previewCanvas.position_down_line = down;
-    this.previewCanvas.position_left_line = left;
-    this.previewCanvas.position_right_line = right;
-    this.previewCanvas.position_baseline = baseline;
-    if(letter == "null")
-        $("#letter").val("");
-    else
-        $("#letter").val(letter);
-
-    $("#up").val(up);
-    $("#up").data('old-value', up);
-    $("#down").val(down);
-    $("#down").data('old-value', down);
-    $("#left").val(left);
-    $("#left").data('old-value', left);
-    $("#right").val(right);
-    $("#right").data('old-value', right);
-    $("#baselineCC").val(baseline);
-    $("#baselineCC").data('old-value', baselineCC);
-
-    mergeButton.disabled="disabled";
-}
-
-// Constructeur de la classe ProcessingImage
+/*!
+ * Image that the user want to work on
+ * \class ProcessingImage
+ */
 function ProcessingImage(src) {
-
     this.img = new Image();
     this.img.src = src;
-
 }
 
+/*!
+ * Draw the image on the context
+ * \memberof ProcessingImage
+ * \param ctx the context to draw on
+ */
 ProcessingImage.prototype.draw = function(ctx) {
     var locx = this.x;
     var locy = this.y;
     ctx.drawImage(this.img,locx,locy);
 }
 
+/*!
+ * Check if a point is in the image
+ * \memberof ProcessingImage
+ * \param mx x coordonate
+ * \param my y coordonate
+ * \return bool if the point is in the image or not
+ */
 ProcessingImage.prototype.contains = function(mx, my) {
-
   return  (this.x <= mx) && (this.x + (this.w) >= mx) &&
           (this.y <= my) && (this.y + (this.h) >= my);
 }
 
+/*!
+ * Single baseline
+ * \class Line
+ */
 function Line(lineId, startx, y, finishx){
     this.id = lineId;
     this.startx = startx;
@@ -297,6 +42,12 @@ function Line(lineId, startx, y, finishx){
     this.selected = false;
 }
 
+/*!
+ * Draw the line on the context
+ * \memberof Line
+ * \param ctx the context to draw on
+ * \param image the image to ajust the coordonate
+ */
 Line.prototype.draw = function(ctx, image){
     ctx.beginPath();
     ctx.moveTo(image.x+ this.startx, image.y + this.y);
@@ -310,23 +61,36 @@ Line.prototype.draw = function(ctx, image){
     ctx.stroke();
 }
 
-//Constructeur de la baseline
+/*!
+ * Container of all baselines
+ * \class Baseline
+ */
 function Baseline(lines) {
     this.lines = lines;
     this.visible = false;
     this.clickMargin = 0.4; //in percent of the image height
-
 }
 
+/*!
+ * Draw all baseline on the context
+ * \memberof Baseline
+ * \param ctx the context to draw on
+ * \param image the image to ajust the coordonate
+ */
 Baseline.prototype.draw = function(ctx, image){  
     if(this.visible)
-    {
-        for (index = 0; index < this.lines.length; index++) {
+        for (index = 0; index < this.lines.length; index++)
             this.lines[index].draw(ctx, image);
-        }   
-    }
-    
 }
+
+/*!
+ * Check if a point is on a baseline
+ * \memberof Baseline
+ * \param mx x coordonate
+ * \param my y coordonate
+ * \param image the image to ajust the coordonate
+ * \return the id of the baseline where the point is on, false otherwise 
+ */
 Baseline.prototype.contains = function(mx, my, image){
     if(this.visible == false)
         return "false";
@@ -340,15 +104,25 @@ Baseline.prototype.contains = function(mx, my, image){
     return 'false';
 }
 
+/*!
+ * Select a baseline
+ * \memberof Baseline
+ * \param id of the line to select
+ */
 Baseline.prototype.select = function (id){
+    // Reset all selected lines
     for (index = 0; index < this.lines.length; index++) {
         this.lines[index].selected = false;
     }
+    // Select the line
     if(id != 'false')
         this.lines[id].selected = true;
 }
 
-
+/*!
+ * Rectangle of a BoundingBox
+ * \class Rectangle
+ */
 function Rectangle(rect, idCC, idLine){
     this.rect = rect;
     this.idCC = idCC;
@@ -359,9 +133,16 @@ function Rectangle(rect, idCC, idLine){
     this.hover = false;
 }
 
+/*!
+ * Draw the rectangle
+ * \memberof Rectangle
+ * \param ctx context to draw on
+ * \param image the image to ajust the coordonate
+ */
 Rectangle.prototype.draw = function(ctx, image){
     if(this.visible)
     {
+        // Color according to the state
         ctx.fillStyle = COLOR_BOUNDINGBOX;
         if(this.labeled != false)
             ctx.fillStyle = COLOR_BOUNDINGBOX_LABELED;
@@ -369,25 +150,40 @@ Rectangle.prototype.draw = function(ctx, image){
             ctx.fillStyle = COLOR_BOUNDINGBOX_SELECTED;
         if(this.hover)
             ctx.fillStyle = COLOR_BOUNDINGBOX_HOVER;
-        
 
         ctx.globalAlpha = ALPHA_BOUNDINGBOX;
         ctx.fillRect(image.x + this.rect.x,image.y + this.rect.y, this.rect.w, this.rect.h);
-
     }
 }
 
-//Constructeur des bounding box
+/*!
+ * Container of all BoundingBox
+ * \class BoundingBox
+ */
 function BoundingBox(rects) {
     this.rects = rects;
-
 }
 
+/*!
+ * Draw all bounding box
+ * \memberof BoundingBox
+ * \param ctx context to draw on
+ * \param image the image to ajust the coordonate
+ */
 BoundingBox.prototype.draw = function(ctx, image){
     for (index = 0; index < this.rects.length; index++) {
         this.rects[index].draw(ctx, image);
     }
 }
+
+/*!
+ * Check if a point is on a bounding box
+ * \memberof BoundingBox
+ * \param mx x coordonate
+ * \param my y coordonate
+ * \param image the image to ajust the coordonate
+ * \return the id of the boundingbox where the point is on, false otherwise 
+ */
 BoundingBox.prototype.contains = function(mx, my, image){
     for (index = 0; index < this.rects.length; index++) {
         if((this.rects[index].rect.x + image.x <= mx) 
@@ -398,24 +194,51 @@ BoundingBox.prototype.contains = function(mx, my, image){
     }
     return 'false';
 }
+
+/*!
+ * Select a boundingbox
+ * \memberof BoundingBox
+ * \param id of the boundingbox to select
+ */
 BoundingBox.prototype.select = function (id){
+    // Reset all selected bounding box
     for (index = 0; index < this.rects.length; index++) {
         this.rects[index].selected = false;
     }
+    // Select the boundingbox
     if(id != 'false')
         this.rects[id].selected = true;
 }
+
+/*!
+ * add a boundingbox to the selection
+ * \memberof BoundingBox
+ * \param id of the boundingbox to add
+ */
 BoundingBox.prototype.addToSelection = function (id){
     if(id != 'false')
         this.rects[id].selected = true;
 }
+
+/*!
+ * remove a boundingbox to the selection
+ * \memberof BoundingBox
+ * \param id of the boundingbox to remove
+ */
 BoundingBox.prototype.removeToSelection = function (id){
     if(id != 'false')
         this.rects[id].selected = false;
 }
 
+/*!
+ * principal canvas 
+ * \class CanvasState
+ * \param canvas canvas element
+ * \param image image draw on the canvas
+ * \param baseline list of baselines
+ * \param boundingBox list of boundingBox
+ */
 function CanvasState(canvas, image, baseline, boundingBox) {
-  
     var myState = this;
 
     this.canvas = canvas;
@@ -440,7 +263,6 @@ function CanvasState(canvas, image, baseline, boundingBox) {
     this.dragoffx = 0;
     this.dragoffy = 0;
 
-
     this.image.img.onload = function(){
         myState.image.w = this.width;
         myState.image.h = this.height;
@@ -460,7 +282,11 @@ function CanvasState(canvas, image, baseline, boundingBox) {
     }
 
 }
-
+/*!
+ * When the mouse down (Dectection for moving the image)
+ * \memberof CanvasState
+ * \param e event
+ */
 CanvasState.prototype.onMouseDown= function(e){
     var mouse = this.getMouse(e);
     var mx = mouse.x;
@@ -469,7 +295,6 @@ CanvasState.prototype.onMouseDown= function(e){
     var image = this.image;
 
     if (image.contains(mx, my)) {
-    
         this.dragoffx = mx - image.x;
         this.dragoffy = my - image.y;             
         this.dragging = true;
@@ -477,6 +302,11 @@ CanvasState.prototype.onMouseDown= function(e){
       }
 }
 
+/*!
+ * When the mouse move (Dectection for moving the image)
+ * \memberof CanvasState
+ * \param e event
+ */
 CanvasState.prototype.onMouseMove = function(e){
     if (this.dragging){
         var mouse = this.getMouse(e);
@@ -485,16 +315,35 @@ CanvasState.prototype.onMouseMove = function(e){
     }
 }
 
+/*!
+ * When the mouse up (Dectection for moving the image)
+ * \memberof CanvasState
+ * \param e event
+ */
 CanvasState.prototype.onMouseUp = function(e){
     this.dragging = false;
 }
 
+/*!
+ * Zoom in
+ * \memberof CanvasState
+ */
 CanvasState.prototype.zoomIn = function(){
     this.scale += 0.1;
 }
+
+/*!
+ * Zoom out
+ * \memberof CanvasState
+ */
 CanvasState.prototype.zoomOut = function(){
     this.scale -= 0.1;
 }
+
+/*!
+ * Reset the zoom value
+ * \memberof CanvasState
+ */
 CanvasState.prototype.zoomReset = function(){
     if(this.width > this.height)
         this.scale = this.width /this.image.w;
@@ -505,54 +354,73 @@ CanvasState.prototype.zoomReset = function(){
     this.image.y = this.image.initialy;
 }
 
-// Efface le canvas pour redessiner
+/*!
+ * Clear the canvas context to redraw on it
+ * \memberof CanvasState
+ */
 CanvasState.prototype.clear = function() {
   this.ctx.clearRect(0, 0, this.width, this.height);
 }
 
-// Dessine le canvas avec ces éléments
+/*!
+ * Draw all element on the canvas
+ * \memberof CanvasState
+ */
 CanvasState.prototype.draw = function() {
   if (!this.valid) {
     var ctx = this.ctx;
 
+    // get the translation to apply to center the image
     var newWidth = this.width * this.scale;
     var newHeight = this.height * this.scale;
     this.panX = -((newWidth-this.width)/2);
     this.panY = -((newHeight-this.height)/2);
-    
+
     this.clear();
 
+    // Save the current context
     ctx.save();
 
+    // Apply modifications (zoom, translation) all elements drawing after this will have the modifications
     ctx.translate(this.panX, this.panY);
-
     ctx.scale(this.scale, this.scale);
     
+    // Draw all elements
     this.image.draw(ctx);
-
     this.baseline.draw(ctx, this.image);
-
     this.boundingBox.draw(ctx, this.image);
 
+    // Restore the context
     ctx.restore();
 
   }
 }
 
-// Retourne les coordonnées de la souris
+/*!
+ * Get the mouse coordonate
+ * \memberof CanvasState
+ * \param e event
+ * \return coordonate of the mouse
+ */
 CanvasState.prototype.getMouse = function(e) {
     var rect = this.canvas.getBoundingClientRect();
+    // Get mouse coordonate relative to the canvas
     var mx = Math.floor((e.clientX-rect.left)/(rect.right-rect.left)*this.canvas.width);
     var my = Math.floor((e.clientY-rect.top)/(rect.bottom-rect.top)*this.canvas.height);
 
+    // Get real mouse coordonate, eliminate scale and translations
     var mouseXT = parseInt((mx - this.panX) / this.scale);
     var mouseYT = parseInt((my - this.panY) / this.scale);
 
     return {x: mouseXT, y: mouseYT};
 }
 
-
-
+/*!
+ * preview canvas 
+ * \class PreviewCanvas
+ * \param canvas canvas element
+ * \param image image draw on the canvas
+ */
 function PreviewCanvas(canvas, image)
 {
     this.canvas = canvas;
@@ -573,37 +441,42 @@ function PreviewCanvas(canvas, image)
     this.position_left_line = 0;
     this.position_right_line = 0;
     this.position_baseline = 0;
-
     this.idElementSelected = 0;
-
-    
-
-    var myPreviewCanvas = this;
-
-    
+    var myPreviewCanvas = this;  
 }
 
-// Efface le canvas pour redessiner
+/*!
+ * Clear the context to redraw on it
+ * \memberof PreviewCanvas
+ */
 PreviewCanvas.prototype.clear = function() {
     this.ctx.clearRect(0, 0, this.width, this.height);
 }
-// Dessine le canvas avec ces éléments
+
+/*!
+ * Draw all element on the canvas
+ * \memberof CanvasState
+ */
 PreviewCanvas.prototype.draw = function() {
     if(this.visible)
     {
         var ctx = this.ctx;
         this.clear();
+        
+        // Save the current context
         ctx.save();
 
+        // get the translation to apply to center the image
         var newWidth = this.width * this.scaleX;
         var newHeight = this.height * this.scaleY;
         var panX = -((newWidth-this.width)/2);
         var panY = -((newHeight-this.height)/2);
 
+        // Apply modifications (zoom, translation) all elements drawing after this will have the modifications
         ctx.translate(panX, panY);
-
         ctx.scale(this.scaleX,this.scaleY);
 
+        // Draw all elements
         this.image.draw(ctx);
         
         if(this.isBaseline)
@@ -611,8 +484,6 @@ PreviewCanvas.prototype.draw = function() {
             var rect = this.canvas.getBoundingClientRect();
             var mx = Math.floor((0-rect.left)/(rect.right-rect.left)*this.canvas.width);
             var startX = parseInt((mx - panX) / this.scaleX);
-           
-
 
             //Baseline
             ctx.beginPath();
@@ -665,12 +536,17 @@ PreviewCanvas.prototype.draw = function() {
             ctx.strokeStyle = COLOR_PREVIEW_BASELINE;
             ctx.stroke();
         }
+        // Restore the context
         ctx.restore();
-
-       
     }
-   
 }
+
+/*!
+ * Zoom the image on a object
+ * \memberof CanvasState
+ * \param obj object to zoom on
+ * \param id of the selected object
+ */
 PreviewCanvas.prototype.zoomTo = function(obj, id){
 
     if(obj instanceof Rectangle)
@@ -679,12 +555,10 @@ PreviewCanvas.prototype.zoomTo = function(obj, id){
         var rect = obj;
         this.image.x = (this.width/2) - rect.rect.x - rect.rect.w/2;
         this.image.y = (this.height/2) - rect.rect.y - rect.rect.h/2;
-    
-     
+        
         this.scaleX = (this.height /rect.rect.h) - (this.height /rect.rect.h)/2;
-
-        console.log(this.scaleX);
         this.scaleY = this.scaleX;
+        
         var actualRect = rect.rect;
         this.isBaseline = false; 
     }
@@ -704,15 +578,31 @@ PreviewCanvas.prototype.zoomTo = function(obj, id){
     
 }
 
+/*!
+ * List of character from labelised Component
+ * \class ListCharacter
+ */
 function ListCharacter(){
     this.list = new Map();
 }
+
+/*!
+ * Add character to the list
+ * \memberof ListCharacter
+ * \param character character to add
+ */
 ListCharacter.prototype.addToCharacter = function(character){
     var number = 0;
     if(this.list.has(character))
         number = this.list.get(character);
     this.list.set(character, number+1);
 }
+
+/*!
+ * Remove character to the list
+ * \memberof ListCharacter
+ * \param character character to remove
+ */
 ListCharacter.prototype.removeToCharacter = function(character){
     if(this.list.has(character))
     {
@@ -724,12 +614,24 @@ ListCharacter.prototype.removeToCharacter = function(character){
             this.list.delete(character);
     }
 }
+
+/*!
+ * Draw the list of character
+ * \memberof ListCharacter
+ */
 ListCharacter.prototype.draw = function(){
     var listHTMl = $("#letter-list");
     listHTMl.empty();
     for (var [key, value] of this.list)
       listHTMl.append( "<li class=\"col-sm-15 listItem\" data-character=\"" + key + "\">" + key + "<span class=\"pull-right letter-number\">" + value + "</span></li>");
 }
+
+/*!
+ * Init all element to usage
+ * \param src source of the image
+ * \param boundingBox list of boundingBox from the server
+ * \param baselines list of baselines from the server
+ */
 function init(src, boundingBox, baseline) {
     var image = new ProcessingImage(src);
     var imagePreview = new ProcessingImage(src);

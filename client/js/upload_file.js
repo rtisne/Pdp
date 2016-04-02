@@ -9,8 +9,7 @@ function errorMessage(message)
 
 function prepareUpload(event)
 {
-  files = event.target.files;
-
+    files = event.target.files;
 
     event.stopPropagation(); 
     event.preventDefault(); 
@@ -23,8 +22,7 @@ function prepareUpload(event)
 
     $('.fileUpload').hide();
     
-    session.startSession(data, askForInfo);
-    
+    session.startSession(data, askForInfo);  
 }
 function askForInfo(filename)
 {

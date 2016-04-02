@@ -1,13 +1,25 @@
+/*!
+ * Session to communate with the server
+ * \class Session
+ */
 function Session() {
 	this.token;
 	var that = this;
 }
 
+/*!
+ * Start the communication with server by sending the image
+ * The server will return the token of the session
+ * \memberof Session
+ * \param file file to upload 
+ * \param callback callback method 
+ */
 Session.prototype.startSession = function(file, callback)
 {
+    // Loading panel
     $('.overlay').show();
     $('.loader').show();
-   
+
 	$.ajax({
     url: 'uploader.txt',
     type: 'POST',
@@ -32,6 +44,12 @@ Session.prototype.startSession = function(file, callback)
   });
 }
 
+/*!
+ * Get informations about the image
+ * \memberof Session
+ * \param filename filename where the image is stored 
+ * \param callback callback method 
+ */
 Session.prototype.imageInfos = function(filename, callback)
 {
 	var imagePath = "data/" + filename;
@@ -56,6 +74,10 @@ Session.prototype.imageInfos = function(filename, callback)
 	});
 }
 
+/*!
+ * Delete the session with the server
+ * \memberof Session
+ */
 Session.prototype.removeSession = function()
 {
 	$.ajax({
@@ -74,7 +96,14 @@ Session.prototype.removeSession = function()
 }
 
 
-
+/*!
+ * Get informations on a Component
+ * \memberof Session
+ * \param id id of the Component in the client
+ * \param idCC id of the component
+ * \param idLine id of the line where is the component
+ * \param callback callback method 
+ */
 Session.prototype.getInfoOnCC = function(id, idCC, idLine, callback)
 {
 	$.ajax({
@@ -94,7 +123,20 @@ Session.prototype.getInfoOnCC = function(id, idCC, idLine, callback)
 	});
 }
 
-Session.prototype.updateInfoOnCC = function(activeId, activeLine, jsonId, ids, left, right, up, down, baseline,letter)
+/*!
+ * update component value on the server
+ * \memberof Session
+ * \param activeId id of the component selected on the preview canvas
+ * \param activeLine id of the line where is the component selected on the preview canvas
+ * \param jsonId llist of identifiers of components that we want to change
+ * \param left value of the left line
+ * \param right value of the right line
+ * \param up value of the up line
+ * \param down value of the down line
+ * \param baseline value of the baseline line
+ * \param letter value of the letter
+ */
+Session.prototype.updateInfoOnCC = function(activeId, activeLine, jsonId, left, right, up, down, baseline,letter)
 {
 	$.ajax({
     url: 'updateInfoOnCC.txt',
@@ -102,7 +144,6 @@ Session.prototype.updateInfoOnCC = function(activeId, activeLine, jsonId, ids, l
     data: "token=" + this.token + "&activeid=" + activeId + "&activeline=" + activeLine + "&id=" + jsonId + "&left=" + left + "&right=" + right + "&up=" + up + "&down=" + down + "&baseline=" + baseline + "&letter=" + letter,
     success: function(data, textStatus, jqXHR)
     {
-    	console.log(data);
     },
     error: function(error)
     {
@@ -111,6 +152,11 @@ Session.prototype.updateInfoOnCC = function(activeId, activeLine, jsonId, ids, l
 	});
 }
 
+/*!
+ * Ask the xml font document to the server
+ * \memberof Session
+ * \param fontname name we want to give the font 
+ */
 Session.prototype.extractFont = function(fontname)
 {
     $('.overlay').show();
@@ -136,6 +182,13 @@ Session.prototype.extractFont = function(fontname)
     }
 	});
 }
+
+/*!
+ * update a baseline value on the server
+ * \memberof Session
+ * \param idLine id of the line on which we want to change the baseline
+ * \param value new value of this baseline
+ */
 Session.prototype.updateBaseline = function(idLine, value)
 {
     $.ajax({

@@ -84,9 +84,16 @@ public:
      */
     Font* getFont();
 private:
+    //!@brief filename of the image
     std::string m_fileName;
+
+    //!@brief unique identifier to access to the session 
     int m_token;
+
+    //!@brief unique font of the client
     Font* m_font;
+
+    //!@brief unique image of the client
     Image* m_image;
 };
 
