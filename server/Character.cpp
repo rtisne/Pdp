@@ -46,6 +46,7 @@ bool Character::hasComponent(int idCC, int idLine) const
 }
 std::pair<int,int> Character::getIdComponentAtIndex(int index)
 {
+	assert(index>=0 && index<=m_idComponentsConnexes.size());
 	return m_idComponentsConnexes.at(index);
 }
 

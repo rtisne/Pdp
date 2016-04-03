@@ -24,7 +24,7 @@ int Font::indexOfCharacter(const std::string &c)
 {
   for (unsigned i=0; i<m_listCharacter.size(); i++)
   {
-    Character s = m_listCharacter.at(i);
+    const Character &s = m_listCharacter.at(i);
     if(s.getLabel() == c)
       return i;
   }

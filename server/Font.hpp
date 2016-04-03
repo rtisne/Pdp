@@ -20,19 +20,86 @@
 class Font
 {
 public:
+    /*!
+     *  \brief Constructor of the Font class
+     */
     Font();
 
+     /*!
+     *  \brief set the name of the font
+     *
+     *  Set accessor for name attribute
+     * 
+     *  \param n : the nmae as string
+     */
     void setName(const std::string &n);
+
+    /*!
+     *  \brief get the name of the font
+     *
+     * Get accessor for name attribute
+     * 
+     *  \return the name as string
+     */
     std::string getName() const;
+
+    /*!
+     *  \brief add charactor to the font
+     *
+     *  \param c: the c as Character
+     */
     void addCharacter(const Character &c);
+
+    /*!
+     *  \brief Verify if character is in Font
+     * 
+     *  \param c: the c as character
+     *
+     *  \return the index as integer
+     */
     int indexOfCharacter(const std::string &c);
 
+    /*!
+     *  \brief Verify if connectedComposent is in Font
+     *
+     *  \param idCC : the idCC as integer
+     *  \param idLine : the idLine as integer
+     * 
+     *  \return the index as inter
+     */
     int indexOfCharacterForCC(int idCC, int idLine);
+
+    /*!
+     *  \brief get the copy of index of ConnectedComponent
+     *
+     * Get accessor for ConnectedComponent
+     *
+     *  \param id : the is as integer;
+     * 
+     *  \return the copy as pointer
+     */
     Character* characterAtIndex(int id);
+
+    /*!
+     *  \brief Remove character of Font
+     *
+     *  \param id : the id as interger
+     */
     void removeCharacter(int id);
+
+    /*!
+     *  \brief Count number of character of Font
+     *
+     * Get accessor for size attribue
+     * 
+     *  \return the size as integer
+     */
     int countCharacter() const;
 private:
+    //!@brief filename of the font
    	std::string m_name;
+    
+    //!@brief vector of Character of the font
    	std::vector<Character> m_listCharacter;
 
 };
