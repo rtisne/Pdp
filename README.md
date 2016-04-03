@@ -26,7 +26,12 @@ make
 ```
 
 ## Docker installation
-// TO DO
+```    
+docker run -dti -p  80:8080 rtisne/font-extractor
+```
+
+This may take some times.
+After the installation just go to your docker ip adress 
 
 ## How to use
 To lauch the server, go into the server folder and make:
