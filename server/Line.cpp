@@ -6,6 +6,9 @@ Line::Line():m_baseline(0){
 
 void Line::setBaseline(int y)
 {
+	/* 
+	* \brief For each CC of Line, the baseline of CC is modified by y if CC baseline is different of m_baseline
+	*/
 	for(std::vector<ConnectedComponent>::iterator it = m_ListCC.begin(); it != m_ListCC.end(); ++it)
 		if(it->getBaseline() == m_baseline)
     	it->setBaseline(y);
@@ -28,6 +31,7 @@ std::vector<ConnectedComponent> Line::getListCC() const
 }
 
 ConnectedComponent Line::getConnectedComponentAtIndex(int index) const{
+	assert(index>=0 && index<= m_ListCC.size());
 	return m_ListCC.at(index);
 }
 
@@ -51,5 +55,6 @@ void Line::computeBaseLine(){
 
 void Line::setBaselineAtIndex(int index, int value)
 {
+	assert(index>=0);
 	m_ListCC[index].setBaseline(value);
 }

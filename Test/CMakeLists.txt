@@ -17,7 +17,6 @@ set(SRCS
     
 set(HEADERS
      ../server/json.hpp
-     ../server/JSON.h
      ../server/ConnectedComponent.hpp
      ../server/Font.hpp
      ../server/Character.hpp

@@ -290,3 +290,6 @@ int Image::isValidIdCC(int line, int cc) const{
   return -1;
 }
 
+std::vector<Line> Image::getListLine(){
+  return m_listLine;
+}

@@ -5,6 +5,7 @@
 #include <time.h>
 #include <signal.h> 
 #include <string.h> 
+#include <unordered_set>
 
 #include "Image.hpp"
 #include "Font.hpp"
@@ -20,6 +21,8 @@ using json = nlohmann::json;
 
 #define CLIENT_DIR "../client/"
 #define UPLOAD_DIR "../client/data/"
+
+const int rng = 10;
 
 WebServer *webServer = NULL;
 
@@ -41,23 +44,13 @@ bool isFormatSupported( const std::string &fileName)
 {
   string extension = fileName.substr(fileName.find(".") + 1);
   std::transform(extension.begin(), extension.end(), extension.begin(), ::toupper);
-  std::map<int,string> format;
-
-  format[1] = "JPG";
-  format[2] = "JPEG";
-  format[3] = "PNG";
-  format[4] = "TIFF";
-  format[4] = "TIF";
-  
-  std::map<int,string>::iterator it = format.begin();
-  
-  while(it != format.end())
-  {
-    if(extension.compare(it->second) == 0)
-    {
+  std::unordered_set<std::string> format ={"JPG","JPEG","PNG","TIFF","TIF"};
+  std::unordered_set<std::string>::const_iterator got = format.find(extension);
+  for(const auto &s: format){
+    if(got == format.end())
+      return false;
+    else
       return true;
-    }
-    ++it;
   }
   return false;
 }
@@ -110,8 +103,8 @@ std::string gen_random(std::string extension) {
   "abcdefghijklmnopqrstuvwxyz";
   srand(time(NULL));    
   string random;
-  for (int i = 0; i < 10; ++i) {
-    random += letter[rand() % (sizeof(letter) - 1)];
+  for (int i = 0; i < rng; ++i) {
+    random += letter[rand() % (sizeof(letter))];
   }
 
   return random + extension;
