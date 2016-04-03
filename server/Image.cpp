@@ -110,7 +110,7 @@ void Image::ComputeMask()
   // CCs extraction of image
   cv::vector<ConnectedComponent> tmpCC = extractComposentConnectImage(binarize.clone());
   //We sort the CCs with respect to their position in the image
-  sort(tmpCC.begin(), tmpCC.end(), []( ConnectedComponent& c1, ConnectedComponent& c2){
+  sort(tmpCC.begin(), tmpCC.end(), [](const ConnectedComponent c1,const ConnectedComponent c2){
     return cv::boundingRect(c1.getListPoint()).x < cv::boundingRect(c2.getListPoint()).x;
   });
 
