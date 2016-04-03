@@ -36,7 +36,7 @@ void Line::setBoundingBoxAtIndex(int index, int up, int down, int left, int righ
 }
 
 void Line::computeBaseLine(){
-	sort(m_ListCC.begin(), m_ListCC.end(), [](ConnectedComponent &c1, ConnectedComponent &c2){
+	sort(m_ListCC.begin(), m_ListCC.end(), [](const ConnectedComponent c1, const ConnectedComponent c2){
         return cv::boundingRect(c1.getListPoint()).x < cv::boundingRect(c2.getListPoint()).x;
     });
 
