@@ -188,33 +188,29 @@ class MyDynamicRepository : public DynamicRepository
 
   class Uploader: public DynamicPage
   {
-    /*
-    * \author provided by Thierry DESCOMBES, Creator of Libnavajo Server
-    */
     bool getPage(HttpRequest* request, HttpResponse *response)
     {
       if (!request->isMultipartContent())
         return false;
 
+      // retrieval of the image
       MPFD::Parser *parser = request->getMPFDparser();
       std::map<std::string,MPFD::Field *> fields=parser->GetFieldsMap();
       std::map<std::string,MPFD::Field *>::iterator it;
       for (it=fields.begin();it!=fields.end();++it) 
       {
         if(isFormatSupported(fields[it->first]->GetFileName()))
-        {
-           
+        {     
           if (fields[it->first]->GetType()==MPFD::Field::TextType)
             return false;
           else
-          {
-           
+          {   
             std::string newFileName = gen_random(fields[it->first]->GetFileName().substr(fields[it->first]->GetFileName().find(".")));
 
             NVJ_LOG->append(NVJ_INFO, "Got file field: [" + it->first + "] Filename:[" + newFileName + "] TempFilename:["  + fields[it->first]->GetTempFileName() + "]\n");
 
 
-            std::ifstream  src( fields[it->first]->GetTempFileName().c_str(), std::ios::binary);
+            std::ifstream  src(fields[it->first]->GetTempFileName().c_str(), std::ios::binary);
             string dstFilename = string(UPLOAD_DIR)+newFileName;
             std::ofstream  dst( dstFilename.c_str(), std::ios::binary);
             if (!src || !dst)
@@ -363,6 +359,7 @@ class MyDynamicRepository : public DynamicRepository
       {
         int sessionIndex = getActiveSessionFromToken(stoi(token));
         auto j = json::parse(listCCId);
+        // For each component connexe
         for (json::iterator it = j.begin(); it != j.end(); ++it) 
         {
           int idCC = it->find("idCC")->get<int>();
@@ -383,9 +380,7 @@ class MyDynamicRepository : public DynamicRepository
           }
           if(letter != "")
           {
-
             int indexCharacter = activeSessions.at(sessionIndex)->getFont()->indexOfCharacter(letter);
-
             if(indexCharacter == -1)
             {
               activeSessions.at(sessionIndex)->getFont()->addCharacter(Character(letter));

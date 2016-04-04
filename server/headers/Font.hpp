@@ -65,7 +65,7 @@ public:
      *  \param idCC : the idCC as integer
      *  \param idLine : the idLine as integer
      * 
-     *  \return the index as inter
+     *  \return the index as integer
      */
     int indexOfCharacterForCC(int idCC, int idLine);
 

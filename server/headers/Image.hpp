@@ -35,7 +35,7 @@ public:
     cv::Mat getMat() const;
 
     /*!
-     *  \brief get the image of Connected component for extration of font 
+     *  \brief get the image of Connected component for extraction of font 
      *
      *  Get accessor for data from Component attribute
      *
@@ -61,7 +61,7 @@ public:
     /*!
      *  \brief Extraction connected components of Image
      * 
-     *  \return the list of connected component as vectoer
+     *  \return the list of connected components as vector
      */
     static cv::vector<ConnectedComponent> extractComposentConnectImage(cv::Mat img);
 
