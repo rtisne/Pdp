@@ -6,24 +6,24 @@ find_package( OpenCV REQUIRED )
 
 set(SRCS
     main.cpp
-     ../server/ConnectedComponent.cpp
-     ../server/Font.cpp
-     ../server/Character.cpp
-     ../server/Line.cpp
-     ../server/Image.cpp
-     ../server/Session.cpp
-     ../server/Binarization.cpp
+     ../server/src/ConnectedComponent.cpp
+     ../server/src/Font.cpp
+     ../server/src/Character.cpp
+     ../server/src/Line.cpp
+     ../server/src/Image.cpp
+     ../server/src/Session.cpp
+     ../server/src/Binarization.cpp
     )
     
 set(HEADERS
-     ../server/json.hpp
-     ../server/ConnectedComponent.hpp
-     ../server/Font.hpp
-     ../server/Character.hpp
-     ../server/Line.hpp
-     ../server/Image.hpp
-     ../server/Session.hpp
-     ../server/Binarization.hpp
+     ../server/headers/json.hpp
+     ../server/headers/ConnectedComponent.hpp
+     ../server/headers/Font.hpp
+     ../server/headers/Character.hpp
+     ../server/headers/Line.hpp
+     ../server/headers/Image.hpp
+     ../server/headers/Session.hpp
+     ../server/headers/Binarization.hpp
     )
 
 add_executable(Unit_test ${SRCS} ${HEADERS})
