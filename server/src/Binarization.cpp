@@ -1,4 +1,4 @@
-#include "Binarization.hpp"
+#include "../headers/Binarization.hpp"
 
 /* Code provided by Antoine BILLY */
 

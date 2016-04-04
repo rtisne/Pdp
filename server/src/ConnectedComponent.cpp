@@ -1,4 +1,4 @@
-#include "ConnectedComponent.hpp"
+#include "../headers/ConnectedComponent.hpp"
 
 ConnectedComponent::ConnectedComponent():m_baseline(0)
 {

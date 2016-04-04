@@ -1,4 +1,4 @@
-#include "Session.hpp"
+#include "../headers/Session.hpp"
 
 
 Session::Session(const std::string &f):m_fileName(""),m_token(0),m_font(new Font()),m_image(new Image(f))

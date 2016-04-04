@@ -7,10 +7,10 @@
 #include <string.h> 
 #include <unordered_set>
 
-#include "Image.hpp"
-#include "Font.hpp"
-#include "Session.hpp"
-#include "json.hpp"
+#include "../headers/Image.hpp"
+#include "../headers/Font.hpp"
+#include "../headers/Session.hpp"
+#include "../headers/json.hpp"
 
 
 using namespace cv;
