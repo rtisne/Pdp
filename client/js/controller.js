@@ -89,6 +89,7 @@ function Controller(canvas, previewCanvas, listCharacter) {
     // Click on the trash button
     document.getElementById('button_trash').addEventListener('click', function(e){
         session.removeSession();
+        location.reload();
     }, true);    
 
     // Click on the export button
