@@ -222,28 +222,37 @@ std::string Image::jsonBaseline(){
 std::string Image::extractDataFromComponent(int index, int lineId) const
 {
 
+  // Generate binarized image
   cv::Mat imgBinarized; 
   imgBinarized = binarizeImage().clone();
 
   std::string data;
+
+  // Get coordonate of the component
   cv::Rect bb = getBoundingBoxAtIndex(index, lineId);
 
+  // Apply a mask to erase the background and resize to the component size
   cv::Mat mask = imgBinarized(bb);
   cv::threshold(mask, mask, 20, 1, cv::THRESH_BINARY_INV); 
   cv::Mat letter; 
   letter = cv::Mat::ones(mask.rows,mask.cols,m_img.type());
   letter.setTo(cv::Scalar(255,255,255));
   m_img(bb).copyTo(letter, mask);
+
   for (int i=0; i<letter.rows; ++i) {
+    // get the row i
     cv::Vec3b *p = letter.ptr<cv::Vec3b>(i);
     for (int j=0; j<letter.cols; ++j) {
+      // get the col j
       const cv::Vec3b pix = p[j];
       unsigned char opacity;
+      // if color is white make it transparent
       if(pix[0] == 255 && pix[1] == 255 && pix[2] == 255)
         opacity = 0;
       else
         opacity = 255;
 
+      // transforme RGB to ARGB
       unsigned int v = (opacity<<24)|(pix[0]<<16)|(pix[1]<<8)|(pix[2]);
       data += std::to_string(v);
       data += ",";
