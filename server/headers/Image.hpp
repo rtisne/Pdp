@@ -14,7 +14,6 @@
 
 
 #include "Line.hpp"
-#include <deque>
 
 class Image
 {

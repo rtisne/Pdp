@@ -13,7 +13,6 @@
  */
 
 #include <opencv2/core/core.hpp>
-#include <algorithm>
 #include <iostream>
 
 class Character

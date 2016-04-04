@@ -30,6 +30,11 @@ LocalRepository *myUploadRepo = NULL;
 
 std::vector<Session*> activeSessions;
 
+/*
+* \brief Function use when the service is closed and killed the active session
+*
+* \param dummy : the dummy as integer 
+*/
 
 void exitFunction( int dummy )
 {
@@ -39,6 +44,14 @@ void exitFunction( int dummy )
   }
   if (webServer != NULL) webServer->stopService();
 }
+
+/*
+* \brief Verify if the format's image uploaded is supported 
+*
+* \param &filenane : the filename as string 
+*
+* \return a bool
+*/
 
 bool isFormatSupported( const std::string &fileName)
 {
@@ -56,7 +69,14 @@ bool isFormatSupported( const std::string &fileName)
 }
 
 
-
+/*
+* \brief Extract all informations about the font  
+*
+* \param sessionindex : the index as integeer
+* \param fontname : the fontname as string 
+*
+* \return a string
+*/
 string extractFontInOl(int sessionIndex, string fontName)
 {
   ostringstream xmlDocument;
@@ -96,6 +116,13 @@ string extractFontInOl(int sessionIndex, string fontName)
   return xmlDocument.str();
 } 
 
+/*
+* \brief Generate a random name for image uploaded 
+*
+* \param extension : the extension as string
+*
+* \return a string
+*/
 std::string gen_random(std::string extension) {
   static const char letter[] =
   "0123456789"
@@ -109,6 +136,15 @@ std::string gen_random(std::string extension) {
 
   return random + extension;
 }
+
+/*
+* \brief Creater User session when image was uploading
+*
+* \param filenane : the filename as string 
+* \param *request : the request as HttpRequest
+*
+* \return a string JSON
+*/
 
 std::string InitiateSession(std::string fileName,HttpRequest *request)
 {
@@ -124,6 +160,13 @@ std::string InitiateSession(std::string fileName,HttpRequest *request)
   return "{\"fileName\":\""+fileName+"\",\"token\":"+to_string(mySession->getToken())+"}";
 }
 
+/*
+* \brief Verify if token is valid
+*
+* \param token : the token as integer
+*
+* \return a integer
+*/
 int getActiveSessionFromToken(int token)
 {
   for (unsigned i=0; i<activeSessions.size(); i++)
@@ -145,6 +188,9 @@ class MyDynamicRepository : public DynamicRepository
 
   class Uploader: public DynamicPage
   {
+    /*
+    * \author provided by Thierry DESCOMBES, Creator of Libnavajo Server
+    */
     bool getPage(HttpRequest* request, HttpResponse *response)
     {
       if (!request->isMultipartContent())
@@ -193,6 +239,14 @@ class MyDynamicRepository : public DynamicRepository
 
   class getBoundingBox: public MyDynamicPage
   {
+    /*
+    * \brief Extract all bounding box and baseline
+    *
+    * \param *response : the response as HttpReponse 
+    * \param *request : the request as HttpRequest
+    *
+    * \return a string in response and a bool
+    */
     bool getPage(HttpRequest* request, HttpResponse *response)
     {
       string token;
@@ -212,7 +266,15 @@ class MyDynamicRepository : public DynamicRepository
   } getBoundingBox;
 
   class getInfoOnCC: public MyDynamicPage
-  {
+  { 
+    /*
+    * \brief Get informations about a bounding box
+    *
+    * \param *response : the response as HttpReponse 
+    * \param *request : the request as HttpRequest
+    *
+    * \return a string in response and a bool
+    */
     bool getPage(HttpRequest* request, HttpResponse *response)
     {
       string token;
@@ -263,7 +325,15 @@ class MyDynamicRepository : public DynamicRepository
   } getInfoOnCC;    
 
   class updateInfoOnCC: public MyDynamicPage
-  {
+  { 
+    /*
+    * \brief Update informations about a bounding box
+    *
+    * \param *response : the response as HttpReponse 
+    * \param *request : the request as HttpRequest
+    *
+    * \return a string in response and a bool
+    */
     bool getPage(HttpRequest* request, HttpResponse *response)
     {
 
@@ -387,8 +457,17 @@ class MyDynamicRepository : public DynamicRepository
 
     } extractFont;
 
+
     class updateBaseline: public MyDynamicPage
     {
+      /*
+      * \brief Update informations about a baseline
+      *
+      * \param *response : the response as HttpReponse 
+      * \param *request : the request as HttpRequest
+      *
+      * \return a string in response and a bool
+      */
       bool getPage(HttpRequest* request, HttpResponse *response)
       {
         string token;
@@ -441,6 +520,9 @@ class MyDynamicRepository : public DynamicRepository
 
 /***********************************************************************/
 
+/*
+* \author Provided by Thierry DESCOMBES, Creator of Libnavajo Server
+*/
   int main(int argc, char** argv )
   {
     signal( SIGTERM, exitFunction );

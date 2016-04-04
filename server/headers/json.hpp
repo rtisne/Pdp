@@ -11,28 +11,28 @@ Licensed under the MIT License <http://opensource.org/licenses/MIT>.
 #ifndef NLOHMANN_JSON_HPP
 #define NLOHMANN_JSON_HPP
 
-#include <algorithm>
+//#include <algorithm>
 #include <array>
-#include <cassert>
-#include <ciso646>
-#include <cmath>
-#include <cstddef>
-#include <cstdio>
-#include <cstdlib>
-#include <functional>
-#include <initializer_list>
+//#include <cassert>
+//#include <ciso646>
+//#include <cmath>
+//#include <cstddef>
+//#include <cstdio>
+//#include <cstdlib>
+//#include <functional>
+//#include <initializer_list>
 #include <iomanip>
 #include <iostream>
-#include <iterator>
-#include <limits>
-#include <map>
-#include <memory>
-#include <sstream>
-#include <stdexcept>
-#include <string>
-#include <type_traits>
-#include <utility>
-#include <vector>
+//#include <iterator>
+//#include <limits>
+//#include <map>
+//#include <memory>
+//#include <sstream>
+//#include <stdexcept>
+//#include <string>
+//#include <type_traits>
+//#include <utility>
+//#include <vector>
 
 // disable float-equal warnings on GCC/clang
 #if defined(__clang__) || defined(__GNUC__) || defined(__GNUG__)

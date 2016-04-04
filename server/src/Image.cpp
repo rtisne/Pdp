@@ -132,6 +132,7 @@ void Image::ComputeMask()
         cv::Rect r = cv::boundingRect(tmpCC[k].getListPoint());
         if(tmpCC[k].getInline() == false)
         {
+          // Verify if CC[k] is in Line[i]
           if(inMiddle(rMask,r) || rMask.contains(r.tl()) || rMask.contains(r.br()))
           {
             line.addCC(tmpCC[k]);
@@ -146,6 +147,7 @@ void Image::ComputeMask()
         m_listLine[i].computeBaseLine();
       }     
     }
+    // No Line founded and Connected Component exist
   } else if(tmpCC.size() == 1){
     Line line = Line();
     line.addCC(tmpCC[0]);
@@ -153,6 +155,8 @@ void Image::ComputeMask()
     m_listLine.push_back(line);
     m_listLine[0].computeBaseLine();
   }
+
+  // All connected component not added to a line of mask, trash line
   if(nbCCInline != tmpCC.size())
   {
     Line line = Line();
