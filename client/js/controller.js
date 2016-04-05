@@ -13,6 +13,8 @@ function Controller(canvas, previewCanvas, listCharacter) {
     this.canvas.selectedCC = [0];
     session.getInfoOnCC(0,controller.canvas.boundingBox.rects[0].idCC, controller.canvas.boundingBox.rects[0].idLine, controller);
     this.previewCanvas.visible = true;
+    this.previewCanvas.draw();
+
     
     canvas.canvas.addEventListener('selectstart', function(e) { e.preventDefault(); return false; }, false);
 
@@ -37,34 +39,41 @@ function Controller(canvas, previewCanvas, listCharacter) {
         else{
             controller.canvas.baseline.visible = false;
         }     
+        controller.canvas.draw();
     }, true);
 
      // Change the up line on the preview
     $( "#up" ).change(function() {
         controller.previewCanvas.position_up_line = parseFloat($(this).val());
+        controller.previewCanvas.draw();
     });
     // Change the down line on the preview
     $( "#down" ).change(function() {
         controller.previewCanvas.position_down_line = parseFloat($(this).val());
+        controller.previewCanvas.draw();
     });
 
     // Change the left line on the preview
     $( "#left" ).change(function() {
         controller.previewCanvas.position_left_line = parseFloat($(this).val());
+        controller.previewCanvas.draw();
     });
 
     // Change the right line on the preview
     $( "#right" ).change(function() {
         controller.previewCanvas.position_right_line = parseFloat($(this).val());
+        controller.previewCanvas.draw();
     });
 
     // Change the baseline on the preview
     $( "#baselineCC" ).change(function() {
         controller.previewCanvas.position_baseline = parseFloat($(this).val());
+        controller.previewCanvas.draw();
     }); 
 
     $( "#baselineValue" ).change(function() {
         controller.previewCanvas.position_baseline = parseFloat($(this).val());
+        controller.previewCanvas.draw();
     }); 
 
     // Click on the save button for Component
@@ -74,6 +83,8 @@ function Controller(canvas, previewCanvas, listCharacter) {
     document.getElementById('saveBaseline').addEventListener('click', function(e){
         var value = parseFloat($("#baselineValue").val());
         controller.canvas.baseline.lines[controller.previewCanvas.idElementSelected].y = value;
+        controller.canvas.draw();
+
         session.updateBaseline(controller.canvas.baseline.lines[controller.previewCanvas.idElementSelected].id, value);
     }, true);
 
@@ -107,6 +118,7 @@ function Controller(canvas, previewCanvas, listCharacter) {
                 if(controller.canvas.boundingBox.rects[i].labeled == character)
                     controller.canvas.boundingBox.rects[i].hover = true;
             }
+            controller.canvas.draw();
         },
         mouseleave: function(){
             var character = $(this).data("character");
@@ -114,6 +126,7 @@ function Controller(canvas, previewCanvas, listCharacter) {
                 if(controller.canvas.boundingBox.rects[i].labeled == character)
                     controller.canvas.boundingBox.rects[i].hover = false;
             }
+            controller.canvas.draw();
         }
     }, '.listItem');
 
@@ -133,10 +146,6 @@ function Controller(canvas, previewCanvas, listCharacter) {
     window.onunload = function() { 
        session.removeSession();
     };
-
-    // Drawing
-    this.interval = 30;
-    setInterval(function() { controller.draw(); }, controller.interval);
 
 }
 
@@ -193,7 +202,8 @@ Controller.prototype.getInfoOnClickedObject = function getInfoOnClickedObject(e)
             this.canvas.selectedCC = [id];
             session.getInfoOnCC(id,this.canvas.boundingBox.rects[id].idCC, this.canvas.boundingBox.rects[id].idLine, this);
         } 
-        return;   
+        this.canvas.draw();
+        return;  
     }
     // Check if we clic on a Baseline
     var id = this.canvas.baseline.contains(mx, my, this.canvas.image);
@@ -206,7 +216,7 @@ Controller.prototype.getInfoOnClickedObject = function getInfoOnClickedObject(e)
         this.previewCanvas.zoomTo(this.canvas.baseline.lines[id], id);
         this.previewCanvas.visible = true;
         $("#baselineValue").val(this.canvas.baseline.lines[id].y);
-
+        this.canvas.draw();
     }  
 }
 
@@ -260,18 +270,9 @@ Controller.prototype.updateInfoOnObject = function(e)
 
     session.updateInfoOnCC(this.canvas.boundingBox.rects[this.previewCanvas.idElementSelected].idCC, this.canvas.boundingBox.rects[this.previewCanvas.idElementSelected].idLine,jsonId, parseFloat($("#left").val()), parseFloat($("#right").val()),  parseFloat($("#up").val()), parseFloat($("#down").val()),parseInt($("#baselineCC").val()), $("#letter").val());
 
+    this.canvas.draw();
     this.listCharacter.draw();
 }
-
-/*!
- * Draw on all canvas
- * \memberof Controller
- */
-Controller.prototype.draw = function(){
-    this.canvas.draw();
-    this.previewCanvas.draw();
-}
-
 
 /*!
  * Update infos on the client with values receive from the server
@@ -313,4 +314,6 @@ Controller.prototype.manipulateInfos = function manipulateInfos(id, left, right,
     $("#right").data('old-value', right);
     $("#baselineCC").val(baseline);
     $("#baselineCC").data('old-value', baselineCC);
+    this.canvas.draw();
+    this.previewCanvas.draw();
 }

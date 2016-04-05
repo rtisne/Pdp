@@ -279,8 +279,8 @@ function CanvasState(canvas, image, baseline, boundingBox) {
             myState.scale = myState.width /this.width;
         else
             myState.scale = myState.height /this.height;
+        myState.draw();
     }
-
 }
 /*!
  * When the mouse down (Dectection for moving the image)
@@ -298,7 +298,7 @@ CanvasState.prototype.onMouseDown= function(e){
         this.dragoffx = mx - image.x;
         this.dragoffy = my - image.y;             
         this.dragging = true;
-        return;
+        this.draw();
       }
 }
 
@@ -312,6 +312,7 @@ CanvasState.prototype.onMouseMove = function(e){
         var mouse = this.getMouse(e);
         this.image.x = (mouse.x) - this.dragoffx;
         this.image.y = (mouse.y) - this.dragoffy; 
+        this.draw();
     }
 }
 
@@ -330,6 +331,7 @@ CanvasState.prototype.onMouseUp = function(e){
  */
 CanvasState.prototype.zoomIn = function(){
     this.scale += 0.1;
+    this.draw();
 }
 
 /*!
@@ -338,6 +340,7 @@ CanvasState.prototype.zoomIn = function(){
  */
 CanvasState.prototype.zoomOut = function(){
     this.scale -= 0.1;
+    this.draw();
 }
 
 /*!
@@ -352,6 +355,7 @@ CanvasState.prototype.zoomReset = function(){
 
     this.image.x = this.image.initialx;
     this.image.y = this.image.initialy;
+    this.draw();
 }
 
 /*!
@@ -442,7 +446,11 @@ function PreviewCanvas(canvas, image)
     this.position_right_line = 0;
     this.position_baseline = 0;
     this.idElementSelected = 0;
-    var myPreviewCanvas = this;  
+    var myPreviewCanvas = this; 
+
+    this.image.img.onload = function(){
+        myPreviewCanvas.draw();
+    }
 }
 
 /*!
@@ -575,6 +583,7 @@ PreviewCanvas.prototype.zoomTo = function(obj, id){
         this.position_baseline = line.y;
         this.idElementSelected = id;
     }
+    this.draw();
     
 }
 
