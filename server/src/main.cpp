@@ -414,7 +414,6 @@ class MyDynamicRepository : public DynamicRepository
       int sessionIndex = getActiveSessionFromToken(stoi(token));
       if(sessionIndex != -1)
       {
-        int sessionIndex = getActiveSessionFromToken(stoi(token));
         string filePath = activeSessions.at(sessionIndex)->getFileName();
         if( remove( filePath.c_str() ) != 0 )
         {

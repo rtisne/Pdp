@@ -99,7 +99,7 @@ function Controller(canvas, previewCanvas, listCharacter) {
 
     // Click on the trash button
     document.getElementById('button_trash').addEventListener('click', function(e){
-        session.removeSession();
+        session.removeSession(true);
         location.reload();
     }, true);    
 
@@ -144,7 +144,7 @@ function Controller(canvas, previewCanvas, listCharacter) {
 
     // When the user quit the application
     window.onunload = function() { 
-       session.removeSession();
+       session.removeSession(false);
     };
 
 }

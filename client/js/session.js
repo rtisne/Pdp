@@ -78,13 +78,13 @@ Session.prototype.imageInfos = function(filename, callback)
  * Delete the session with the server
  * \memberof Session
  */
-Session.prototype.removeSession = function()
+Session.prototype.removeSession = function(isAsync)
 {
 	$.ajax({
     url: 'stopSession.txt',
     type: 'POST',
     data: "token=" + this.token,
-    async: false,
+    async: isAsync,
     success: function(data, textStatus, jqXHR)
     {
     },
