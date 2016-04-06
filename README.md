@@ -1,8 +1,10 @@
 # Font-extractor
 
-Semi-automatic extraction of characters from an image into a font for the generation of images and old documents
+Semi-automatic extraction of characters from an image into a font for the generation of images and old documents.
 
-
+This application can be tested online, or installed locally. To 
+install it two solutions are provided : manually or from a docker 
+image.
 ## Manual installation
 ```
 // Opencv installation
