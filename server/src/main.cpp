@@ -420,6 +420,7 @@ class MyDynamicRepository : public DynamicRepository
           NVJ_LOG->append(NVJ_ERROR, "Error Deleted");
           return fromString("{\"error\":\"An error append when deleting the image\"}",response);
         } else {
+          delete activeSessions.at(sessionIndex);
           activeSessions.erase(activeSessions.begin() + sessionIndex);
           NVJ_LOG->append(NVJ_ERROR, "Deleted");
           return fromString("{\"success\":\"Goodbye\"}",response);

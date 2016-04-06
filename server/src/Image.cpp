@@ -166,7 +166,10 @@ void Image::ComputeMask()
     }
     m_listLine.push_back(line);
   }
-  
+
+  contours_mask.clear();
+  tmpCC.clear();
+
   tmp.release();
   binarize.release();
 }
@@ -194,7 +197,7 @@ std::string Image::jsonBoundingRect(){
     }
     ListTmpCC.clear();
   }
-
+  
   json = json.substr(0, json.size()-1);
   return json;
 }
