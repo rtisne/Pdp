@@ -34,7 +34,7 @@ public:
      *
      *  Get accessor for label attribute
      * 
-     *  \return the label as string
+     *  \return the label of character
      */
     std::string getLabel() const;
 
@@ -48,11 +48,11 @@ public:
     void setBaseline(int x);
 
     /*!
-     *  \brief get the baselie of the character
+     *  \brief get the baseline of the character
      *
      *  Get accessor for baseline attribute
      * 
-     *  \return the baseline as integer
+     *  \return the baseline of character
      */
     int getBaseline() const;
 
@@ -96,7 +96,7 @@ public:
      * 
      *  \param index: the index as integer
      *
-     *  \return the index as std::pair<int,int>
+     *  \return the index of character
      */
     std::pair<int,int> getIdComponentAtIndex(int index);
 
@@ -108,7 +108,7 @@ private:
     //!@brief baseline of the Character
    	int m_baseline;
 
-    //!@brief Vector List of pair integer of the Character
+    //!@brief vector of pair integer of the Character
     std::vector<std::pair<int,int>> m_idComponentsConnexes;
 };
 

@@ -30,7 +30,7 @@ public:
      *
      *  Set accessor for name attribute
      * 
-     *  \param n : the nmae as string
+     *  \param n : the name as string
      */
     void setName(const std::string &n);
 
@@ -44,7 +44,7 @@ public:
     std::string getName() const;
 
     /*!
-     *  \brief add charactor to the font
+     *  \brief add character to the font
      *
      *  \param c: the c as Character
      */
@@ -60,7 +60,7 @@ public:
     int indexOfCharacter(const std::string &c);
 
     /*!
-     *  \brief Verify if connectedComposent is in Font
+     *  \brief Verify if connected component is in Font
      *
      *  \param idCC : the idCC as integer
      *  \param idLine : the idLine as integer
@@ -90,7 +90,7 @@ public:
     /*!
      *  \brief Count number of character of Font
      *
-     * Get accessor for size attribue
+     * Get accessor for size attribute
      * 
      *  \return the size as integer
      */

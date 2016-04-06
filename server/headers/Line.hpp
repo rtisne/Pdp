@@ -42,9 +42,9 @@ public:
   	int getBaseline() const;
 
     /*!
-     *  \brief get the Vector list of ConnectedComponent of a Line
+     *  \brief get the vector of ConnectedComponent of a Line
      *
-     * Get accessor for token Vector list of ConnectedComponent
+     * Get accessor for token vector of ConnectedComponent
      * 
      *  \return the ListCC as vector of Connected Component 
      */
@@ -88,12 +88,12 @@ public:
   	void setBaselineAtIndex(int index, int value);
 
     /*!
-     *  \brief Set the baseline for each line with median of vector list Of Connected Component
+     *  \brief Set the baseline for each line with median of vector Of Connected Component
      */
     void computeBaseLine();
 
 private:
-  //!@brief Vector List of Connected Component of the Line
+  //!@brief vector of Connected Component of the Line
   std::vector<ConnectedComponent> m_ListCC;
 
   //!@brief Baseline of the Line

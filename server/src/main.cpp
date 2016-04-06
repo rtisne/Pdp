@@ -18,10 +18,12 @@ using namespace std;
 using json = nlohmann::json;
 
 
+static const char *CLIENT_DIR = "../client/";
+static const char *UPLOAD_DIR = "../client/data/";
+// #define CLIENT_DIR "../client/"
+// #define UPLOAD_DIR "../client/data/"
 
-#define CLIENT_DIR "../client/"
-#define UPLOAD_DIR "../client/data/"
-
+/* Const integer for random number of name file generation */
 const int rng = 10;
 
 WebServer *webServer = NULL;
@@ -72,7 +74,7 @@ bool isFormatSupported( const std::string &fileName)
 /*
 * \brief Extract all informations about the font  
 *
-* \param sessionindex : the index as integeer
+* \param sessionindex : the index as integer
 * \param fontname : the fontname as string 
 *
 * \return a string

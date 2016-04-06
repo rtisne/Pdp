@@ -28,7 +28,7 @@ public:
 
     /*!
      *  \brief Constructor of the Connected Component class
-     *  \param vec : the vec as copy of Vector list of Point
+     *  \param vec : the vec as copy of vector of Point
      */
     explicit ConnectedComponent(const std::vector<cv::Point> &vec);
 
@@ -55,7 +55,7 @@ public:
      *
      *  Get accessor for baseline attribute
      * 
-     *  \return the baseline as integer
+     *  \return the baseline of the connected component
      */
     int getBaseline() const;
 
@@ -96,13 +96,13 @@ public:
      */
     cv::Rect getBoundingBox() const;
 private:
-   //!@brief Vector List of Point of the Connected Component
+   //!@brief vector of Point of the Connected Component
    std::vector<cv::Point> m_listPoint;
 
    //!@brief baseline of the Connected Component
    float m_baseline;
 
-   //!@brief up of of the Connected Component
+   //!@brief up of the Connected Component
    int m_up;
 
    //!@brief down of the Connected Component

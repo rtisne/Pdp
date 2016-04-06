@@ -176,7 +176,7 @@ public:
     int getBaselineAtIndex(int index,int line);
 
     /*!
-     *  \brief get ConnectedComponent informations
+     *  \brief get positons of connected component in vector
      *
      *  get accessor for connected component attribute
      * 
@@ -188,11 +188,11 @@ public:
     ConnectedComponent getConnectedComponnentAt(int index, int line);
 
     /*!
-     *  \brief get m_listLine informations
+     *  \brief get the lines present on image
      *
      *  get accessor for m_listLine attribute
      *
-     *  \return the list line as Vector list of Line
+     *  \return the list line as vector of Line
      */
     std::vector<Line> getListLine();
 
@@ -200,7 +200,7 @@ private:
 //!@brief Mat of the image uploaded
  cv::Mat m_img;
  
-//!@brief Vector list of Line
+//!@brief vector of Line
  std::vector<Line> m_listLine;
 };
 
