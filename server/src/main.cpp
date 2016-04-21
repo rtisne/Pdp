@@ -407,6 +407,71 @@ class MyDynamicRepository : public DynamicRepository
 
   } updateInfoOnCC;
 
+  class merge: public MyDynamicPage
+  { 
+    /*
+    * \brief Merge the components
+    *
+    * \param *response : the response as HttpReponse 
+    * \param *request : the request as HttpRequest
+    *
+    * \return a string in response and a bool
+    */
+    bool getPage(HttpRequest* request, HttpResponse *response)
+    {
+
+      string listCCId;
+      string token;
+      string activeId;
+      string activeLine;
+      request->getParameter("token", token);
+      request->getParameter("id", listCCId);
+      request->getParameter("activeid", activeId);
+      request->getParameter("activeline", activeLine);
+
+      int sessionIndex = getActiveSessionFromToken(stoi(token));
+      if(sessionIndex != -1)
+      {
+        int sessionIndex = getActiveSessionFromToken(stoi(token));
+        auto j = json::parse(listCCId);
+        for (json::iterator it = j.begin(); it != j.end(); ++it) 
+        {
+          int idCC = it->find("idCC")->get<int>();
+          int idLine = it->find("idLine")->get<int>(); 
+          if(!(idCC == stoi(activeId) && idLine == stoi(activeLine)))
+          {
+            cv::Rect bb = activeSessions.at(sessionIndex)->getImage()->getBoundingBoxAtIndex(idCC,idLine);
+            cv::Rect bbActive = activeSessions.at(sessionIndex)->getImage()->getBoundingBoxAtIndex(stoi(activeId),stoi(activeLine));
+            activeSessions.at(sessionIndex)->getImage()->setBoundingBoxAtIndex(stoi(activeId),stoi(activeLine),min(bb.y,bbActive.y),max(bb.y + bb.height, bbActive.y + bbActive.height), min(bb.x, bbActive.x), max(bb.x + bb.width, bbActive.x + bbActive.width));
+            //activeSessions.at(sessionIndex)->getImage()->removeConnectedComponentAt(idCC, idLine);
+            int indexCharacterForCC = activeSessions.at(sessionIndex)->getFont()->indexOfCharacterForCC(idCC, idLine);
+            if(indexCharacterForCC != -1)
+            {
+              activeSessions.at(sessionIndex)->getFont()->characterAtIndex(indexCharacterForCC)->removeComponent(idCC, idLine);
+              if(activeSessions.at(sessionIndex)->getFont()->characterAtIndex(indexCharacterForCC)->countComponent() <= 0)
+                activeSessions.at(sessionIndex)->getFont()->removeCharacter(indexCharacterForCC);
+            }
+          }
+        }
+        cv::Rect bbActive = activeSessions.at(sessionIndex)->getImage()->getBoundingBoxAtIndex(stoi(activeId),stoi(activeLine));
+        string json = "{";
+        json += ("\"id\":" + activeId + ",");
+        json += ("\"idLine\":" + activeLine + ",");
+        json += ("\"left\":" + to_string(bbActive.x) + ",");
+        json += ("\"right\":" + to_string(bbActive.x + bbActive.width) + ",");
+        json += ("\"up\":" + to_string(bbActive.y) + ",");
+        json += ("\"down\":" + to_string(bbActive.y + bbActive.height));
+        json += "}";
+        return fromString(json, response);
+      } else {
+        return fromString("{\"error\" : You don't have a valid token, retry please\"}", response);
+      }
+      return fromString("ok", response);
+    }
+
+  } merge;
+
+
   class stopSession: public MyDynamicPage
   {
     bool getPage(HttpRequest* request, HttpResponse *response)
@@ -512,6 +577,7 @@ class MyDynamicRepository : public DynamicRepository
       add("stopSession.txt",&stopSession);
       add("extractFont.txt",&extractFont);
       add("updateBaseline.txt",&updateBaseline);
+      add("merge.txt",&merge);
     }
   };
 

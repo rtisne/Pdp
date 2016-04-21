@@ -79,6 +79,9 @@ function Controller(canvas, previewCanvas, listCharacter) {
     // Click on the save button for Component
     document.getElementById('save').addEventListener('click', function(e){ controller.updateInfoOnObject(e); }, true);
 
+    // Click on the merge button
+    document.getElementById('mergeButton').addEventListener('click', function(e){ controller.merge(e); }, true);
+
      // Click on the save button for baseline
     document.getElementById('saveBaseline').addEventListener('click', function(e){
         var value = parseFloat($("#baselineValue").val());
@@ -195,6 +198,10 @@ Controller.prototype.getInfoOnClickedObject = function getInfoOnClickedObject(e)
                 this.canvas.selectedCC.push(id);
                 this.canvas.boundingBox.addToSelection(id);
             }
+            if(this.canvas.selectedCC.length > 1)
+                $("#mergeButton").removeAttr('disabled');
+            else
+                $("#mergeButton").prop("disabled", true);
         }
         else
         {
@@ -316,4 +323,51 @@ Controller.prototype.manipulateInfos = function manipulateInfos(id, left, right,
     $("#baselineCC").data('old-value', baselineCC);
     this.canvas.draw();
     this.previewCanvas.draw();
+}
+
+Controller.prototype.merge = function merge(e)
+{
+    var ids = this.canvas.selectedCC;
+    // Construct the json object containing all components ids
+    var jsonId = "{";
+    for (index = 0; index < ids.length; index++) 
+    {
+        jsonId += "\"" + index + "\"\:{";
+        jsonId += "\"idCC\"\:" + this.canvas.boundingBox.rects[ids[index]].idCC + ",";
+        jsonId += "\"idLine\"\:" + this.canvas.boundingBox.rects[ids[index]].idLine + ",";
+        jsonId += "\"id\"\:" + ids[index];
+        jsonId += "}";
+        if(index < ids.length-1)
+            jsonId += ",";    
+    }
+    jsonId += "}";
+
+    session.merge(this.canvas.boundingBox.rects[this.previewCanvas.idElementSelected].idCC, this.canvas.boundingBox.rects[this.previewCanvas.idElementSelected].idLine,jsonId, this);
+}
+
+Controller.prototype.mergeComponent = function mergeComponent(id, idLine, left, right, up, down, jsonId)
+{
+    for(var i in jsonId) { 
+        if(jsonId[i].idCC == id && jsonId[i].idLine == idLine)
+        {
+            this.canvas.boundingBox.rects[jsonId[i].id].rect.x = left;
+            this.canvas.boundingBox.rects[jsonId[i].id].rect.y = up;
+            this.canvas.boundingBox.rects[jsonId[i].id].rect.w = right - left;
+            this.canvas.boundingBox.rects[jsonId[i].id].rect.h = down - up;
+        }
+        else
+        {
+            //this.canvas.boundingBox.rects.splice(jsonId[i].id, 1);
+            this.canvas.boundingBox.rects[jsonId[i].id].rect.x = -1;
+            this.canvas.boundingBox.rects[jsonId[i].id].rect.y = -1;
+            this.canvas.boundingBox.rects[jsonId[i].id].rect.w = 0;
+            this.canvas.boundingBox.rects[jsonId[i].id].rect.h = 0;
+            if(this.canvas.boundingBox.rects[jsonId[i].id].labeled != false)
+                this.listCharacter.removeToCharacter(this.canvas.boundingBox.rects[jsonId[i].id].labeled);
+        }
+    }
+    this.canvas.boundingBox.select(this.previewCanvas.idElementSelected);
+    this.canvas.selectedCC = [this.previewCanvas.idElementSelected];
+    this.manipulateInfos(this.previewCanvas.idElementSelected, left, right, up, down, $("#letter").val(), down);
+    this.listCharacter.draw();
 }

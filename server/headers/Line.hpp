@@ -85,7 +85,14 @@ public:
      *  \param index : the index as integer 
      *  \param value : the value as integer
      */
-  	void setBaselineAtIndex(int index, int value);
+    void setBaselineAtIndex(int index, int value);
+
+    /*!
+     *  \brief remove connected component
+     * 
+     *  \param index : the index as integer 
+     */
+  	void removeConnectedComponentAt(int index);
 
     /*!
      *  \brief Set the baseline for each line with median of vector Of Connected Component

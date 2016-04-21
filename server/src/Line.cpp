@@ -53,6 +53,11 @@ void Line::computeBaseLine(){
 	} 
 }
 
+void Line::removeConnectedComponentAt(int index)
+{
+	m_ListCC.erase(m_ListCC.begin() + index);
+}
+
 void Line::setBaselineAtIndex(int index, int value)
 {
 	assert(index>=0);

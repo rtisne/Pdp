@@ -110,12 +110,12 @@ public:
      *
      *  Set accessor for boundingbox attribute
      * 
-     *  \param index : the index as string
-     *  \param line : the line as string
-     *  \param up : the up as string
-     *  \param down : the down as string
-     *  \param left : the left as string
-     *  \param right : the right as string
+     *  \param index : the index as int
+     *  \param line : the line as int
+     *  \param up : the up as int
+     *  \param down : the down as int
+     *  \param left : the left as int
+     *  \param right : the right as int
      */
     void setBoundingBoxAtIndex(int index,int line, int up, int down, int left, int right);
 
@@ -124,9 +124,9 @@ public:
      *
      *  Set accessor for baseline of Connected component attribute
      * 
-     *  \param index : the index as string
-     *  \param line : the line as string
-     *  \param value : the value as string
+     *  \param index : the index as int
+     *  \param line : the line as int
+     *  \param value : the value as int
      */
     void setBaselineAtIndex(int index,int line, int value);   
 
@@ -185,7 +185,16 @@ public:
      *
      *  \return the connectedcomponent as ConnectedComponent
      */
-    ConnectedComponent getConnectedComponnentAt(int index, int line);
+    ConnectedComponent getConnectedComponnentAt(int index, int line); 
+
+    /*!
+     *  \brief remove the connected component
+     * 
+     *  \param index: the index as integer
+     *  \param line: the line as integer
+     *
+     */
+    void removeConnectedComponentAt(int index, int line);
 
     /*!
      *  \brief get the lines present on image

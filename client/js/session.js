@@ -205,3 +205,29 @@ Session.prototype.updateBaseline = function(idLine, value)
     }
     });
 }
+/*!
+ * merge different Components
+ * \memberof Session
+ * \param activeId id of the component selected on the preview canvas
+ * \param activeLine id of the line where is the component selected on the preview canvas
+ * \param jsonId list of identifiers of components that we want to change
+ */
+Session.prototype.merge = function(activeId, activeLine, jsonId, callback)
+{
+    $.ajax({
+    url: 'merge.txt',
+    type: 'POST',
+    data: "token=" + this.token + "&activeid=" + activeId + "&activeline=" + activeLine + "&id=" + jsonId,
+    context: callback,
+    success: function(data, textStatus, jqXHR)
+    {
+        var info = JSON.parse(data);
+        callback.mergeComponent(info.id, info.idLine, info.left, info.right, info.up, info.down, JSON.parse(jsonId));
+    },
+    error: function(error)
+    {
+            console.log('ERRORS: ' + error);
+    }
+    });
+}
+

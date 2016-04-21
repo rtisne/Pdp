@@ -309,3 +309,7 @@ int Image::isValidIdCC(int line, int cc) const{
 std::vector<Line> Image::getListLine(){
   return m_listLine;
 }
+
+void Image::removeConnectedComponentAt(int index, int line){
+  m_listLine[line].removeConnectedComponentAt(index);
+}
