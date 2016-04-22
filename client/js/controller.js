@@ -205,6 +205,7 @@ Controller.prototype.getInfoOnClickedObject = function getInfoOnClickedObject(e)
         }
         else
         {
+            $("#mergeButton").prop("disabled", true);
             this.canvas.boundingBox.select(id);
             this.canvas.selectedCC = [id];
             session.getInfoOnCC(id,this.canvas.boundingBox.rects[id].idCC, this.canvas.boundingBox.rects[id].idLine, this);
