@@ -74,7 +74,7 @@ public:
     void addComponent(int idCC, int idLine);
 
     /*!
-     *  \brief remove component to m_idComponentsConnexes
+     *  \brief remove component from m_idComponentsConnexes
      * 
      *  \param idCC : the idCC as integer
      *  \param idLine : the idLine as integer
@@ -98,15 +98,16 @@ public:
      *
      *  \return the index of character
      */
-    std::pair<int,int> getIdComponentAtIndex(int index);
+    std::pair<int,int> getIdComponentAtIndex(int index) const;
 
-    friend bool operator== ( const Character &c1, const Character &c2);
+    friend bool operator==(const Character &c1, const Character &c2);
+  
 private:
     //!@brief label of the Character
     std::string m_label;
 
     //!@brief baseline of the Character
-   	int m_baseline;
+    int m_baseline;
 
     //!@brief vector of pair integer of the Character
     std::vector<std::pair<int,int>> m_idComponentsConnexes;

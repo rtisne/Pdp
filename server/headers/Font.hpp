@@ -74,12 +74,15 @@ public:
      *
      * Get accessor for ConnectedComponent
      *
-     *  \param id : the is as integer;
+     *  \param id : the id as integer;
      * 
      *  \return the copy as pointer
      */
     Character* characterAtIndex(int id);
 
+  const Character* characterAtIndex(int id) const;
+
+  
     /*!
      *  \brief Remove character of Font
      *

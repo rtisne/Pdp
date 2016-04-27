@@ -82,10 +82,13 @@ bool isFormatSupported( const std::string &fileName)
 string extractFontInOl(int sessionIndex, string fontName)
 {
   ostringstream xmlDocument;
-  xmlDocument << "<?xml version=\"1.0\" encoding=\"UTF-8\"?>" << endl << "<font name=\"" + fontName + "\">" << endl; 
-  for(int i = 0; i < activeSessions.at(sessionIndex)->getFont()->countCharacter(); i ++)
+  xmlDocument << "<?xml version=\"1.0\" encoding=\"UTF-8\"?>" << endl << "<font name=\"" + fontName + "\">" << endl;
+  const Image *image = activeSessions.at(sessionIndex)->getImage();
+  const Font *font = activeSessions.at(sessionIndex)->getFont();
+  const int nbCharacters = font->countCharacter();
+  for(int i = 0; i < nbCharacters; ++i)
   {
-    Character* character = activeSessions.at(sessionIndex)->getFont()->characterAtIndex(i);
+    const Character* character = font->characterAtIndex(i);
     xmlDocument << "<letter char=\"" +  character->getLabel() + "\">"<< endl; 
     xmlDocument << "<anchor>"<< endl; 
     xmlDocument << "<upLine>0</upLine>"<< endl; 
@@ -94,20 +97,21 @@ string extractFontInOl(int sessionIndex, string fontName)
     xmlDocument << "<rightLine>100</rightLine>"<< endl; 
     xmlDocument << "</anchor>" << endl;
 
-    for(int j = 0; j < character->countComponent(); j++)
+    const int nbComponents = character->countComponent();
+    for(int j = 0; j < nbComponents; ++j)
     {
       pair<int,int> ids = character->getIdComponentAtIndex(j);
       int indexLine = ids.first;
       int indexCC = ids.second;
 
-      ConnectedComponent component = activeSessions.at(sessionIndex)->getImage()->getConnectedComponnentAt(indexCC, indexLine); 
+      ConnectedComponent component = image->getConnectedComponnentAt(indexCC, indexLine); 
       xmlDocument << "<picture id=\"" + to_string(j) + "\">"<< endl; 
       xmlDocument << "<imageData>"<< endl; 
-      xmlDocument << "<width>"+to_string((int) activeSessions.at(sessionIndex)->getImage()->getBoundingBoxAtIndex(indexCC, indexLine).width)+"</width>"<< endl; 
-      xmlDocument << "<height>"+to_string((int) activeSessions.at(sessionIndex)->getImage()->getBoundingBoxAtIndex(indexCC, indexLine).height)+"</height>"<< endl; 
+      xmlDocument << "<width>"+to_string((int) image->getBoundingBoxAtIndex(indexCC, indexLine).width)+"</width>"<< endl; 
+      xmlDocument << "<height>"+to_string((int) image->getBoundingBoxAtIndex(indexCC, indexLine).height)+"</height>"<< endl; 
       xmlDocument << "<format>5</format>"<< endl; 
       xmlDocument << "<degradationlevel>0</degradationlevel>"<< endl; 
-      xmlDocument << "<data>" + activeSessions.at(sessionIndex)->getImage()->extractDataFromComponent(indexCC, indexLine) + "</data>"<< endl; 
+      xmlDocument << "<data>" + image->extractDataFromComponent(indexCC, indexLine) + "</data>"<< endl; 
       xmlDocument << "</imageData>"<< endl; 
       xmlDocument << "</picture>"<< endl; 
     }
@@ -366,7 +370,7 @@ class MyDynamicRepository : public DynamicRepository
         {
           int idCC = it->find("idCC")->get<int>();
           int idLine = it->find("idLine")->get<int>();
-          int oldBaseline;
+          int oldBaseline = 0;
           if(idCC == stoi(activeId) && idLine == stoi(activeLine))
           {
             activeSessions.at(sessionIndex)->getImage()->setBoundingBoxAtIndex(idCC, idLine,stoi(up),stoi(down),stoi(left),stoi(right));

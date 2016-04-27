@@ -15,9 +15,13 @@ $ sudo apt-get install libopencv-dev
 $ brew install opencv
 
 // Libnavajo installation
+// You may need to first install OpenSSL & PAM
+// sudo apt-get install libssl-dev libpam0g-dev
 $ git clone https://github.com/titi38/libnavajo.git
 $ cd libnavajo
-$ cmake .
+$ mkdir build
+$ cd build 
+$ cmake ..
 $ make
 $ sudo make install
     
