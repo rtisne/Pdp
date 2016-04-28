@@ -32,7 +32,16 @@ public:
      * 
      *  \return the image as matrice
      */
-    cv::Mat getMat() const;
+    cv::Mat getMat() const;   
+
+    /*!
+     *  \brief set the matrice of the image
+     *
+     *  set accessor for matrice attribute
+     *
+     *  \param mat : the image as matrice
+     */
+    void setMat(const cv::Mat &mat);
 
     /*!
      *  \brief get the image of Connected component for extraction of font 

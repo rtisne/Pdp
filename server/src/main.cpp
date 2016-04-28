@@ -11,6 +11,7 @@
 #include "../headers/Font.hpp"
 #include "../headers/Session.hpp"
 #include "../headers/json.hpp"
+#include "../headers/GrayscaleCharsDegradationModel.hpp"
 
 
 using namespace cv;
@@ -79,7 +80,7 @@ bool isFormatSupported( const std::string &fileName)
 *
 * \return a string
 */
-string extractFontInOl(int sessionIndex, string fontName)
+string extractFontInOf(int sessionIndex, string fontName)
 {
   ostringstream xmlDocument;
   xmlDocument << "<?xml version=\"1.0\" encoding=\"UTF-8\"?>" << endl << "<font name=\"" + fontName + "\">" << endl; 
@@ -156,7 +157,7 @@ std::string InitiateSession(std::string fileName,HttpRequest *request)
   srand(time(NULL));
   cptExample = rand();
   mySession->setToken(cptExample);
-  mySession->setFileName((UPLOAD_DIR)+fileName);  
+  mySession->setOriginalFileName((UPLOAD_DIR)+fileName);   
   activeSessions.push_back(mySession);
   mySession->getImage()->ComputeMask();
   return "{\"fileName\":\""+fileName+"\",\"token\":"+to_string(mySession->getToken())+"}";
@@ -481,12 +482,21 @@ class MyDynamicRepository : public DynamicRepository
       int sessionIndex = getActiveSessionFromToken(stoi(token));
       if(sessionIndex != -1)
       {
-        string filePath = activeSessions.at(sessionIndex)->getFileName();
+        string filePath = activeSessions.at(sessionIndex)->getOriginalFileName();
         if( remove( filePath.c_str() ) != 0 )
         {
           NVJ_LOG->append(NVJ_ERROR, "Error Deleted");
           return fromString("{\"error\":\"An error append when deleting the image\"}",response);
         } else {
+          if(activeSessions.at(sessionIndex)->getOriginalFileName() != activeSessions.at(sessionIndex)->getDisplayedFileName())
+          {
+            string fileDisplayedPath = UPLOAD_DIR + activeSessions.at(sessionIndex)->getDisplayedFileName();
+            if( remove( fileDisplayedPath.c_str()) != 0 )
+            {
+              NVJ_LOG->append(NVJ_ERROR, "Error Deleted");
+              return fromString("{\"error\":\"An error append when deleting the image\"}",response);
+            }
+          }
           delete activeSessions.at(sessionIndex);
           activeSessions.erase(activeSessions.begin() + sessionIndex);
           NVJ_LOG->append(NVJ_ERROR, "Deleted");
@@ -511,7 +521,7 @@ class MyDynamicRepository : public DynamicRepository
           int sessionIndex = getActiveSessionFromToken(stoi(token));
           string fontname;
           request->getParameter("fontname", fontname);
-          return fromString(extractFontInOl(sessionIndex, fontname),response);
+          return fromString(extractFontInOf(sessionIndex, fontname),response);
         } else {
           return fromString("{\"error\" : You don't have a valid token, retry please\"}", response);
         }
@@ -554,7 +564,9 @@ class MyDynamicRepository : public DynamicRepository
         }
       }
 
-    } updateBaseline;
+    } updateBaseline;  
+
+    // TODO :: grayScaleCharsDegradation
 
     class Controller: public MyDynamicPage
     {
@@ -578,6 +590,7 @@ class MyDynamicRepository : public DynamicRepository
       add("extractFont.txt",&extractFont);
       add("updateBaseline.txt",&updateBaseline);
       add("merge.txt",&merge);
+      // TODO :: grayScaleCharsDegradation
     }
   };
 

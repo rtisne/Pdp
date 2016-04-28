@@ -231,3 +231,4 @@ Session.prototype.merge = function(activeId, activeLine, jsonId, callback)
     });
 }
 
+// TODO :: grayScaleCharsDegradation

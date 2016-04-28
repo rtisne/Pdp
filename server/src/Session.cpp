@@ -1,9 +1,10 @@
 #include "../headers/Session.hpp"
+#include <fstream>
 
 
-Session::Session(const std::string &f):m_fileName(""),m_token(0),m_font(new Font()),m_image(new Image(f))
+Session::Session(const std::string &f):m_originalFileName(""),m_displayedFileName(""),m_token(0),m_font(new Font()),m_image(new Image(f))
 {}
-Session::Session(const Session& session):m_fileName(""),m_token(session.getToken()),m_font(nullptr), m_image(nullptr)
+Session::Session(const Session& session):m_originalFileName(""),m_displayedFileName(""),m_token(session.getToken()),m_font(nullptr), m_image(nullptr)
 {
 }
 Session::~Session()
@@ -14,12 +15,22 @@ Session::~Session()
 	m_font = nullptr;
 }
 
-void Session::setFileName(const std::string &f){
-	m_fileName = f;
+void Session::setOriginalFileName(const std::string &f){
+	m_originalFileName = f;
+	if(m_displayedFileName == "")
+		m_displayedFileName = f;
 }
 
-std::string Session::getFileName() const{
-	return m_fileName;
+std::string Session::getOriginalFileName() const{
+	return m_originalFileName;
+}
+
+void Session::setDisplayedFileName(const std::string &f){
+	m_displayedFileName = f;
+}
+
+std::string Session::getDisplayedFileName() const{
+	return m_displayedFileName;
 }
 
 Image* Session::getImage(){
@@ -29,12 +40,16 @@ Font* Session::getFont(){
 	return m_font;
 }
 
-
 void Session::setToken(int t){
 	m_token = t;
 }
 
 int Session::getToken() const{
 	return m_token;
+}
+void Session::saveDisplayedImage(const std::string &upload_dir){
+	if(m_displayedFileName == m_originalFileName)
+		m_displayedFileName = std::to_string(m_token) + "Displayed.png";
+	cv::imwrite(upload_dir + m_displayedFileName, m_image->getMat() );
 }
 

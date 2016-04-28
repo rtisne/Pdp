@@ -32,23 +32,7 @@
   </div>
 </div>
 	<div class="overlay"></div>
-	<div class="modal fade" id="saveModal" tabindex="-1" role="dialog" aria-labelledby="mySmallModalLabel">
-	  <div class="modal-dialog modal-sm">
-		  <div class="modal-content">
-		  	<div class="modal-header">
-			    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
-			    <h4 class="modal-title">Export font</h4>
-			  </div>
-		    <div class="modal-body">
-		      <input class="form-control" id="fontName" type="text" data-tabindex="1" placeholder="font name">
-		    </div>
-		    <div class="modal-footer">
-			    <button type="button" data-dismiss="modal" class="btn btn-default">Close</button>
-			    <button type="button" id="exportFont" class="btn btn-primary">Export</button>
-			  </div>
-		  </div>
-	  </div>
-	</div>
+	
 
 
 	<nav class="navbar navbar-default">
@@ -59,13 +43,37 @@
 
 			<div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
 				<ul class="nav navbar-nav">
-					<li>
-						<a href="#">
-							<label>
-								<input type="checkbox" id="baseline">  Show Baseline
-							</label>
-						</a>
+					
+					
+					<li class="dropdown">
+					  <a id="dLabel" data-target="#" href="http://example.com" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">
+					    Degradations
+					  </a>
+
+					  <ul class="dropdown-menu" aria-labelledby="dLabel">
+					    <li>
+								<a href="#" data-toggle="modal" data-target="#GrayScaleCharacterDegradationModal">
+										GrayScale Character Degradation
+								</a>
+							</li>
+					  </ul>
 					</li>
+					<li class="dropdown">
+					  <a id="dLabel" data-target="#" href="http://example.com" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">
+					    View
+					  </a>
+
+					  <ul class="dropdown-menu" aria-labelledby="dLabel">
+					    <li>
+								<a href="#">
+									<label>
+										<input type="checkbox" id="baseline">  Show Baseline
+									</label>
+								</a>
+							</li>
+					  </ul>
+					</li>
+					
 				</ul>
 				<ul class="nav navbar-nav navbar-right">
 					<li>
@@ -219,6 +227,45 @@
 		Made with <a href="https://github.com/titi38/libnavajo">libnavajo</a>
 	</div>
 
+
+
+	<!-- Modals section  -->
+
+	<div class="modal fade" id="saveModal" tabindex="-1" role="dialog" aria-labelledby="mySmallModalLabel">
+	  <div class="modal-dialog modal-sm">
+		  <div class="modal-content">
+		  	<div class="modal-header">
+			    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+			    <h4 class="modal-title">Export font</h4>
+			  </div>
+		    <div class="modal-body">
+		      <input class="form-control" id="fontName" type="text" data-tabindex="1" placeholder="font name">
+		    </div>
+		    <div class="modal-footer">
+			    <button type="button" data-dismiss="modal" class="btn btn-default">Close</button>
+			    <button type="button" id="exportFont" class="btn btn-primary">Export</button>
+			  </div>
+		  </div>
+	  </div>
+	</div>	
+
+	<div class="modal fade" id="GrayScaleCharacterDegradationModal" tabindex="-1" role="dialog">
+	  <div class="modal-dialog">
+		  <div class="modal-content">
+		  	<div class="modal-header">
+			    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+			    <h4 class="modal-title">Character Degradation Level Adjustement</h4>
+			  </div>
+		    <div class="modal-body input-inside">
+		      <input id="GrayScaleCharacterDegradationValue" type="range" value="5" max="10" min="0" step="1">
+		    </div>
+		    <div class="modal-footer">
+			    <button type="button" data-dismiss="modal" class="btn btn-default">Close</button>
+			    <button type="button" data-dismiss="modal" id="GrayScaleCharacterDegradationExec" class="btn btn-primary">Ok</button>
+			  </div>
+		  </div>
+	  </div>
+	</div>
 
 	</div>
 	<script type="text/javascript" src="js/Blob.js"></script>

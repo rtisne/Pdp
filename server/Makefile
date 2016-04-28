@@ -61,6 +61,8 @@ MAIN_OBJS = \
 		  Image.o \
 		  Session.o \
 		  Binarization.o \
+		  GrayscaleCharsDegradationModel.o \
+		  connectedcomponentextraction.o \
 		  main.o \
 
 CONNECTEDCOMPONENT= ConnectedComponent
@@ -76,6 +78,10 @@ IMAGE= Image
 SESSION= Session
 
 BINARIZATION= Binarization
+
+GRAYSCALECHARSDEGRADATIONMODEL= GrayscaleCharsDegradationModel
+
+CONNECTEDCOMPONENTEXTRACTION= connectedcomponentextraction
 
 
 
@@ -120,6 +126,14 @@ $(SESSION): $(MAIN_OBJS) $(LIB_STATIC_NAME)
 	$(LD) $(LDFLAGS) -o $@ $(MAIN_OBJS) $(LIB_STATIC_NAME) $(LIBS)
 
 $(BINARIZATION): $(MAIN_OBJS) $(LIB_STATIC_NAME)
+	rm -f $@
+	$(LD) $(LDFLAGS) -o $@ $(MAIN_OBJS) $(LIB_STATIC_NAME) $(LIBS)
+
+$(GRAYSCALECHARSDEGRADATIONMODEL): $(MAIN_OBJS) $(LIB_STATIC_NAME)
+	rm -f $@
+	$(LD) $(LDFLAGS) -o $@ $(MAIN_OBJS) $(LIB_STATIC_NAME) $(LIBS)
+
+	$(CONNECTEDCOMPONENTEXTRACTION): $(MAIN_OBJS) $(LIB_STATIC_NAME)
 	rm -f $@
 	$(LD) $(LDFLAGS) -o $@ $(MAIN_OBJS) $(LIB_STATIC_NAME) $(LIBS)
 

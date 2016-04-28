@@ -113,6 +113,10 @@ function Controller(canvas, previewCanvas, listCharacter) {
     }, true);
 
 
+    // TODO :: GrayScaleCharsDegradationExec
+
+
+    
     // Highlight labelised Component when we hover the letter in the letter list
     $("#letter-list").on({
         mouseenter: function(){
@@ -372,3 +376,6 @@ Controller.prototype.mergeComponent = function mergeComponent(id, idLine, left, 
     this.manipulateInfos(this.previewCanvas.idElementSelected, left, right, up, down, $("#letter").val(), down);
     this.listCharacter.draw();
 }
+
+
+// TODO :: replaceImage
