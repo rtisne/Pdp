@@ -1,4 +1,3 @@
-#include "libnavajo/AuthPAM.hh"
 #include "libnavajo/libnavajo.hh"
 #include "libnavajo/LogStdOutput.hh"
 
@@ -596,7 +595,7 @@ class MyDynamicRepository : public DynamicRepository
     signal( SIGINT, exitFunction );
 
     NVJ_LOG->addLogOutput(new LogStdOutput);
-    AuthPAM::start(); 
+
     webServer = new WebServer;
 
   //webServer->setUseSSL(true, "../mycert.pem");
@@ -615,7 +614,6 @@ class MyDynamicRepository : public DynamicRepository
 
     webServer->wait();
 
-    AuthPAM::stop();
     LogRecorder::freeInstance();
     return 0;
   }
