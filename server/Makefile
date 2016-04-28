@@ -18,26 +18,19 @@ else
 OS = OTHER
 endif
 
-DLOPEN_PAM=0
-ifeq ($(DLOPEN_PAM),1)
-        LIBPAM=-ldl
-else
-        LIBPAM=-lpam
-endif
-
 LIB_DIR      = lib
 CXX 	=  g++ -std=c++11
 
 ifeq ($(OS),MACOSX)
 LIBSSL_DIR = /usr/local/Cellar/openssl/1.0.1j
-LIBS       = -lnavajo -L../../$(LIB_DIR) -lz  -L$(LIBSSL_DIR)/lib -lssl -lcrypto  -lopencv_core -lopencv_imgproc -lopencv_highgui -lopencv_ml -lopencv_video -lopencv_features2d -lopencv_calib3d -lopencv_objdetect -lopencv_contrib -lopencv_legacy $(LIBPAM)
+LIBS       = -lnavajo -L../../$(LIB_DIR) -lz  -L$(LIBSSL_DIR)/lib -lssl -lcrypto  -lopencv_core -lopencv_imgproc -lopencv_highgui -lopencv_ml -lopencv_video -lopencv_features2d -lopencv_calib3d -lopencv_objdetect -lopencv_contrib -lopencv_legacy
 DEFS            =   -D__darwin__ -D__x86__ -fPIC -fno-common -D_REENTRANT
 CXXFLAGS        =  -O3  -Wdeprecated-declarations
 else
 ifeq ($(LBITS),64)
   LIB_DIR=lib64
 endif
-LIBS       = -lnavajo -L../../$(LIB_DIR) -lz -lssl -lcrypto -pthread  -lopencv_core -lopencv_imgproc -lopencv_highgui -lopencv_ml -lopencv_video -lopencv_features2d -lopencv_calib3d -lopencv_objdetect -lopencv_contrib -lopencv_legacy $(LIBPAM)
+LIBS       = -lnavajo -L../../$(LIB_DIR) -lz -lssl -lcrypto -pthread  -lopencv_core -lopencv_imgproc -lopencv_highgui -lopencv_ml -lopencv_video -lopencv_features2d -lopencv_calib3d -lopencv_objdetect -lopencv_contrib -lopencv_legacy
 DEFS            =  -DLINUX -Wall -Wno-unused -fexceptions -fPIC -D_REENTRANT
 CXXFLAGS        =  -O4  -Wdeprecated-declarations
 endif
