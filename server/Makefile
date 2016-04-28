@@ -26,7 +26,7 @@ else
 endif
 
 LIB_DIR      = lib
-CXX 	=  g++ -std=c++11
+CXX 	=  g++ -std=c++11 -Wall -Wextra -g
 
 ifeq ($(OS),MACOSX)
 LIBSSL_DIR = /usr/local/Cellar/openssl/1.0.1j
@@ -87,9 +87,9 @@ BINARIZATION= Binarization
 
 %.o: src/%.cpp
 	$(CXX) -c $< -o $@ $(CXXFLAGS) $(CPPFLAGS) $(DEFS) 
-	
+
 all: $(MAIN_NAME)
-	
+
 $(MAIN_NAME): $(MAIN_OBJS) $(LIB_STATIC_NAME)
 	rm -f $@
 	$(LD) $(LDFLAGS) -o $@ $(MAIN_OBJS) $(LIB_STATIC_NAME) $(LIBS) 
