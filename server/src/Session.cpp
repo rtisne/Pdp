@@ -50,6 +50,6 @@ int Session::getToken() const{
 void Session::saveDisplayedImage(const std::string &upload_dir){
 	if(m_displayedFileName == m_originalFileName)
 		m_displayedFileName = std::to_string(m_token) + "Displayed.png";
-	cv::imwrite(upload_dir + m_displayedFileName, m_image->getMat() );
+	cv::imwrite(upload_dir + m_displayedFileName, m_image->getMat());
 }
 

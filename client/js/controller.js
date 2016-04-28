@@ -113,7 +113,9 @@ function Controller(canvas, previewCanvas, listCharacter) {
     }, true);
 
 
-    // TODO :: GrayScaleCharsDegradationExec
+    document.getElementById('GrayScaleCharacterDegradationExec').addEventListener('click', function(){
+        session.grayScaleCharsDegradation(document.getElementById('GrayScaleCharacterDegradationValue').value, controller);
+    }, true);
 
 
     
@@ -378,4 +380,8 @@ Controller.prototype.mergeComponent = function mergeComponent(id, idLine, left, 
 }
 
 
-// TODO :: replaceImage
+Controller.prototype.replaceImage = function replaceImage(imagePath)
+{
+    this.canvas.changeImage("data/" + imagePath);
+    this.previewCanvas.changeImage("data/" + imagePath);
+}

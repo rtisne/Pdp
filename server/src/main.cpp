@@ -1,4 +1,3 @@
-#include "libnavajo/AuthPAM.hh"
 #include "libnavajo/libnavajo.hh"
 #include "libnavajo/LogStdOutput.hh"
 
@@ -21,8 +20,7 @@ using json = nlohmann::json;
 
 static const char *CLIENT_DIR = "../client/";
 static const char *UPLOAD_DIR = "../client/data/";
-// #define CLIENT_DIR "../client/"
-// #define UPLOAD_DIR "../client/data/"
+
 
 /* Const integer for random number of name file generation */
 const int rng = 10;
@@ -566,7 +564,32 @@ class MyDynamicRepository : public DynamicRepository
 
     } updateBaseline;  
 
-    // TODO :: grayScaleCharsDegradation
+    class grayScaleCharsDegradation: public MyDynamicPage
+    {
+      bool getPage(HttpRequest* request, HttpResponse *response)
+      {
+        string tokenParam;
+        string levelParam;
+        request->getParameter("token", tokenParam);
+        request->getParameter("level", levelParam);
+        int token = stoi(tokenParam);
+        int level = stoi(levelParam);
+        int sessionIndex = getActiveSessionFromToken(token);
+        if(sessionIndex != -1)
+        {
+          GrayscaleCharsDegradationModel grayDegradation = GrayscaleCharsDegradationModel(activeSessions.at(sessionIndex)->getImage()->getMat());
+          activeSessions.at(sessionIndex)->getImage()->setMat(grayDegradation.degradateByLevel_cv(level));
+          activeSessions.at(sessionIndex)->saveDisplayedImage(UPLOAD_DIR);
+          myUploadRepo->reload();
+          return fromString(activeSessions.at(sessionIndex)->getDisplayedFileName(), response);
+        }
+        else
+        {
+          return fromString("Error : this session doesn't exist", response);
+        }
+
+      }
+    } grayScaleCharsDegradation;
 
     class Controller: public MyDynamicPage
     {
@@ -581,8 +604,8 @@ class MyDynamicRepository : public DynamicRepository
   public:
     MyDynamicRepository() : DynamicRepository()
     {
-      add("uploader.txt",&uploader);
       add("index.html",&controller);
+      add("uploader.txt",&uploader);
       add("getBoundingBox.txt",&getBoundingBox);
       add("getInfoOnCC.txt",&getInfoOnCC);
       add("updateInfoOnCC.txt",&updateInfoOnCC);
@@ -590,7 +613,7 @@ class MyDynamicRepository : public DynamicRepository
       add("extractFont.txt",&extractFont);
       add("updateBaseline.txt",&updateBaseline);
       add("merge.txt",&merge);
-      // TODO :: grayScaleCharsDegradation
+      add("grayScaleCharsDegradation.txt",&grayScaleCharsDegradation);
     }
   };
 
@@ -605,7 +628,6 @@ class MyDynamicRepository : public DynamicRepository
     signal( SIGINT, exitFunction );
 
     NVJ_LOG->addLogOutput(new LogStdOutput);
-    AuthPAM::start(); 
     webServer = new WebServer;
 
   //webServer->setUseSSL(true, "../mycert.pem");
@@ -623,8 +645,6 @@ class MyDynamicRepository : public DynamicRepository
     webServer->startService();
 
     webServer->wait();
-
-    AuthPAM::stop();
     LogRecorder::freeInstance();
     return 0;
   }
