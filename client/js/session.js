@@ -215,19 +215,44 @@ Session.prototype.updateBaseline = function(idLine, value)
 Session.prototype.merge = function(activeId, activeLine, jsonId, callback)
 {
     $.ajax({
-    url: 'merge.txt',
-    type: 'POST',
-    data: "token=" + this.token + "&activeid=" + activeId + "&activeline=" + activeLine + "&id=" + jsonId,
-    context: callback,
-    success: function(data, textStatus, jqXHR)
-    {
-        var info = JSON.parse(data);
-        callback.mergeComponent(info.id, info.idLine, info.left, info.right, info.up, info.down, JSON.parse(jsonId));
-    },
-    error: function(error)
-    {
-            console.log('ERRORS: ' + error);
-    }
+        url: 'merge.txt',
+        type: 'POST',
+        data: "token=" + this.token + "&activeid=" + activeId + "&activeline=" + activeLine + "&id=" + jsonId,
+        context: callback,
+        success: function(data, textStatus, jqXHR)
+        {
+            var info = JSON.parse(data);
+            callback.mergeComponent(info.id, info.idLine, info.left, info.right, info.up, info.down, JSON.parse(jsonId));
+        },
+        error: function(error)
+        {
+                console.log('ERRORS: ' + error);
+        }
     });
 }
 
+Session.prototype.grayScaleCharsDegradation = function(level, callback)
+{
+    // Loading panel
+    $('.overlay').show();
+    $('.loader').show();
+
+    $.ajax({
+        url: 'grayScaleCharsDegradation.txt',
+        type: 'POST',
+        data: 'token=' + this.token + '&level=' + level,
+        context: callback,
+        success : function(data, textStatus, jqXHR)
+        {
+            callback.replaceImage(data);
+
+            $('.overlay').hide();
+            $('.loader').hide();
+        },
+        error: function(error)
+        {
+            console.log('ERRORS: ' + error);
+        }
+    });
+}
+// TODO :: grayScaleCharsDegradation

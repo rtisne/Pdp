@@ -9,6 +9,16 @@ Image::Image(const std::string &path){
   }
 }
 
+cv::Mat Image::getMat() const
+{
+  return m_img;
+}
+
+void Image::setMat(const cv::Mat &mat)
+{
+  m_img = mat;
+}
+
 cv::Rect Image::getBoundingBoxAtIndex(int index,int line) const
 {
   std::vector<ConnectedComponent> ListTmpCC = m_listLine[line].getListCC();

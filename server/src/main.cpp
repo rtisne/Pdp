@@ -10,17 +10,15 @@
 #include "../headers/Font.hpp"
 #include "../headers/Session.hpp"
 #include "../headers/json.hpp"
+#include "../headers/GrayscaleCharsDegradationModel.hpp"
 
 
-using namespace cv;
-using namespace std;
 using json = nlohmann::json;
 
 
 static const char *CLIENT_DIR = "../client/";
 static const char *UPLOAD_DIR = "../client/data/";
-// #define CLIENT_DIR "../client/"
-// #define UPLOAD_DIR "../client/data/"
+
 
 /* Const integer for random number of name file generation */
 const int rng = 10;
@@ -56,7 +54,7 @@ void exitFunction( int dummy )
 
 bool isFormatSupported( const std::string &fileName)
 {
-  string extension = fileName.substr(fileName.find(".") + 1);
+  std::string extension = fileName.substr(fileName.find(".") + 1);
   std::transform(extension.begin(), extension.end(), extension.begin(), ::toupper);
   std::unordered_set<std::string> format ={"JPG","JPEG","PNG","TIFF","TIF"};
   std::unordered_set<std::string>::const_iterator got = format.find(extension);
@@ -78,46 +76,46 @@ bool isFormatSupported( const std::string &fileName)
 *
 * \return a string
 */
-string extractFontInOl(int sessionIndex, string fontName)
+std::string extractFontInOf(int sessionIndex, std::string fontName)
 {
-  ostringstream xmlDocument;
-  xmlDocument << "<?xml version=\"1.0\" encoding=\"UTF-8\"?>" << endl << "<font name=\"" + fontName + "\">" << endl;
+  std::ostringstream xmlDocument;
+  xmlDocument << "<?xml version=\"1.0\" encoding=\"UTF-8\"?>" << "\n" << "<font name=\"" + fontName + "\">" << "\n";
   const Image *image = activeSessions.at(sessionIndex)->getImage();
   const Font *font = activeSessions.at(sessionIndex)->getFont();
   const int nbCharacters = font->countCharacter();
   for(int i = 0; i < nbCharacters; ++i)
   {
     const Character* character = font->characterAtIndex(i);
-    xmlDocument << "<letter char=\"" +  character->getLabel() + "\">"<< endl; 
-    xmlDocument << "<anchor>"<< endl; 
-    xmlDocument << "<upLine>0</upLine>"<< endl; 
-    xmlDocument << "<baseLine>" << character->getBaseline() << "</baseLine>"<< endl; 
-    xmlDocument << "<leftLine>0</leftLine>"<< endl; 
-    xmlDocument << "<rightLine>100</rightLine>"<< endl; 
-    xmlDocument << "</anchor>" << endl;
+    xmlDocument << "<letter char=\"" +  character->getLabel() + "\">"<< "\n";
+    xmlDocument << "<anchor>"<< "\n";
+    xmlDocument << "<upLine>0</upLine>"<< "\n";
+    xmlDocument << "<baseLine>" << character->getBaseline() << "</baseLine>"<< "\n";
+    xmlDocument << "<leftLine>0</leftLine>"<< "\n";
+    xmlDocument << "<rightLine>100</rightLine>"<< "\n";
+    xmlDocument << "</anchor>" << "\n";
 
     const int nbComponents = character->countComponent();
     for(int j = 0; j < nbComponents; ++j)
     {
-      pair<int,int> ids = character->getIdComponentAtIndex(j);
+      std::pair<int,int> ids = character->getIdComponentAtIndex(j);
       int indexLine = ids.first;
       int indexCC = ids.second;
 
       ConnectedComponent component = image->getConnectedComponnentAt(indexCC, indexLine); 
-      xmlDocument << "<picture id=\"" + to_string(j) + "\">"<< endl; 
-      xmlDocument << "<imageData>"<< endl; 
-      xmlDocument << "<width>"+to_string((int) image->getBoundingBoxAtIndex(indexCC, indexLine).width)+"</width>"<< endl; 
-      xmlDocument << "<height>"+to_string((int) image->getBoundingBoxAtIndex(indexCC, indexLine).height)+"</height>"<< endl; 
-      xmlDocument << "<format>5</format>"<< endl; 
-      xmlDocument << "<degradationlevel>0</degradationlevel>"<< endl; 
-      xmlDocument << "<data>" + image->extractDataFromComponent(indexCC, indexLine) + "</data>"<< endl; 
-      xmlDocument << "</imageData>"<< endl; 
-      xmlDocument << "</picture>"<< endl; 
+      xmlDocument << "<picture id=\"" + std::to_string(j) + "\">"<< "\n";
+      xmlDocument << "<imageData>"<< "\n";
+      xmlDocument << "<width>" + std::to_string((int) image->getBoundingBoxAtIndex(indexCC, indexLine).width)+"</width>"<< "\n";
+      xmlDocument << "<height>" + std::to_string((int) image->getBoundingBoxAtIndex(indexCC, indexLine).height)+"</height>"<< "\n";
+      xmlDocument << "<format>5</format>"<< "\n";
+      xmlDocument << "<degradationlevel>0</degradationlevel>"<< "\n";
+      xmlDocument << "<data>" + image->extractDataFromComponent(indexCC, indexLine) + "</data>"<< "\n";
+      xmlDocument << "</imageData>"<< "\n";
+      xmlDocument << "</picture>"<< "\n";
     }
-    xmlDocument << "</letter>" << endl;
+    xmlDocument << "</letter>" << "\n";
 
   }
-  xmlDocument << "</font>" << endl;
+  xmlDocument << "</font>" << "\n";
   return xmlDocument.str();
 } 
 
@@ -134,7 +132,7 @@ std::string gen_random(std::string extension) {
   "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
   "abcdefghijklmnopqrstuvwxyz";
   srand(time(NULL));    
-  string random;
+  std::string random;
   for (int i = 0; i < rng; ++i) {
     random += letter[rand() % (sizeof(letter))];
   }
@@ -151,7 +149,7 @@ std::string gen_random(std::string extension) {
 * \return a string JSON
 */
 
-std::string InitiateSession(std::string fileName,HttpRequest *request)
+std::string InitiateSession(std::string fileName, HttpRequest *request)
 {
   int cptExample=0;
   Session * mySession = new Session((UPLOAD_DIR)+fileName);
@@ -159,10 +157,10 @@ std::string InitiateSession(std::string fileName,HttpRequest *request)
   srand(time(NULL));
   cptExample = rand();
   mySession->setToken(cptExample);
-  mySession->setFileName((UPLOAD_DIR)+fileName);  
+  mySession->setOriginalFileName((UPLOAD_DIR)+fileName);   
   activeSessions.push_back(mySession);
   mySession->getImage()->ComputeMask();
-  return "{\"fileName\":\""+fileName+"\",\"token\":"+to_string(mySession->getToken())+"}";
+  return "{\"fileName\":\""+fileName+"\",\"token\":" + std::to_string(mySession->getToken())+"}";
 }
 
 /*
@@ -216,7 +214,7 @@ class MyDynamicRepository : public DynamicRepository
 
 
             std::ifstream  src(fields[it->first]->GetTempFileName().c_str(), std::ios::binary);
-            string dstFilename = string(UPLOAD_DIR)+newFileName;
+	    std::string dstFilename = std::string(UPLOAD_DIR)+newFileName;
             std::ofstream  dst( dstFilename.c_str(), std::ios::binary);
             if (!src || !dst)
               NVJ_LOG->append(NVJ_ERROR, "Copy error: check read/write permissions");
@@ -250,13 +248,13 @@ class MyDynamicRepository : public DynamicRepository
     */
     bool getPage(HttpRequest* request, HttpResponse *response)
     {
-      string token;
+      std::string token;
       request->getParameter("token", token);
       int sessionIndex = getActiveSessionFromToken(stoi(token));
       if(sessionIndex != -1)
       {
         Image* img = activeSessions.at(sessionIndex)->getImage();
-        string json = "{\"boundingbox\":{" + img->jsonBoundingRect() + "},\"baseline\":{" + img->jsonBaseline() + "}}";
+	std::string json = "{\"boundingbox\":{" + img->jsonBoundingRect() + "},\"baseline\":{" + img->jsonBaseline() + "}}";
         return fromString(json, response);
       } else {
         return fromString("{\"error\" : You don't have a valid token, retry please\"}", response);
@@ -278,22 +276,22 @@ class MyDynamicRepository : public DynamicRepository
     */
     bool getPage(HttpRequest* request, HttpResponse *response)
     {
-      string token;
-      string ccId;
-      string lineId;
+      std::string token;
+      std::string ccId;
+      std::string lineId;
       request->getParameter("token", token);
       request->getParameter("idCC", ccId);
       request->getParameter("idLine", lineId);
       int sessionIndex = getActiveSessionFromToken(stoi(token));
       if(sessionIndex != -1)
       {
-        if(activeSessions.at(sessionIndex)->getImage()->isValidIdCC(stoi(lineId),stoi(ccId)) != -1)
+        if(activeSessions.at(sessionIndex)->getImage()->isValidIdCC(stoi(lineId), stoi(ccId)) != -1)
         {
           int sessionIndex = getActiveSessionFromToken(stoi(token));
-          cv::Rect bb = activeSessions.at(sessionIndex)->getImage()->getBoundingBoxAtIndex(stoi(ccId),stoi(lineId));
-          int charactereId = activeSessions.at(sessionIndex)->getFont()->indexOfCharacterForCC(stoi(ccId),stoi(lineId));
+          cv::Rect bb = activeSessions.at(sessionIndex)->getImage()->getBoundingBoxAtIndex(stoi(ccId), stoi(lineId));
+          int charactereId = activeSessions.at(sessionIndex)->getFont()->indexOfCharacterForCC(stoi(ccId), stoi(lineId));
 
-          string letter = "";
+	  std::string letter = "";
           int baseline;
           if(charactereId != -1)
           {
@@ -301,16 +299,16 @@ class MyDynamicRepository : public DynamicRepository
             int percent = activeSessions.at(sessionIndex)->getFont()->characterAtIndex(charactereId)->getBaseline();
             baseline = round((float)bb.y + ((float)bb.height * (float)percent / 100));
           } else {
-            baseline = activeSessions.at(sessionIndex)->getImage()->getBaselineAtIndex(stoi(ccId),stoi(lineId));
+            baseline = activeSessions.at(sessionIndex)->getImage()->getBaselineAtIndex(stoi(ccId), stoi(lineId));
           }
-          string json = "{";
+	  std::string json = "{";
           json += ("\"id\":" + ccId + ",");
           json += ("\"idLine\":" + lineId + ",");
-          json += ("\"baseline\":" + to_string(baseline) + ",");
-          json += ("\"left\":" + to_string(bb.x) + ",");
-          json += ("\"right\":" + to_string(bb.x + bb.width) + ",");
-          json += ("\"up\":" + to_string(bb.y) + ",");
-          json += ("\"down\":" + to_string(bb.y + bb.height) + ",");
+          json += ("\"baseline\":" + std::to_string(baseline) + ",");
+          json += ("\"left\":" + std::to_string(bb.x) + ",");
+          json += ("\"right\":" + std::to_string(bb.x + bb.width) + ",");
+          json += ("\"up\":" + std::to_string(bb.y) + ",");
+          json += ("\"down\":" + std::to_string(bb.y + bb.height) + ",");
           json += ("\"letter\":\"" + letter + "\"");
           json += "}";
           return fromString(json, response);
@@ -338,16 +336,16 @@ class MyDynamicRepository : public DynamicRepository
     bool getPage(HttpRequest* request, HttpResponse *response)
     {
 
-      string listCCId;
-      string token;
-      string left;
-      string right;
-      string up;
-      string down;
-      string letter;
-      string activeId;
-      string activeLine;
-      string baseline;
+      std::string listCCId;
+      std::string token;
+      std::string left;
+      std::string right;
+      std::string up;
+      std::string down;
+      std::string letter;
+      std::string activeId;
+      std::string activeLine;
+      std::string baseline;
       request->getParameter("token", token);
       request->getParameter("left", left);
       request->getParameter("right", right);
@@ -372,7 +370,7 @@ class MyDynamicRepository : public DynamicRepository
           int oldBaseline = 0;
           if(idCC == stoi(activeId) && idLine == stoi(activeLine))
           {
-            activeSessions.at(sessionIndex)->getImage()->setBoundingBoxAtIndex(idCC, idLine,stoi(up),stoi(down),stoi(left),stoi(right));
+            activeSessions.at(sessionIndex)->getImage()->setBoundingBoxAtIndex(idCC, idLine, stoi(up), stoi(down), stoi(left), stoi(right));
             oldBaseline = activeSessions.at(sessionIndex)->getImage()->getBaselineAtIndex(idCC, idLine);
             activeSessions.at(sessionIndex)->getImage()->setBaselineAtIndex(idCC, idLine, stoi(baseline));
           }
@@ -423,10 +421,10 @@ class MyDynamicRepository : public DynamicRepository
     bool getPage(HttpRequest* request, HttpResponse *response)
     {
 
-      string listCCId;
-      string token;
-      string activeId;
-      string activeLine;
+      std::string listCCId;
+      std::string token;
+      std::string activeId;
+      std::string activeLine;
       request->getParameter("token", token);
       request->getParameter("id", listCCId);
       request->getParameter("activeid", activeId);
@@ -444,8 +442,8 @@ class MyDynamicRepository : public DynamicRepository
           if(!(idCC == stoi(activeId) && idLine == stoi(activeLine)))
           {
             cv::Rect bb = activeSessions.at(sessionIndex)->getImage()->getBoundingBoxAtIndex(idCC,idLine);
-            cv::Rect bbActive = activeSessions.at(sessionIndex)->getImage()->getBoundingBoxAtIndex(stoi(activeId),stoi(activeLine));
-            activeSessions.at(sessionIndex)->getImage()->setBoundingBoxAtIndex(stoi(activeId),stoi(activeLine),min(bb.y,bbActive.y),max(bb.y + bb.height, bbActive.y + bbActive.height), min(bb.x, bbActive.x), max(bb.x + bb.width, bbActive.x + bbActive.width));
+            cv::Rect bbActive = activeSessions.at(sessionIndex)->getImage()->getBoundingBoxAtIndex(stoi(activeId), stoi(activeLine));
+            activeSessions.at(sessionIndex)->getImage()->setBoundingBoxAtIndex(stoi(activeId), stoi(activeLine), std::min(bb.y,bbActive.y), std::max(bb.y + bb.height, bbActive.y + bbActive.height), std::min(bb.x, bbActive.x), std::max(bb.x + bb.width, bbActive.x + bbActive.width));
             //activeSessions.at(sessionIndex)->getImage()->removeConnectedComponentAt(idCC, idLine);
             int indexCharacterForCC = activeSessions.at(sessionIndex)->getFont()->indexOfCharacterForCC(idCC, idLine);
             if(indexCharacterForCC != -1)
@@ -456,14 +454,14 @@ class MyDynamicRepository : public DynamicRepository
             }
           }
         }
-        cv::Rect bbActive = activeSessions.at(sessionIndex)->getImage()->getBoundingBoxAtIndex(stoi(activeId),stoi(activeLine));
-        string json = "{";
+        cv::Rect bbActive = activeSessions.at(sessionIndex)->getImage()->getBoundingBoxAtIndex(stoi(activeId), stoi(activeLine));
+        std::string json = "{";
         json += ("\"id\":" + activeId + ",");
         json += ("\"idLine\":" + activeLine + ",");
-        json += ("\"left\":" + to_string(bbActive.x) + ",");
-        json += ("\"right\":" + to_string(bbActive.x + bbActive.width) + ",");
-        json += ("\"up\":" + to_string(bbActive.y) + ",");
-        json += ("\"down\":" + to_string(bbActive.y + bbActive.height));
+        json += ("\"left\":" + std::to_string(bbActive.x) + ",");
+        json += ("\"right\":" + std::to_string(bbActive.x + bbActive.width) + ",");
+        json += ("\"up\":" + std::to_string(bbActive.y) + ",");
+        json += ("\"down\":" + std::to_string(bbActive.y + bbActive.height));
         json += "}";
         return fromString(json, response);
       } else {
@@ -479,17 +477,26 @@ class MyDynamicRepository : public DynamicRepository
   {
     bool getPage(HttpRequest* request, HttpResponse *response)
     {
-      string token;
+      std::string token;
       request->getParameter("token", token);
       int sessionIndex = getActiveSessionFromToken(stoi(token));
       if(sessionIndex != -1)
       {
-        string filePath = activeSessions.at(sessionIndex)->getFileName();
+        std::string filePath = activeSessions.at(sessionIndex)->getOriginalFileName();
         if( remove( filePath.c_str() ) != 0 )
         {
           NVJ_LOG->append(NVJ_ERROR, "Error Deleted");
           return fromString("{\"error\":\"An error append when deleting the image\"}",response);
         } else {
+          if(activeSessions.at(sessionIndex)->getOriginalFileName() != activeSessions.at(sessionIndex)->getDisplayedFileName())
+          {
+            std::string fileDisplayedPath = UPLOAD_DIR + activeSessions.at(sessionIndex)->getDisplayedFileName();
+            if( remove( fileDisplayedPath.c_str()) != 0 )
+            {
+              NVJ_LOG->append(NVJ_ERROR, "Error Deleted");
+              return fromString("{\"error\":\"An error append when deleting the image\"}",response);
+            }
+          }
           delete activeSessions.at(sessionIndex);
           activeSessions.erase(activeSessions.begin() + sessionIndex);
           NVJ_LOG->append(NVJ_ERROR, "Deleted");
@@ -506,15 +513,15 @@ class MyDynamicRepository : public DynamicRepository
   {
     bool getPage(HttpRequest* request, HttpResponse *response)
     {
-      string token;
+      std::string token;
       request->getParameter("token", token);
       int sessionIndex = getActiveSessionFromToken(stoi(token));
       if(sessionIndex != -1)
         { 
           int sessionIndex = getActiveSessionFromToken(stoi(token));
-          string fontname;
+          std::string fontname;
           request->getParameter("fontname", fontname);
-          return fromString(extractFontInOl(sessionIndex, fontname),response);
+          return fromString(extractFontInOf(sessionIndex, fontname),response);
         } else {
           return fromString("{\"error\" : You don't have a valid token, retry please\"}", response);
         }
@@ -535,17 +542,17 @@ class MyDynamicRepository : public DynamicRepository
       */
       bool getPage(HttpRequest* request, HttpResponse *response)
       {
-        string token;
+        std::string token;
         request->getParameter("token", token);
         int sessionIndex = getActiveSessionFromToken(stoi(token));
         if(sessionIndex != -1)
         {
           int sessionIndex = getActiveSessionFromToken(stoi(token));
-          string idLine;
+          std::string idLine;
           request->getParameter("idLine", idLine);
           if(activeSessions.at(sessionIndex)->getImage()->isValidIdLine(stoi(idLine)) != - 1)
           {
-            string value;
+            std::string value;
             request->getParameter("value", value);
             activeSessions.at(sessionIndex)->getImage()->setBaselineForLine(stoi(idLine), stoi(value));
             return fromString("ok", response);
@@ -557,7 +564,34 @@ class MyDynamicRepository : public DynamicRepository
         }
       }
 
-    } updateBaseline;
+    } updateBaseline;  
+
+    class grayScaleCharsDegradation: public MyDynamicPage
+    {
+      bool getPage(HttpRequest* request, HttpResponse *response)
+      {
+        std::string tokenParam;
+        std::string levelParam;
+        request->getParameter("token", tokenParam);
+        request->getParameter("level", levelParam);
+        int token = stoi(tokenParam);
+        int level = stoi(levelParam);
+        int sessionIndex = getActiveSessionFromToken(token);
+        if(sessionIndex != -1)
+        {
+          GrayscaleCharsDegradationModel grayDegradation = GrayscaleCharsDegradationModel(activeSessions.at(sessionIndex)->getImage()->getMat());
+          activeSessions.at(sessionIndex)->getImage()->setMat(grayDegradation.degradateByLevel_cv(level));
+          activeSessions.at(sessionIndex)->saveDisplayedImage(UPLOAD_DIR);
+          myUploadRepo->reload();
+          return fromString(activeSessions.at(sessionIndex)->getDisplayedFileName(), response);
+        }
+        else
+        {
+          return fromString("Error : this session doesn't exist", response);
+        }
+
+      }
+    } grayScaleCharsDegradation;
 
     class Controller: public MyDynamicPage
     {
@@ -572,8 +606,8 @@ class MyDynamicRepository : public DynamicRepository
   public:
     MyDynamicRepository() : DynamicRepository()
     {
-      add("uploader.txt",&uploader);
       add("index.html",&controller);
+      add("uploader.txt",&uploader);
       add("getBoundingBox.txt",&getBoundingBox);
       add("getInfoOnCC.txt",&getInfoOnCC);
       add("updateInfoOnCC.txt",&updateInfoOnCC);
@@ -581,6 +615,7 @@ class MyDynamicRepository : public DynamicRepository
       add("extractFont.txt",&extractFont);
       add("updateBaseline.txt",&updateBaseline);
       add("merge.txt",&merge);
+      add("grayScaleCharsDegradation.txt",&grayScaleCharsDegradation);
     }
   };
 
@@ -615,6 +650,7 @@ class MyDynamicRepository : public DynamicRepository
     webServer->wait();
 
     LogRecorder::freeInstance();
+
     return 0;
   }
 

@@ -113,6 +113,12 @@ function Controller(canvas, previewCanvas, listCharacter) {
     }, true);
 
 
+    document.getElementById('GrayScaleCharacterDegradationExec').addEventListener('click', function(){
+        session.grayScaleCharsDegradation(document.getElementById('GrayScaleCharacterDegradationValue').value, controller);
+    }, true);
+
+
+    
     // Highlight labelised Component when we hover the letter in the letter list
     $("#letter-list").on({
         mouseenter: function(){
@@ -371,4 +377,11 @@ Controller.prototype.mergeComponent = function mergeComponent(id, idLine, left, 
     this.canvas.selectedCC = [this.previewCanvas.idElementSelected];
     this.manipulateInfos(this.previewCanvas.idElementSelected, left, right, up, down, $("#letter").val(), down);
     this.listCharacter.draw();
+}
+
+
+Controller.prototype.replaceImage = function replaceImage(imagePath)
+{
+    this.canvas.changeImage("data/" + imagePath);
+    this.previewCanvas.changeImage("data/" + imagePath);
 }

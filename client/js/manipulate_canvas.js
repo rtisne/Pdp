@@ -232,14 +232,14 @@ BoundingBox.prototype.removeToSelection = function (id){
 
 /*!
  * principal canvas 
- * \class CanvasState
+ * \class Canvas
  * \param canvas canvas element
  * \param image image draw on the canvas
  * \param baseline list of baselines
  * \param boundingBox list of boundingBox
  */
-function CanvasState(canvas, image, baseline, boundingBox) {
-    var myState = this;
+function Canvas(canvas, image, baseline, boundingBox) {
+    var myCanvas = this;
 
     this.canvas = canvas;
     this.width = canvas.width;
@@ -264,30 +264,30 @@ function CanvasState(canvas, image, baseline, boundingBox) {
     this.dragoffy = 0;
 
     this.image.img.onload = function(){
-        myState.image.w = this.width;
-        myState.image.h = this.height;
+        myCanvas.image.w = this.width;
+        myCanvas.image.h = this.height;
 
 
-        myState.image.initialx = myState.width/2 - this.width/2;
-        myState.image.initialy = myState.height/2 - this.height/2;
+        myCanvas.image.initialx = myCanvas.width/2 - this.width/2;
+        myCanvas.image.initialy = myCanvas.height/2 - this.height/2;
 
-        myState.image.x = myState.image.initialx;
-        myState.image.y = myState.image.initialy;
+        myCanvas.image.x = myCanvas.image.initialx;
+        myCanvas.image.y = myCanvas.image.initialy;
 
 
         if(this.width > this.height)
-            myState.scale = myState.width /this.width;
+            myCanvas.scale = myCanvas.width /this.width;
         else
-            myState.scale = myState.height /this.height;
-        myState.draw();
+            myCanvas.scale = myCanvas.height /this.height;
+        myCanvas.draw();
     }
 }
 /*!
  * When the mouse down (Dectection for moving the image)
- * \memberof CanvasState
+ * \memberof Canvas
  * \param e event
  */
-CanvasState.prototype.onMouseDown= function(e){
+Canvas.prototype.onMouseDown= function(e){
     var mouse = this.getMouse(e);
     var mx = mouse.x;
     var my = mouse.y;
@@ -304,10 +304,10 @@ CanvasState.prototype.onMouseDown= function(e){
 
 /*!
  * When the mouse move (Dectection for moving the image)
- * \memberof CanvasState
+ * \memberof Canvas
  * \param e event
  */
-CanvasState.prototype.onMouseMove = function(e){
+Canvas.prototype.onMouseMove = function(e){
     if (this.dragging){
         var mouse = this.getMouse(e);
         this.image.x = (mouse.x) - this.dragoffx;
@@ -318,36 +318,36 @@ CanvasState.prototype.onMouseMove = function(e){
 
 /*!
  * When the mouse up (Dectection for moving the image)
- * \memberof CanvasState
+ * \memberof Canvas
  * \param e event
  */
-CanvasState.prototype.onMouseUp = function(e){
+Canvas.prototype.onMouseUp = function(e){
     this.dragging = false;
 }
 
 /*!
  * Zoom in
- * \memberof CanvasState
+ * \memberof Canvas
  */
-CanvasState.prototype.zoomIn = function(){
+Canvas.prototype.zoomIn = function(){
     this.scale += 0.1;
     this.draw();
 }
 
 /*!
  * Zoom out
- * \memberof CanvasState
+ * \memberof Canvas
  */
-CanvasState.prototype.zoomOut = function(){
+Canvas.prototype.zoomOut = function(){
     this.scale -= 0.1;
     this.draw();
 }
 
 /*!
  * Reset the zoom value
- * \memberof CanvasState
+ * \memberof Canvas
  */
-CanvasState.prototype.zoomReset = function(){
+Canvas.prototype.zoomReset = function(){
     if(this.width > this.height)
         this.scale = this.width /this.image.w;
     else
@@ -360,17 +360,17 @@ CanvasState.prototype.zoomReset = function(){
 
 /*!
  * Clear the canvas context to redraw on it
- * \memberof CanvasState
+ * \memberof Canvas
  */
-CanvasState.prototype.clear = function() {
+Canvas.prototype.clear = function() {
   this.ctx.clearRect(0, 0, this.width, this.height);
 }
 
 /*!
  * Draw all element on the canvas
- * \memberof CanvasState
+ * \memberof Canvas
  */
-CanvasState.prototype.draw = function() {
+Canvas.prototype.draw = function() {
   if (!this.valid) {
     var ctx = this.ctx;
 
@@ -402,11 +402,11 @@ CanvasState.prototype.draw = function() {
 
 /*!
  * Get the mouse coordonate
- * \memberof CanvasState
+ * \memberof Canvas
  * \param e event
  * \return coordonate of the mouse
  */
-CanvasState.prototype.getMouse = function(e) {
+Canvas.prototype.getMouse = function(e) {
     var rect = this.canvas.getBoundingClientRect();
     // Get mouse coordonate relative to the canvas
     var mx = Math.floor((e.clientX-rect.left)/(rect.right-rect.left)*this.canvas.width);
@@ -417,6 +417,14 @@ CanvasState.prototype.getMouse = function(e) {
     var mouseYT = parseInt((my - this.panY) / this.scale);
 
     return {x: mouseXT, y: mouseYT};
+}
+
+Canvas.prototype.changeImage = function(imagePath) {
+    var canvas = this;
+    this.image.img.src = imagePath;
+    this.image.img.onload = function(){
+        canvas.draw();
+    }
 }
 
 /*!
@@ -463,7 +471,7 @@ PreviewCanvas.prototype.clear = function() {
 
 /*!
  * Draw all element on the canvas
- * \memberof CanvasState
+ * \memberof Canvas
  */
 PreviewCanvas.prototype.draw = function() {
     if(this.visible)
@@ -551,7 +559,7 @@ PreviewCanvas.prototype.draw = function() {
 
 /*!
  * Zoom the image on a object
- * \memberof CanvasState
+ * \memberof Canvas
  * \param obj object to zoom on
  * \param id of the selected object
  */
@@ -585,6 +593,14 @@ PreviewCanvas.prototype.zoomTo = function(obj, id){
     }
     this.draw();
     
+}
+
+PreviewCanvas.prototype.changeImage = function(imagePath) {
+    var canvas = this;
+    this.image.img.src = imagePath;
+    this.image.img.onload = function(){
+        canvas.draw();
+    }
 }
 
 /*!
@@ -659,7 +675,7 @@ function init(src, boundingBox, baseline) {
     var baseline = new Baseline(listBaseline);
 
     var previewCanvas = new PreviewCanvas(document.getElementById('small_canvas'), imagePreview);
-    var normalCanvas = new CanvasState(document.getElementById('canvas'), image, baseline, boundingBox);
+    var normalCanvas = new Canvas(document.getElementById('canvas'), image, baseline, boundingBox);
 
 
     var listCharacter = new ListCharacter();
