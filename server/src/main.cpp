@@ -51,22 +51,54 @@ void exitFunction( int dummy )
 *
 * \return a bool
 */
-
+static inline
 bool isFormatSupported( const std::string &fileName)
 {
   std::string extension = fileName.substr(fileName.find(".") + 1);
   std::transform(extension.begin(), extension.end(), extension.begin(), ::toupper);
   std::unordered_set<std::string> format ={"JPG","JPEG","PNG","TIFF","TIF"};
   std::unordered_set<std::string>::const_iterator got = format.find(extension);
-  for(const auto &s: format){
-    if(got == format.end())
-      return false;
-    else
-      return true;
-  }
+  if (got != format.end())
+    return true;
   return false;
 }
 
+/*
+ * Auxialiry function to save one instance of character to XML file
+ *
+ */
+static inline
+void
+saveInstanceToXml(std::ostream &xmlDocument, int id, int width, int height, const std::string &data)
+{
+  xmlDocument << "<picture id=\"" + std::to_string(id) + "\">"<< "\n";
+  xmlDocument << "<imageData>"<< "\n";
+  xmlDocument << "<width>" + std::to_string((int)width)+"</width>\n";
+  xmlDocument << "<height>" + std::to_string((int)height)+"</height>\n";
+  xmlDocument << "<format>5</format>"<< "\n";
+  xmlDocument << "<degradationlevel>0</degradationlevel>"<< "\n";
+  xmlDocument << "<data>" + data + "</data>"<< "\n";
+  xmlDocument << "</imageData>"<< "\n";
+  xmlDocument << "</picture>"<< "\n";
+}
+
+/*
+ * Make data for space character (that is, transparent white square) as a string
+ */
+static inline
+std::string
+makeSpaceCharacterData(int width, int height)
+{
+  const unsigned int v = (255<<16)|(255<<8)|(255);
+  const std::string pix = std::to_string(v)+",";
+
+  std::string data;
+  data.reserve(width*height*pix.size());
+  for (int i=0; i<width*height; ++i) {
+    data.append(pix);
+  }
+  return data;
+}
 
 /*
 * \brief Extract all informations about the font  
@@ -76,13 +108,22 @@ bool isFormatSupported( const std::string &fileName)
 *
 * \return a string
 */
-std::string extractFontInOf(int sessionIndex, std::string fontName)
+static
+std::string extractFontInOf(int sessionIndex, const std::string &fontName)
 {
   std::ostringstream xmlDocument;
   xmlDocument << "<?xml version=\"1.0\" encoding=\"UTF-8\"?>" << "\n" << "<font name=\"" + fontName + "\">" << "\n";
   const Image *image = activeSessions.at(sessionIndex)->getImage();
   const Font *font = activeSessions.at(sessionIndex)->getFont();
   const int nbCharacters = font->countCharacter();
+  const std::string SPACE = " ";
+  bool hasSpace = false;
+  std::vector<int> widths;
+  std::vector<int> heights;
+  const size_t reserveSize = nbCharacters*4; //arbitrary
+  widths.reserve(reserveSize);
+  heights.reserve(reserveSize);
+
   for(int i = 0; i < nbCharacters; ++i)
   {
     const Character* character = font->characterAtIndex(i);
@@ -94,28 +135,59 @@ std::string extractFontInOf(int sessionIndex, std::string fontName)
     xmlDocument << "<rightLine>100</rightLine>"<< "\n";
     xmlDocument << "</anchor>" << "\n";
 
+    if (! hasSpace) {
+      if (character->getLabel() == SPACE) {
+	hasSpace = true;
+      }
+    }
+
     const int nbComponents = character->countComponent();
     for(int j = 0; j < nbComponents; ++j)
     {
-      std::pair<int,int> ids = character->getIdComponentAtIndex(j);
+      std::pair<int, int> ids = character->getIdComponentAtIndex(j);
       int indexLine = ids.first;
       int indexCC = ids.second;
 
-      ConnectedComponent component = image->getConnectedComponnentAt(indexCC, indexLine); 
-      xmlDocument << "<picture id=\"" + std::to_string(j) + "\">"<< "\n";
-      xmlDocument << "<imageData>"<< "\n";
-      xmlDocument << "<width>" + std::to_string((int) image->getBoundingBoxAtIndex(indexCC, indexLine).width)+"</width>"<< "\n";
-      xmlDocument << "<height>" + std::to_string((int) image->getBoundingBoxAtIndex(indexCC, indexLine).height)+"</height>"<< "\n";
-      xmlDocument << "<format>5</format>"<< "\n";
-      xmlDocument << "<degradationlevel>0</degradationlevel>"<< "\n";
-      xmlDocument << "<data>" + image->extractDataFromComponent(indexCC, indexLine) + "</data>"<< "\n";
-      xmlDocument << "</imageData>"<< "\n";
-      xmlDocument << "</picture>"<< "\n";
+      ConnectedComponent component = image->getConnectedComponnentAt(indexCC, indexLine);
+      cv::Rect bb = image->getBoundingBoxAtIndex(indexCC, indexLine);
+
+      saveInstanceToXml(xmlDocument, j, bb.width, bb.height, image->extractDataFromComponent(indexCC, indexLine));
+
+      widths.push_back(bb.width);
+      heights.push_back(bb.height);
     }
     xmlDocument << "</letter>" << "\n";
 
   }
+
+  if (! hasSpace) {
+    const size_t numCCs = widths.size();
+    if (numCCs > 0) {
+      //which size should have the space character ?
+      //Here we take the median width & height...
+      auto itW = widths.begin()+numCCs/2;
+      std::nth_element(widths.begin(), itW, widths.end());
+      auto itH = heights.begin()+numCCs/2;
+      std::nth_element(heights.begin(), itH, heights.end());
+      const int w = *itW;
+      const int h = *itH;
+
+      //NVJ_LOG->append(NVJ_INFO, "Add space character in font w="+std::to_string(w)+" h="+std::to_string(h));
+
+      xmlDocument << "<letter char=\"" + SPACE + "\">"<< "\n";
+      xmlDocument << "<anchor>"<< "\n";
+      xmlDocument << "<upLine>0</upLine>"<< "\n";
+      xmlDocument << "<baseLine>100</baseLine>"<< "\n";
+      xmlDocument << "<leftLine>0</leftLine>"<< "\n";
+      xmlDocument << "<rightLine>100</rightLine>"<< "\n";
+      xmlDocument << "</anchor>" << "\n";
+      saveInstanceToXml(xmlDocument, 0, w, h, makeSpaceCharacterData(w, h));
+      xmlDocument << "</letter>" << "\n";
+    }
+  }
+
   xmlDocument << "</font>" << "\n";
+
   return xmlDocument.str();
 } 
 
@@ -126,6 +198,7 @@ std::string extractFontInOf(int sessionIndex, std::string fontName)
 *
 * \return a string
 */
+static
 std::string gen_random(std::string extension) {
   static const char letter[] =
   "0123456789"
@@ -148,7 +221,7 @@ std::string gen_random(std::string extension) {
 *
 * \return a string JSON
 */
-
+static
 std::string InitiateSession(std::string fileName, HttpRequest *request)
 {
   int cptExample=0;
@@ -170,6 +243,7 @@ std::string InitiateSession(std::string fileName, HttpRequest *request)
 *
 * \return a integer
 */
+static
 int getActiveSessionFromToken(int token)
 {
   for (unsigned i=0; i<activeSessions.size(); i++)
@@ -223,12 +297,12 @@ class MyDynamicRepository : public DynamicRepository
             src.close();
             dst.close();
             myUploadRepo->reload();
-            std::string json_Session = InitiateSession(newFileName,request);
+            std::string json_Session = InitiateSession(newFileName, request);
             NVJ_LOG->append(NVJ_ERROR, json_Session);
             return fromString(json_Session, response); 
           }
         } else {
-          return fromString("{\"error\":\"This format of image isn't correct\"}",response);
+          return fromString("{\"error\":\"This format of image isn't correct\"}", response);
         }
 
       }
@@ -335,7 +409,6 @@ class MyDynamicRepository : public DynamicRepository
     */
     bool getPage(HttpRequest* request, HttpResponse *response)
     {
-
       std::string listCCId;
       std::string token;
       std::string left;
@@ -441,9 +514,9 @@ class MyDynamicRepository : public DynamicRepository
           int idLine = it->find("idLine")->get<int>(); 
           if(!(idCC == stoi(activeId) && idLine == stoi(activeLine)))
           {
-            cv::Rect bb = activeSessions.at(sessionIndex)->getImage()->getBoundingBoxAtIndex(idCC,idLine);
+            cv::Rect bb = activeSessions.at(sessionIndex)->getImage()->getBoundingBoxAtIndex(idCC, idLine);
             cv::Rect bbActive = activeSessions.at(sessionIndex)->getImage()->getBoundingBoxAtIndex(stoi(activeId), stoi(activeLine));
-            activeSessions.at(sessionIndex)->getImage()->setBoundingBoxAtIndex(stoi(activeId), stoi(activeLine), std::min(bb.y,bbActive.y), std::max(bb.y + bb.height, bbActive.y + bbActive.height), std::min(bb.x, bbActive.x), std::max(bb.x + bb.width, bbActive.x + bbActive.width));
+            activeSessions.at(sessionIndex)->getImage()->setBoundingBoxAtIndex(stoi(activeId), stoi(activeLine), std::min(bb.y, bbActive.y), std::max(bb.y + bb.height, bbActive.y + bbActive.height), std::min(bb.x, bbActive.x), std::max(bb.x + bb.width, bbActive.x + bbActive.width));
             //activeSessions.at(sessionIndex)->getImage()->removeConnectedComponentAt(idCC, idLine);
             int indexCharacterForCC = activeSessions.at(sessionIndex)->getFont()->indexOfCharacterForCC(idCC, idLine);
             if(indexCharacterForCC != -1)
@@ -486,7 +559,7 @@ class MyDynamicRepository : public DynamicRepository
         if( remove( filePath.c_str() ) != 0 )
         {
           NVJ_LOG->append(NVJ_ERROR, "Error Deleted");
-          return fromString("{\"error\":\"An error append when deleting the image\"}",response);
+          return fromString("{\"error\":\"An error append when deleting the image\"}", response);
         } else {
           if(activeSessions.at(sessionIndex)->getOriginalFileName() != activeSessions.at(sessionIndex)->getDisplayedFileName())
           {
@@ -494,13 +567,13 @@ class MyDynamicRepository : public DynamicRepository
             if( remove( fileDisplayedPath.c_str()) != 0 )
             {
               NVJ_LOG->append(NVJ_ERROR, "Error Deleted");
-              return fromString("{\"error\":\"An error append when deleting the image\"}",response);
+              return fromString("{\"error\":\"An error append when deleting the image\"}", response);
             }
           }
           delete activeSessions.at(sessionIndex);
           activeSessions.erase(activeSessions.begin() + sessionIndex);
           NVJ_LOG->append(NVJ_ERROR, "Deleted");
-          return fromString("{\"success\":\"Goodbye\"}",response);
+          return fromString("{\"success\":\"Goodbye\"}", response);
         }
       } else {
         return fromString("{\"error\" : You don't have a valid token, retry please\"}", response);
@@ -521,7 +594,7 @@ class MyDynamicRepository : public DynamicRepository
           int sessionIndex = getActiveSessionFromToken(stoi(token));
           std::string fontname;
           request->getParameter("fontname", fontname);
-          return fromString(extractFontInOf(sessionIndex, fontname),response);
+          return fromString(extractFontInOf(sessionIndex, fontname), response);
         } else {
           return fromString("{\"error\" : You don't have a valid token, retry please\"}", response);
         }
