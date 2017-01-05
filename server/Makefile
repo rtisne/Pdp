@@ -7,6 +7,7 @@
 OUTPUTFILENAME = PrecompiledRepository.cc
 NAVAJO_PREFIX=/usr
 NAVAJO_INCLUDE_DIR=${NAVAJO_PREFIX}/include
+NAVAJO_LIB_DIR=${NAVAJO_PREFIX}/lib
 NAVAJO_PRECOMPILER_EXEC=${NAVAJO_PREFIX}/bin/navajoPrecompiler
 
 UNAME := $(shell uname)
@@ -25,14 +26,14 @@ CXX 	=  g++ -std=c++11 -Wall -Wextra -g
 
 ifeq ($(OS),MACOSX)
 LIBSSL_DIR = /usr/local/Cellar/openssl/1.0.1j
-LIBS       = -lnavajo -L../../$(LIB_DIR) -lz  -L$(LIBSSL_DIR)/lib -lssl -lcrypto  -lopencv_core -lopencv_imgproc -lopencv_highgui -lopencv_ml -lopencv_video -lopencv_features2d -lopencv_calib3d -lopencv_objdetect -lopencv_contrib -lopencv_legacy
+LIBS       = -L$(NAVAJO_LIB_DIR) -lnavajo -L../../$(LIB_DIR) -lz  -L$(LIBSSL_DIR)/lib -lssl -lcrypto  -lopencv_core -lopencv_imgproc -lopencv_highgui -lopencv_ml -lopencv_video -lopencv_features2d -lopencv_calib3d -lopencv_objdetect -lopencv_contrib -lopencv_legacy
 DEFS            =   -D__darwin__ -D__x86__ -fPIC -fno-common -D_REENTRANT
 CXXFLAGS        =  -O3  -Wdeprecated-declarations
 else
 ifeq ($(LBITS),64)
   LIB_DIR=lib64
 endif
-LIBS       = -lnavajo -L../../$(LIB_DIR) -lz -lssl -lcrypto -pthread  -lopencv_core -lopencv_imgproc -lopencv_highgui -lopencv_ml -lopencv_video -lopencv_features2d -lopencv_calib3d -lopencv_objdetect -lopencv_contrib -lopencv_legacy
+LIBS       = -L$(NAVAJO_LIB_DIR) -lnavajo -L../../$(LIB_DIR) -lz -lssl -lcrypto -pthread  -lopencv_core -lopencv_imgproc -lopencv_highgui -lopencv_ml -lopencv_video -lopencv_features2d -lopencv_calib3d -lopencv_objdetect -lopencv_contrib -lopencv_legacy
 DEFS            =  -DLINUX -Wall -Wno-unused -fexceptions -fPIC -D_REENTRANT
 CXXFLAGS        =  -O4  -Wdeprecated-declarations
 endif

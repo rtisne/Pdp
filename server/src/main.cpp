@@ -1,9 +1,10 @@
 #include "libnavajo/libnavajo.hh"
 #include "libnavajo/LogStdOutput.hh"
 
-#include <time.h>
+#include <cstdio> //remove 
+#include <ctime>
 #include <signal.h> 
-#include <string.h> 
+#include <cstring> 
 #include <unordered_set>
 
 #include "../headers/Image.hpp"
@@ -556,7 +557,7 @@ class MyDynamicRepository : public DynamicRepository
       if(sessionIndex != -1)
       {
         std::string filePath = activeSessions.at(sessionIndex)->getOriginalFileName();
-        if( remove( filePath.c_str() ) != 0 )
+        if( std::remove( filePath.c_str() ) != 0 )
         {
           NVJ_LOG->append(NVJ_ERROR, "Error Deleted");
           return fromString("{\"error\":\"An error append when deleting the image\"}", response);
@@ -564,7 +565,7 @@ class MyDynamicRepository : public DynamicRepository
           if(activeSessions.at(sessionIndex)->getOriginalFileName() != activeSessions.at(sessionIndex)->getDisplayedFileName())
           {
             std::string fileDisplayedPath = UPLOAD_DIR + activeSessions.at(sessionIndex)->getDisplayedFileName();
-            if( remove( fileDisplayedPath.c_str()) != 0 )
+            if( std::remove( fileDisplayedPath.c_str()) != 0 )
             {
               NVJ_LOG->append(NVJ_ERROR, "Error Deleted");
               return fromString("{\"error\":\"An error append when deleting the image\"}", response);
