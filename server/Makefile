@@ -5,7 +5,9 @@
 ##############################
 
 OUTPUTFILENAME = PrecompiledRepository.cc
-NAVAJO_PRECOMPILER_EXEC = ../bin/navajoPrecompiler
+NAVAJO_PREFIX=/usr
+NAVAJO_INCLUDE_DIR=${NAVAJO_PREFIX}/include
+NAVAJO_PRECOMPILER_EXEC=${NAVAJO_PREFIX}/bin/navajoPrecompiler
 
 UNAME := $(shell uname)
 LBITS := $(shell getconf LONG_BIT)
@@ -39,7 +41,7 @@ endif
 CPPFLAGS	= -I. \
             -I$(LIBSSL_DIR)/include \
 		  	-I../../include \
-			-I/usr/include/opencv -I/usr/include/opencv2
+			-I/usr/include/opencv -I/usr/include/opencv2 -I$(NAVAJO_INCLUDE_DIR)
 LD		=  g++ 
 
 LDFLAGS        = -Wall -Wno-unused -O3   
