@@ -31,8 +31,8 @@ std::vector<ConnectedComponent> Line::getListCC() const
 }
 
 ConnectedComponent Line::getConnectedComponentAtIndex(int index) const{
-	assert(index>=0 && index<= m_ListCC.size());
-	return m_ListCC.at(index);
+  assert(index>=0 && size_t(index)<= m_ListCC.size());
+  return m_ListCC.at(index);
 }
 
 void Line::setBoundingBoxAtIndex(int index, int up, int down, int left, int right){

@@ -194,7 +194,7 @@ public:
      *
      *  \return the connectedcomponent as ConnectedComponent
      */
-    ConnectedComponent getConnectedComponnentAt(int index, int line); 
+    ConnectedComponent getConnectedComponnentAt(int index, int line) const; 
 
     /*!
      *  \brief remove the connected component

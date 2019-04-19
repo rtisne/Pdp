@@ -41,7 +41,7 @@ void Image::setBaselineAtIndex(int index,int line, int value)
   m_listLine[line].setBaselineAtIndex(index,value);
 }
 
-ConnectedComponent Image::getConnectedComponnentAt(int index, int line){
+ConnectedComponent Image::getConnectedComponnentAt(int index, int line) const{
   return m_listLine[line].getConnectedComponentAtIndex(index);
 }
 
@@ -62,7 +62,8 @@ cv::vector<ConnectedComponent> Image::extractComposentConnectImage(cv::Mat img){
   cv::vector<ConnectedComponent> tmpCC;
   cv::vector<cv::vector<cv::Point>> contours;
   cv::findContours(img, contours, CV_RETR_EXTERNAL, CV_CHAIN_APPROX_NONE);
-  for(int i =0; i< contours.size();i++){
+  tmpCC.reserve(contours.size());
+  for(size_t i=0; i<contours.size(); i++){
     ConnectedComponent cc = ConnectedComponent(contours[i]);
     tmpCC.push_back(cc);
   }
@@ -129,15 +130,15 @@ void Image::ComputeMask()
     return cv::boundingRect(c1).y < cv::boundingRect(c2).y;
   });
 
-  int nbCCInline = 0;
+  size_t nbCCInLine = 0;
 
-  if(contours_mask.size() != 0)
+  if(! contours_mask.empty())
   {
-    for(int i = 0 ; i < contours_mask.size(); i++)
+    for(size_t i=0 ; i<contours_mask.size(); ++i)
     {
       Line line = Line();
       cv::Rect rMask = cv::boundingRect(contours_mask[i]);
-      for(int k = 0; k < tmpCC.size();k++)
+      for(size_t k=0; k < tmpCC.size(); ++k)
       {
         cv::Rect r = cv::boundingRect(tmpCC[k].getListPoint());
         if(tmpCC[k].getInline() == false)
@@ -147,7 +148,7 @@ void Image::ComputeMask()
           {
             line.addCC(tmpCC[k]);
             tmpCC[k].setInline(true);
-            nbCCInline++;
+            ++nbCCInLine;
           }
         }  
       }  
@@ -161,16 +162,16 @@ void Image::ComputeMask()
   } else if(tmpCC.size() == 1){
     Line line = Line();
     line.addCC(tmpCC[0]);
-    nbCCInline++;
+    ++nbCCInLine;
     m_listLine.push_back(line);
     m_listLine[0].computeBaseLine();
   }
 
   // All connected component not added to a line of mask, trash line
-  if(nbCCInline != tmpCC.size())
+  if(nbCCInLine != tmpCC.size())
   {
     Line line = Line();
-    for(int i = 0; i < tmpCC.size() ; i++){
+    for(size_t i = 0; i < tmpCC.size() ; i++){
       if(tmpCC[i].getInline() == false)
         line.addCC(tmpCC[i]);
     }
@@ -188,10 +189,10 @@ void Image::ComputeMask()
 std::string Image::jsonBoundingRect(){
   std::string json;
   int id = 0;
-  for(int line = 0 ; line < m_listLine.size(); line++)
+  for(size_t line=0 ; line < m_listLine.size(); ++line)
   {
     std::vector<ConnectedComponent> ListTmpCC = m_listLine[line].getListCC();
-    for(int i = 0; i < ListTmpCC.size(); i++)
+    for(size_t i=0; i < ListTmpCC.size(); ++i)
     {
       cv::Rect rect = cv::boundingRect(ListTmpCC[i].getListPoint());
       json += ("\""+ std::to_string(id) +"\":{");
@@ -214,7 +215,7 @@ std::string Image::jsonBoundingRect(){
 
 std::string Image::jsonBaseline(){
   std::string json;
-  for(int line = 0 ; line < m_listLine.size(); line++)
+  for(size_t line = 0 ; line < m_listLine.size(); ++line)
   {
     if(m_listLine[line].getListCC().size() != 0)
     {
@@ -281,7 +282,7 @@ std::string Image::extractDataFromComponent(int index, int lineId) const
   return data.substr(0, data.size()-1);
 } 
 
-bool Image::inMiddle(const cv::Rect bb1,const cv::Rect bb2) const
+bool Image::inMiddle(const cv::Rect bb1, const cv::Rect bb2) const
 {
   int bb2_x = bb2.x + (bb2.width/2);
   int bb2_y = bb2.y + (bb2.height/2);
@@ -300,19 +301,17 @@ void Image::setBaselineForLine(int id, int value)
 }
 
 int Image::isValidIdLine(int line) const{
-  for(int i = 0; i < m_listLine.size(); i++){
-    if(line == i)
-      return line;
-  }
+  if (line >=0 && size_t(line) < m_listLine.size())
+    return line;
   return -1;
 }
 
 int Image::isValidIdCC(int line, int cc) const{
-  if(isValidIdLine(line) != -1)
-    for(int i=0; i< m_listLine[line].getListCC().size(); i++)
-      if(cc == i)
-        return cc;
-
+  if(isValidIdLine(line) != -1) {
+    const size_t sz = m_listLine[line].getListCC().size();
+    if (cc>=0 && size_t(cc)<sz)
+      return cc;
+  }
   return -1;
 }
 

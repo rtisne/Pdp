@@ -7,6 +7,17 @@ install it two solutions are provided : manually or from a docker
 image.
 ## Manual installation
 ```
+// Libnavajo installation
+// You may need to first install OpenSSL, PAM, zlib, cmake & g++
+// sudo apt-get install libssl-dev libpam0g-dev g++ cmake libz-dev
+$ git clone https://github.com/titi38/libnavajo.git
+$ cd libnavajo
+$ mkdir build
+$ cd build 
+$ cmake ..
+$ make
+$ sudo make install
+
 // Opencv installation
 #Ubuntu Linux distribution
 $ sudo apt-get install libopencv-dev
@@ -14,15 +25,9 @@ $ sudo apt-get install libopencv-dev
 #MAC distribution (with Homebrew)
 $ brew install opencv
 
-// Libnavajo installation
-$ git clone https://github.com/titi38/libnavajo.git
-$ cd libnavajo
-$ cmake .
-$ make
-$ sudo make install
-    
+
 // Font-extractor installation
-$ git clone https://github.com/rtisne/Pdp.git
+$ git clone https://github.com/BorisMansencal/Pdp.git
 $ cd Pdp/server
 $ make
 ```
@@ -48,9 +53,6 @@ You can change the port in the file libnavajo/src/WebServer.cc of libnavajo
 
 If you are in local, you can access to the server throught: http://localhost:8080
 
-## Demo
-The application is host online :
-https://intranet.iut.u-bordeaux.fr/navajo/
 
 ## Building and running unit tests
 Tests are available to test the algorithm part that retrieves components in the image.
