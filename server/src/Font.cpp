@@ -45,6 +45,12 @@ Character* Font::characterAtIndex(int id)
   return &m_listCharacter.at(id);
 }
 
+const Character* Font::characterAtIndex(int id) const
+{
+  assert(id>=0 && id<countCharacter());
+  return &m_listCharacter.at(id);
+}
+
 void Font::removeCharacter(int id)
 {
   assert(id>=0 && id<countCharacter());

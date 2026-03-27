@@ -44,10 +44,10 @@ bool Character::hasComponent(int idCC, int idLine) const
 		return false;
 
 }
-std::pair<int,int> Character::getIdComponentAtIndex(int index)
+std::pair<int,int> Character::getIdComponentAtIndex(int index) const
 {
-	assert(index>=0 && index<=m_idComponentsConnexes.size());
-	return m_idComponentsConnexes.at(index);
+  assert(index>=0 && size_t(index)<=m_idComponentsConnexes.size());
+  return m_idComponentsConnexes.at(index);
 }
 
 bool operator== ( const Character &c1, const Character &c2) 
